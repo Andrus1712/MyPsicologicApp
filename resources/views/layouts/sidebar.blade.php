@@ -32,26 +32,10 @@
         </form>
         <!-- Sidebar Menu -->
 
-        <ul class="sidebar-menu nav" data-widget="tree">
+        <ul class="sidebar-menu" data-widget="tree" >
             @include('layouts.menu')
         </ul>
         <!-- /.sidebar-menu -->
     </section>
     <!-- /.sidebar -->
 </aside>
-
-@section('css') 
-<style>
-    .nav > li {
-  position: relative;
-  display: block; }
-
-    .nav.side-menu > li {
-    position: relative;
-    display: block;
-    cursor: pointer; }
-
-    .nav.child_menu {
-  display: none; }
-</style>
-@endsection

@@ -1,66 +1,60 @@
 <!-- Id Field -->
 <div class="form-group">
     {!! Form::label('id', 'Id:') !!}
-    <p>{{ $docente->id }}</p>
+    <p>{{ $docentes->id }}</p>
 </div>
 
 <!-- Tipoidentificacion Field -->
 <div class="form-group">
     {!! Form::label('tipoIdentificacion', 'Tipoidentificacion:') !!}
-    <p>{{ $docente->tipoIdentificacion }}</p>
-</div>
-
-<!-- Identificacion Field -->
-<div class="form-group">
-    {!! Form::label('identificacion', 'Identificacion:') !!}
-    <p>{{ $docente->identificacion }}</p>
+    <p>{{ $docentes->tipoIdentificacion }}</p>
 </div>
 
 <!-- Nombres Field -->
 <div class="form-group">
     {!! Form::label('nombres', 'Nombres:') !!}
-    <p>{{ $docente->nombres }}</p>
+    <p>{{ $docentes->nombres }}</p>
 </div>
 
 <!-- Apellidos Field -->
 <div class="form-group">
     {!! Form::label('apellidos', 'Apellidos:') !!}
-    <p>{{ $docente->apellidos }}</p>
+    <p>{{ $docentes->apellidos }}</p>
+</div>
+
+<!-- Identificacion Field -->
+<div class="form-group">
+    {!! Form::label('identificacion', 'Identificacion:') !!}
+    <p>{{ $docentes->identificacion }}</p>
 </div>
 
 <!-- Correo Field -->
 <div class="form-group">
     {!! Form::label('correo', 'Correo:') !!}
-    <p>{{ $docente->correo }}</p>
-</div>
-
-<!-- Fechanacimiento Field -->
-<div class="form-group">
-    {!! Form::label('fechaNacimiento', 'Fechanacimiento:') !!}
-    <p>{{ $docente->fechaNacimiento }}</p>
+    <p>{{ $docentes->correo }}</p>
 </div>
 
 <!-- Telefono Field -->
 <div class="form-group">
     {!! Form::label('telefono', 'Telefono:') !!}
-    <p>{{ $docente->telefono }}</p>
+    <p>{{ $docentes->telefono }}</p>
 </div>
 
-<!-- Sexo Field -->
+<!-- Foto Field -->
 <div class="form-group">
-    {!! Form::label('sexo', 'Sexo:') !!}
-    <p>{{ $docente->sexo }}</p>
+    {!! Form::label('foto', 'Foto:') !!}
+    <p>{{ $docentes->foto }}</p>
 </div>
 
 <!-- Created At Field -->
 <div class="form-group">
     {!! Form::label('created_at', 'Created At:') !!}
-    <p>{{ $docente->created_at }}</p>
+    <p>{{ $docentes->created_at }}</p>
 </div>
 
 <!-- Updated At Field -->
 <div class="form-group">
     {!! Form::label('updated_at', 'Updated At:') !!}
-    <p>{{ $docente->updated_at }}</p>
+    <p>{{ $docentes->updated_at }}</p>
 </div>
 

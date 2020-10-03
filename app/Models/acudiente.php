@@ -40,9 +40,7 @@ class acudiente extends Model
         'fechaNacimiento',
         'correo',
         'direccion',
-        'telefono',
-        'sexo',
-        'photo'
+        'telefono'
     ];
 
     /**
@@ -60,8 +58,6 @@ class acudiente extends Model
         'correo' => 'string',
         'direccion' => 'string',
         'telefono' => 'string',
-        'sexo' => 'string',
-        'photo' => 'string'
     ];
 
     /**

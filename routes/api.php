@@ -25,3 +25,13 @@ Route::resource('estudiantes', 'estudianteAPIController');
 Route::resource('docentes', 'docenteAPIController');
 
 Route::resource('psicologos', 'psicologoAPIController');
+
+Route::resource('grupos', 'grupoAPIController');
+
+Route::resource('tipo_comportamientos', 'tipoComportamientoAPIController');
+
+Route::resource('comportamientos', 'comportamientoAPIController');
+
+Route::resource('actividades', 'actividadesAPIController');
+
+Route::resource('avances', 'avancesAPIController');

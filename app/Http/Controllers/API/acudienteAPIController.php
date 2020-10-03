@@ -8,10 +8,9 @@ use App\Models\acudiente;
 use App\Repositories\acudienteRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
-use InfyOm\Generator\Criteria\LimitOffsetCriteria;
-use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 
+use Illuminate\Support\Facades\DB;
 /**
  * Class acudienteController
  * @package App\Http\Controllers\API
@@ -36,9 +35,10 @@ class acudienteAPIController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $this->acudienteRepository->pushCriteria(new RequestCriteria($request));
-        $this->acudienteRepository->pushCriteria(new LimitOffsetCriteria($request));
-        $acudientes = $this->acudienteRepository->all();
+        $acudientes = DB::table(DB::raw('acudientes a'))
+                    ->where(DB::raw('a.deleted_at', '=', NULL))
+                    ->select('a.*')
+                    ->get();
 
         return $this->sendResponse($acudientes->toArray(), 'Acudientes retrieved successfully');
     }
@@ -116,14 +116,14 @@ class acudienteAPIController extends AppBaseController
     public function destroy($id)
     {
         /** @var acudiente $acudiente */
-        $acudiente = $this->acudienteRepository->findWithoutFail($id);
+        $acudiente = acudiente::find($id);
 
-        if (empty($acudiente)) {
-            return $this->sendError('Acudiente not found');
-        }
+        // if (empty($acudiente)) {
+        //     return $this->sendError('Acudiente not found');
+        // }
 
         $acudiente->delete();
 
-        return $this->sendSuccess('Acudiente deleted successfully');
+        return response()->json(['' => 'Acudiente deleted successfully']);
     }
 }

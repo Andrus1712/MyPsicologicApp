@@ -8,10 +8,9 @@ use App\Models\docente;
 use App\Repositories\docenteRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
-use InfyOm\Generator\Criteria\LimitOffsetCriteria;
-use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 
+use Illuminate\Support\Facades\DB;
 /**
  * Class docenteController
  * @package App\Http\Controllers\API
@@ -36,9 +35,10 @@ class docenteAPIController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $this->docenteRepository->pushCriteria(new RequestCriteria($request));
-        $this->docenteRepository->pushCriteria(new LimitOffsetCriteria($request));
-        $docentes = $this->docenteRepository->all();
+        $docentes = DB::table(DB::raw('docentes d'))
+                ->where(DB::raw('d.deleted_at', '=', NULL))
+                ->select('d.*')
+                ->get();
 
         return $this->sendResponse($docentes->toArray(), 'Docentes retrieved successfully');
     }
@@ -116,14 +116,11 @@ class docenteAPIController extends AppBaseController
     public function destroy($id)
     {
         /** @var docente $docente */
-        $docente = $this->docenteRepository->findWithoutFail($id);
+        $docente = docente::find($id);
 
-        if (empty($docente)) {
-            return $this->sendError('Docente not found');
-        }
 
         $docente->delete();
 
-        return $this->sendSuccess('Docente deleted successfully');
+        return response()->json(['status' => 'Docente deleted successfully']);
     }
 }

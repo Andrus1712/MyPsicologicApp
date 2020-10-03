@@ -1,7 +1,7 @@
 <!-- Tipoidentificacion Field -->
 <div class="form-group col-sm-6">
     {!! Form::label('tipoIdentificacion', 'Tipoidentificacion:') !!}
-    {!! Form::select('tipoIdentificacion', ['TI' => 'TI', 'CC' => 'CC', 'RC' => 'RC', 'CE' => 'CE', 'PA' => 'PA'], null, ['class' => 'form-control']) !!}
+    {!! Form::select('tipoIdentificacion', ['RC' => 'RC', 'TI' => 'TI', 'CC' => 'CC', 'CE' => 'CE', 'PA' => 'PA'], null, ['class' => 'form-control']) !!}
 </div>
 
 <!-- Identificacion Field -->
@@ -22,6 +22,18 @@
     {!! Form::text('apellidos', null, ['class' => 'form-control']) !!}
 </div>
 
+<!-- Edad Field -->
+<div class="form-group col-sm-6">
+    {!! Form::label('edad', 'Edad:') !!}
+    {!! Form::number('edad', null, ['class' => 'form-control']) !!}
+</div>
+
+<!-- Telefono Field -->
+<div class="form-group col-sm-6">
+    {!! Form::label('telefono', 'Telefono:') !!}
+    {!! Form::text('telefono', null, ['class' => 'form-control']) !!}
+</div>
+
 <!-- Correo Field -->
 <div class="form-group col-sm-6">
     {!! Form::label('correo', 'Correo:') !!}
@@ -34,36 +46,25 @@
     {!! Form::date('fechaNacimiento', null, ['class' => 'form-control','id'=>'fechaNacimiento']) !!}
 </div>
 
-
-<!-- Grado Field -->
-<div class="form-group col-sm-6">
-    {!! Form::label('grado', 'Grado:') !!}
-    {!! Form::text('grado', null, ['class' => 'form-control']) !!}
-</div>
-
-<!-- Telefono Field -->
-<div class="form-group col-sm-6">
-    {!! Form::label('telefono', 'Telefono:') !!}
-    {!! Form::text('telefono', null, ['class' => 'form-control']) !!}
-</div>
-
-<!-- Sexo Field -->
-<div class="form-group col-sm-6">
-    {!! Form::label('sexo', 'Sexo:') !!}
-    {!! Form::select('sexo', ['Masculino' => 'Masculino', 'Femenino' => 'Femenino', 'Otro' => 'Otro'], null, ['class' => 'form-control']) !!}
-</div>
-
-<!-- Actaaprobacion Field -->
-<div class="form-group col-sm-6">
-    {!! Form::label('actaAprobacion', 'Acta de aprobacion:') !!}
-    {!! Form::file('actaAprobacion') !!}
-</div>
-<div class="clearfix"></div>
+@section('scripts')
+    <script type="text/javascript">
+        $('#fechaNacimiento').datetimepicker({
+            format: 'YYYY-MM-DD HH:mm:ss',
+            useCurrent: false
+        })
+    </script>
+@endsection
 
 <!-- Acudiente Id Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('acudiente_name', 'Nombre del acudiente:') !!}
-    {!! Form::select('acudiente_name', $acudienteItems, null, ['class' => 'form-control']) !!}
+    {!! Form::label('acudiente_id', 'Acudiente Id:') !!}
+    {!! Form::select('acudiente_id', $acudienteItems, null, ['class' => 'form-control']) !!}
+</div>
+
+<!-- Grupo Id Field -->
+<div class="form-group col-sm-6">
+    {!! Form::label('grupo_id', 'Grupo Id:') !!}
+    {!! Form::select('grupo_id', $grupoItems, null, ['class' => 'form-control']) !!}
 </div>
 
 <!-- Submit Field -->

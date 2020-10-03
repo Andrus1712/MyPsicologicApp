@@ -28,8 +28,6 @@ class acudienteRepository extends BaseRepository
         'correo',
         'direccion',
         'telefono',
-        'sexo',
-        'photo'
     ];
 
     /**

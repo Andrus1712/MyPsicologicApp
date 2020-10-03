@@ -24,13 +24,12 @@ class estudianteRepository extends BaseRepository
         'identificacion',
         'nombres',
         'apellidos',
+        'edad',
+        'telefono',
         'correo',
         'fechaNacimiento',
-        'grado',
-        'telefono',
-        'sexo',
-        'actaAprobacion',
-        'acudiente_id'
+        'acudiente_id',
+        'grupo_id'
     ];
 
     /**

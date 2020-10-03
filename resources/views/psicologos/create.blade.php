@@ -1,23 +1,6 @@
-@extends('layouts.app')
-
-@section('content')
-    <section class="content-header">
-        <h1>
-            Psicologo
-        </h1>
-    </section>
-    <div class="content">
-        @include('adminlte-templates::common.errors')
-        <div class="box box-primary">
-            <div class="box-body">
-                <div class="row">
-                    {!! Form::open(['route' => 'psicologos.store']) !!}
-
-                        @include('psicologos.fields')
-
-                    {!! Form::close() !!}
-                </div>
-            </div>
+<div class="modal fade" id="modal-psicologos" tabindex="-1" role="basic" data-backdrop="static"  aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">            
         </div>
     </div>
-@endsection
+</div>

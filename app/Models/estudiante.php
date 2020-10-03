@@ -38,13 +38,12 @@ class estudiante extends Model
         'identificacion',
         'nombres',
         'apellidos',
+        'edad',
+        'telefono',
         'correo',
         'fechaNacimiento',
-        'grado',
-        'telefono',
-        'sexo',
-        'actaAprobacion',
-        'acudiente_id'
+        'acudiente_id',
+        'grupo_id'
     ];
 
     /**
@@ -58,13 +57,12 @@ class estudiante extends Model
         'identificacion' => 'string',
         'nombres' => 'string',
         'apellidos' => 'string',
+        'edad' => 'integer',
+        'telefono' => 'string',
         'correo' => 'string',
         'fechaNacimiento' => 'date',
-        'grado' => 'string',
-        'telefono' => 'string',
-        'sexo' => 'string',
-        'actaAprobacion' => 'string',
-        'acudiente_id' => 'integer'
+        'acudiente_id' => 'integer',
+        'grupo_id' => 'integer'
     ];
 
     /**

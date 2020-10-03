@@ -27,7 +27,7 @@ class psicologoRepository extends BaseRepository
         'correo',
         'fechaNacimiento',
         'telefono',
-        'sexo'
+        'direccion'
     ];
 
     /**

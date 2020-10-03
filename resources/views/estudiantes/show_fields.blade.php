@@ -1,84 +1,78 @@
 <!-- Id Field -->
 <div class="form-group">
     {!! Form::label('id', 'Id:') !!}
-    <p>{{ $estudiante->id }}</p>
+    <p>{{ $estudiantes->id }}</p>
 </div>
 
 <!-- Tipoidentificacion Field -->
 <div class="form-group">
     {!! Form::label('tipoIdentificacion', 'Tipoidentificacion:') !!}
-    <p>{{ $estudiante->tipoIdentificacion }}</p>
+    <p>{{ $estudiantes->tipoIdentificacion }}</p>
 </div>
 
 <!-- Identificacion Field -->
 <div class="form-group">
     {!! Form::label('identificacion', 'Identificacion:') !!}
-    <p>{{ $estudiante->identificacion }}</p>
+    <p>{{ $estudiantes->identificacion }}</p>
 </div>
 
 <!-- Nombres Field -->
 <div class="form-group">
     {!! Form::label('nombres', 'Nombres:') !!}
-    <p>{{ $estudiante->nombres }}</p>
+    <p>{{ $estudiantes->nombres }}</p>
 </div>
 
 <!-- Apellidos Field -->
 <div class="form-group">
     {!! Form::label('apellidos', 'Apellidos:') !!}
-    <p>{{ $estudiante->apellidos }}</p>
+    <p>{{ $estudiantes->apellidos }}</p>
 </div>
 
-<!-- Correo Field -->
+<!-- Edad Field -->
 <div class="form-group">
-    {!! Form::label('correo', 'Correo:') !!}
-    <p>{{ $estudiante->correo }}</p>
-</div>
-
-<!-- Fechanacimiento Field -->
-<div class="form-group">
-    {!! Form::label('fechaNacimiento', 'Fechanacimiento:') !!}
-    <p>{{ $estudiante->fechaNacimiento }}</p>
-</div>
-
-<!-- Grado Field -->
-<div class="form-group">
-    {!! Form::label('grado', 'Grado:') !!}
-    <p>{{ $estudiante->grado }}</p>
+    {!! Form::label('edad', 'Edad:') !!}
+    <p>{{ $estudiantes->edad }}</p>
 </div>
 
 <!-- Telefono Field -->
 <div class="form-group">
     {!! Form::label('telefono', 'Telefono:') !!}
-    <p>{{ $estudiante->telefono }}</p>
+    <p>{{ $estudiantes->telefono }}</p>
 </div>
 
-<!-- Sexo Field -->
+<!-- Correo Field -->
 <div class="form-group">
-    {!! Form::label('sexo', 'Sexo:') !!}
-    <p>{{ $estudiante->sexo }}</p>
+    {!! Form::label('correo', 'Correo:') !!}
+    <p>{{ $estudiantes->correo }}</p>
 </div>
 
-<!-- Actaaprobacion Field -->
+<!-- Fechanacimiento Field -->
 <div class="form-group">
-    {!! Form::label('actaAprobacion', 'Actaaprobacion:') !!}
-    <p>{{ $estudiante->actaAprobacion }}</p>
+    {!! Form::label('fechaNacimiento', 'Fechanacimiento:') !!}
+    <p>{{ $estudiantes->fechaNacimiento }}</p>
 </div>
 
 <!-- Acudiente Id Field -->
 <div class="form-group">
     {!! Form::label('acudiente_id', 'Acudiente Id:') !!}
-    <p>{{ $estudiante->acudiente_id }}</p>
+    <p>{{ $estudiantes->acudiente_id }}</p>
+</div>
+
+<!-- Grupo Id Field -->
+<div class="form-group">
+    {!! Form::label('grupo_id', 'Grupo Id:') !!}
+    <p>{{ $estudiantes->grupo_id }}</p>
 </div>
 
 <!-- Created At Field -->
 <div class="form-group">
     {!! Form::label('created_at', 'Created At:') !!}
-    <p>{{ $estudiante->created_at }}</p>
+    <p>{{ $estudiantes->created_at }}</p>
 </div>
 
 <!-- Updated At Field -->
 <div class="form-group">
     {!! Form::label('updated_at', 'Updated At:') !!}
-    <p>{{ $estudiante->updated_at }}</p>
+    <p>{{ $estudiantes->updated_at }}</p>
 </div>
 

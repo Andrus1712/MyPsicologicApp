@@ -3,7 +3,7 @@
 @section('content')
     <section class="content-header">
         <h1>
-            Acudiente
+            Acudientes
         </h1>
    </section>
    <div class="content">
@@ -11,7 +11,7 @@
        <div class="box box-primary">
            <div class="box-body">
                <div class="row">
-                   {!! Form::model($acudiente, ['route' => ['acudientes.update', $acudiente->id], 'method' => 'patch', 'files' => true]) !!}
+                   {!! Form::model($acudientes, ['route' => ['acudientes.update', $acudientes->id], 'method' => 'patch']) !!}
 
                         @include('acudientes.fields')
 

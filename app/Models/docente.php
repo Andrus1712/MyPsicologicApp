@@ -38,7 +38,7 @@ class docente extends Model
         'correo',
         'fechaNacimiento',
         'telefono',
-        'sexo'
+        'direccion'
     ];
 
     /**
@@ -55,7 +55,7 @@ class docente extends Model
         'correo' => 'string',
         'fechaNacimiento' => 'date',
         'telefono' => 'string',
-        'sexo' => 'string'
+        'direccion' => 'string'
     ];
 
     /**

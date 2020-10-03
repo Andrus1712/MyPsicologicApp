@@ -12,6 +12,8 @@ use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 
+use Illuminate\Support\Facades\DB;
+
 /**
  * Class estudianteController
  * @package App\Http\Controllers\API
@@ -36,9 +38,17 @@ class estudianteAPIController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $this->estudianteRepository->pushCriteria(new RequestCriteria($request));
-        $this->estudianteRepository->pushCriteria(new LimitOffsetCriteria($request));
-        $estudiantes = $this->estudianteRepository->all();
+        $estudiantes = DB::table(DB::raw('estudiantes e'))->where(DB::raw('e.deleted_at', '=', 'NULL'))
+            ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
+            ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
+            ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+            ->select(
+                'e.id', 'e.tipoIdentificacion', 'e.identificacion', 'e.nombres', 'e.apellidos', 'e.edad', 'e.telefono', 'e.correo', 'e.fechaNacimiento', 
+                DB::raw('a.nombres as nombre_acudiente'), DB::raw('a.apellidos as apellido_acudiente'), DB::raw('a.telefono as telefono_acudiente'), DB::raw('a.correo as correo_acudiente'),
+                'g.grado', 'g.curso',
+                DB::raw('d.nombres as nombre_docente'), DB::raw('d.apellidos as apellidos_docente'),
+                'e.created_at')
+            ->get();
 
         return $this->sendResponse($estudiantes->toArray(), 'Estudiantes retrieved successfully');
     }
@@ -116,14 +126,9 @@ class estudianteAPIController extends AppBaseController
     public function destroy($id)
     {
         /** @var estudiante $estudiante */
-        $estudiante = $this->estudianteRepository->findWithoutFail($id);
-
-        if (empty($estudiante)) {
-            return $this->sendError('Estudiante not found');
-        }
-
+        $estudiante = estudiante::find($id);
         $estudiante->delete();
 
-        return $this->sendSuccess('Estudiante deleted successfully');
+        return response()->json(['status' => 'Estudiante deleted successfully']);
     }
 }

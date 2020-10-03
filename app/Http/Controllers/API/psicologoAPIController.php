@@ -16,6 +16,7 @@ use Response;
  * Class psicologoController
  * @package App\Http\Controllers\API
  */
+use Illuminate\Support\Facades\DB;
 
 class psicologoAPIController extends AppBaseController
 {
@@ -36,9 +37,10 @@ class psicologoAPIController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $this->psicologoRepository->pushCriteria(new RequestCriteria($request));
-        $this->psicologoRepository->pushCriteria(new LimitOffsetCriteria($request));
-        $psicologos = $this->psicologoRepository->all();
+        $psicologos = DB::table(DB::raw('psicologos p'))
+            ->where(DB::raw('p.deleted_at', '=', 'NULL'))
+            ->select('p.*')
+            ->get();
 
         return $this->sendResponse($psicologos->toArray(), 'Psicologos retrieved successfully');
     }
@@ -116,14 +118,10 @@ class psicologoAPIController extends AppBaseController
     public function destroy($id)
     {
         /** @var psicologo $psicologo */
-        $psicologo = $this->psicologoRepository->findWithoutFail($id);
-
-        if (empty($psicologo)) {
-            return $this->sendError('Psicologo not found');
-        }
+        $psicologo = psicologo::find($id);
 
         $psicologo->delete();
 
-        return $this->sendSuccess('Psicologo deleted successfully');
+        return response()->json(['status' =>'Actividades deleted successfully']);
     }
 }

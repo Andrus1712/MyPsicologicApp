@@ -22,6 +22,12 @@
     {!! Form::text('apellidos', null, ['class' => 'form-control']) !!}
 </div>
 
+<!-- Correo Field -->
+<div class="form-group col-sm-6">
+    {!! Form::label('correo', 'Correo:') !!}
+    {!! Form::email('correo', null, ['class' => 'form-control']) !!}
+</div>
+
 <!-- Fechanacimiento Field -->
 <div class="form-group col-sm-6">
     {!! Form::label('fechaNacimiento', 'Fechanacimiento:') !!}
@@ -29,20 +35,13 @@
 </div>
 
 @section('scripts')
-
+    <script type="text/javascript">
+        $('#fechaNacimiento').datetimepicker({
+            format: 'YYYY-MM-DD HH:mm:ss',
+            useCurrent: false
+        })
+    </script>
 @endsection
-
-<!-- Correo Field -->
-<div class="form-group col-sm-6">
-    {!! Form::label('correo', 'Correo:') !!}
-    {!! Form::email('correo', null, ['class' => 'form-control']) !!}
-</div>
-
-<!-- Direccion Field -->
-<div class="form-group col-sm-6">
-    {!! Form::label('direccion', 'Direccion:') !!}
-    {!! Form::text('direccion', null, ['class' => 'form-control']) !!}
-</div>
 
 <!-- Telefono Field -->
 <div class="form-group col-sm-6">
@@ -50,18 +49,11 @@
     {!! Form::text('telefono', null, ['class' => 'form-control']) !!}
 </div>
 
-<!-- Sexo Field -->
+<!-- Direccion Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('sexo', 'Sexo:') !!}
-    {!! Form::select('sexo', ['Masculino' => 'Masculino', 'Femenino' => 'Femenino', 'Otro' => 'Otro'], null, ['class' => 'form-control']) !!}
+    {!! Form::label('direccion', 'Direccion:') !!}
+    {!! Form::text('direccion', null, ['class' => 'form-control']) !!}
 </div>
-
-<!-- Photo Field -->
-<div class="form-group col-sm-6">
-    {!! Form::label('photo', 'Photo:') !!}
-    {!! Form::file('photo') !!}
-</div>
-<div class="clearfix"></div>
 
 <!-- Submit Field -->
 <div class="form-group col-sm-12">

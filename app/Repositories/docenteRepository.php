@@ -27,7 +27,7 @@ class docenteRepository extends BaseRepository
         'correo',
         'fechaNacimiento',
         'telefono',
-        'sexo'
+        'direccion'
     ];
 
     /**

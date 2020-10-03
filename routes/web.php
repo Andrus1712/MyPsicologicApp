@@ -11,6 +11,8 @@
 |
 */
 
+use Illuminate\Support\Facades\Auth;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -18,7 +20,7 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index');
+Route::get('/home', 'HomeController@index')->name('home');
 
 Route::resource('acudientes', 'acudienteController');
 
@@ -27,3 +29,13 @@ Route::resource('estudiantes', 'estudianteController');
 Route::resource('docentes', 'docenteController');
 
 Route::resource('psicologos', 'psicologoController');
+
+Route::resource('grupos', 'grupoController');
+
+Route::resource('tipoComportamientos', 'tipoComportamientoController');
+
+Route::resource('comportamientos', 'comportamientoController');
+
+Route::resource('actividades', 'actividadesController');
+
+Route::resource('avances', 'avancesController');

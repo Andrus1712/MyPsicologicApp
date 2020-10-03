@@ -1,7 +1,7 @@
 <!-- Tipoidentificacion Field -->
 <div class="form-group col-sm-6">
     {!! Form::label('tipoIdentificacion', 'Tipoidentificacion:') !!}
-    {!! Form::select('tipoIdentificacion', ['TI' => 'TI', 'CC' => 'CC', 'RC' => 'RC', 'CE' => 'CE', 'PA' => 'PA'], null, ['class' => 'form-control']) !!}
+    {!! Form::text('tipoIdentificacion', null, ['class' => 'form-control']) !!}
 </div>
 
 <!-- Identificacion Field -->
@@ -20,6 +20,12 @@
 <div class="form-group col-sm-6">
     {!! Form::label('apellidos', 'Apellidos:') !!}
     {!! Form::text('apellidos', null, ['class' => 'form-control']) !!}
+</div>
+
+<!-- Telefono Field -->
+<div class="form-group col-sm-6">
+    {!! Form::label('telefono', 'Telefono:') !!}
+    {!! Form::text('telefono', null, ['class' => 'form-control']) !!}
 </div>
 
 <!-- Correo Field -->
@@ -42,18 +48,6 @@
         })
     </script>
 @endsection
-
-<!-- Telefono Field -->
-<div class="form-group col-sm-6">
-    {!! Form::label('telefono', 'Telefono:') !!}
-    {!! Form::text('telefono', null, ['class' => 'form-control']) !!}
-</div>
-
-<!-- Sexo Field -->
-<div class="form-group col-sm-6">
-    {!! Form::label('sexo', 'Sexo:') !!}
-    {!! Form::select('sexo', ['Masculino' => 'Masculino', 'Femenino' => 'Femenino', 'Otro' => 'Otro'], null, ['class' => 'form-control']) !!}
-</div>
 
 <!-- Submit Field -->
 <div class="form-group col-sm-12">
