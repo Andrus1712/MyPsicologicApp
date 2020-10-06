@@ -21,8 +21,10 @@
 
 
 
-    <div class="box box-default box-solid">
-        <div class="box-header with-border">
+    <div class="box box-solid">
+        <div class="box-header with-border" style="
+        background: #605ca8;
+        color: #fff;">
             <h3 class="box-title">Tabla de actividades</h3>
             <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -37,17 +39,12 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div class="box box-default box-solid">
-                <div class="box-header">
-                    <h3>Calendario de actividades</h3>
-                    <div class="box-tools pull-right">
-                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                        </button>
-                    </div>
-                    <!-- /.box-tools -->
+            <div class="box box-default" style="border-top-color: #605ca8;">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Calendario de actividades</h3>
                 </div>
                 <div class="box-body">
-                    <div id="calendar"></div>
+                    <div id="calendar" class="fc fc-unthemed fc-ltr"></div>
                 </div>
             </div>
         </div>

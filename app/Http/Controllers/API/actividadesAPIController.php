@@ -46,7 +46,7 @@ class actividadesAPIController extends AppBaseController
                 DB::raw('c.titulo as titulo_comportamiento'), DB::raw('c.descripcion as descripcion_comportamiento'), 
                 DB::raw('e.nombres as nombre_estudiante'), DB::raw('e.apellidos as apellido_estudiante'),
                 DB::raw('tc.titulo as titulo_tipo_comportamiento'),
-                'ac.created_at')
+                'ac.created_at','ac.deleted_at' )
             ->get();
 
         return $this->sendResponse($actividades->toArray(), 'Actividades retrieved successfully');

@@ -10,7 +10,6 @@ $(document).ready(function () {
         var filtro = AllRegister.filter(f => f.id == id);
 
         if (filtro.length != 0) {
-
             modal.modal('show');
             Modal()
             $('#input_actividad').show()
@@ -34,7 +33,7 @@ $(document).ready(function () {
                     titulo = $("#titulo").val(),
                     descripcion = $("#descripcion").val(),
                     fecha = $("#fecha").val(),
-                    estado = $('#estado').val
+                    estado = $('#estado').val(),
                     tipo_comportamiento_id = $("#tipo_comportamiento_id").val();
 
                 if (comportamiento_id == '' || titulo == '' || descripcion == '' || fecha == '' || estado == '' || tipo_comportamiento_id == '') {
@@ -58,6 +57,7 @@ $(document).ready(function () {
                             setTimeout(function () { modal.modal("hide") }, 600);
                             toastr.info("información actualizada");
                             Reload()
+                            ReloadCalendario()
                         })
                         .fail(function () {
                             toastr.error("Ha ocurrido un error");
@@ -109,7 +109,7 @@ $(document).ready(function () {
         $('#input_actividad').hide()
         LoadComportamientos()
         LoadTiposComportamientos()
-        
+
         $('#save').on('click', function () {
             var comportamiento_id = $("#comportamiento_id").val(),
                 titulo = $("#titulo").val(),
@@ -150,6 +150,15 @@ $(document).ready(function () {
         })
     })
 
+
+    // Check estatus
+    $('#act-table').on('click', '[id^=btn_cumplido_]', function(){
+        alert("check")
+    })
+
+    $('#act-table').on('click', '[id^=btn_incumplido_]', function(){
+        alert("check imcumplido")
+    })
 });
 
 function validarFechaMenorActual(date) {
@@ -199,7 +208,7 @@ function LoadComportamientos() {
     })
         .done(function (response) {
             for (var i in response.data) {
-                $("#comportamiento_id").append(`<option value='${response.data[i].id}'>${response.data[i].titulo} | ${response.data[i].nombres} ${response.data[i].apellidos}</option>`)
+                $("#comportamiento_id").append(`<option value='${response.data[i].id}'>${response.data[i].titulo} | ${response.data[i].nombres}  ${response.data[i].apellidos} | CMP${response.data[i].id} </option>`)
             }
 
         })
@@ -263,10 +272,10 @@ function Modal() {
                     <div class="form-group" id="input_actividad">
                         <label>Estado de la actividad: </label>
                         <select class="form-control" id="estado">
-                            <option val=""> Selecione un estado </option>
-                            <option val="2"> cumplida </option>
-                            <option val="1"> incumplida </option>
-                            <option val="0"> en espera </option>
+                            <option value=""> Selecione un estado </option>
+                            <option value="1"> cumplida </option>
+                            <option value="2"> incumplida </option>
+                            <option value="0"> en espera </option>
                         </select>
                     </div>
 
@@ -323,7 +332,7 @@ function ReloadCalendario() {
         timeZone: 'America/Bogota',
         height: 650,
         locale: 'es',
-        themeSystem: 'bootstrap',
+        themeSystem: 'bootstrap4',
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
@@ -331,9 +340,94 @@ function ReloadCalendario() {
         },
         weekNumbers: true,
         dayMaxEvents: true, // allow "more" link when too many events
-        events: [{
+        events: [{}],
+        eventClick: function (info) {
+            var actividadFilter = JSON.parse(info.event.groupId);
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const event = new Date(actividadFilter.fecha.replace('-', '/'));
+            // console.log(actividadFilter)
+            modal.modal('show')
+            modal.find('.modal-content').empty().append(`
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Actividad ${actividadFilter.titulo}</h4>
+            </div>
+            <div class="modal-body">
 
-        }]
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <div class="clearfix"></div>
+
+                        <div class="box box-widget">
+                            <div class="box-header">
+                                <h3 class="box-title">Informacion de la actividad</h3>
+                            </div>
+                            <div class="box-body with-border">
+                                <div class="form-group">
+                                    <label>Estado</label>
+                                    <input type="text" class="form-control" value="${actividadFilter.estado == 0 ? "En espera" : actividadFilter.estado == 1 ? "Cumplida" : "Inclumplida"}" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Fecha</label>
+                                    <input type="text" class="form-control" value="${event.toLocaleDateString('es-CO', options)}" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Descripción</label>
+                                    <textarea class="form-control" readonly>${actividadFilter.descripcion}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="clearfix"></div>
+                        <div class="box box-widget">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Datos del estudiante</h3>
+                            </div>
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label>Estudiante</label>
+                                    <input type="text" class="form-control" value="${actividadFilter.nombre_estudiante} ${actividadFilter.apellido_estudiante}" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+
+                        <div class="box box-widget">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Datos del Comportamiento</h3>
+                            </div>
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label>Titulo de comportamiento</label>
+                                    <input type="text" class="form-control" value="${actividadFilter.titulo_comportamiento}" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Tipo de comportamiento</label>
+                                    <input type="text" class="form-control" value="${actividadFilter.titulo_tipo_comportamiento}" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+                    </div>
+
+                <div>
+
+                
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+            `)
+
+        }
     });
     calendar.render();
 
@@ -346,18 +440,15 @@ function ReloadCalendario() {
 
         .done(function (response) {
             if (response.length != 0) {
-                registro_avances = response.data;
-                var color;
+
                 for (var i = 0; i < response.data.length; i++) {
-                    if (response.data[i].estado == 'cumplida') { color = "#3CB371" }
-                    else if (response.data[i].estado == 'incumplida') { color = "#FF6347" }
-                    else { color = "#F4A460" }
                     calendar.addEvent({
                         id: response.data[i].id,
+                        groupId: JSON.stringify(response.data[i]),
                         title: response.data[i].titulo,
                         start: response.data[i].fecha,
-                        backgroundColor: color,
-                        borderColor: "gray"
+                        backgroundColor: response.data[i].estado == 0 ? '#F4A460' : response.data[i].estado == 1 ? '#3CB371' : '#FF6347',
+                        borderColor: "gray",
                     })
                 }
             } else {
@@ -416,27 +507,37 @@ function DataTable(response) {
 
             if (key == 'created_at') {
 
-                my_item.title = 'Actividades';
+                my_item.title = 'Culminación';
 
                 my_item.render = function (data, type, row) {
                     return `<div align="center">
 
                                 <div class="btn-group btn-group-circle btn-group-solid" align="center">
-                                    <a data-id=${row.id} id="btn_cumplido${row.id}" class='btn btn-circle btn-sm btn-success'>
+                                    <a data-id=${row.id} id="btn_cumplido_${row.id}" class='btn btn-circle btn-sm btn-success'>
                                         <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
                                     </a>
 
-                                    <a data-id=${row.id} id="btn_incumplido${row.id}" class='btn btn-circle btn-sm btn-danger'>
+                                    <a data-id=${row.id} id="btn_incumplido_${row.id}" class='btn btn-circle btn-sm btn-danger'>
                                         <i class="fa fa-thumbs-o-down" aria-hidden="true"></i>
                                     </a>
                                 </div>
-                                <div class="btn-group btn-group-circle btn-group-solid" align="center">
+                            </div>`
 
-                                    
+                }
+                my_columns.push(my_item);
+
+            }
+
+            if (key == 'deleted_at') {
+
+                my_item.title = 'Actividades';
+
+                my_item.render = function (data, type, row) {
+                    return `<div align="center">
+                                <div class="btn-group btn-group-circle btn-group-solid" align="center">
                                     <a data-id=${row.id} id="Btn_Edit_${row.id}" class='btn btn-circle btn-sm btn-primary'>
                                         <i class="fa fa-edit" aria-hidden="true"></i>
                                     </a>
-
                                     <a data-id=${row.id} id="Btn_delete_${row.id}" class='btn btn-circle btn-sm btn-danger'>
                                         <i class="fa fa-trash" aria-hidden="true"></i>
                                     </a> 
@@ -522,14 +623,20 @@ function DataTable(response) {
             }
 
             else if (key == 'estado') {
-                
+
                 my_item.title = 'Estado Actividad';
 
                 my_item.render = function (data, type, row) {
-                    if(row.estado == 2){return `Cumplida`}
-                    else if(row.estado == 1){return `Incumplida`}
-                    else if(row.estado == 0){return `En espera`}
-                                    
+
+                    return `${row.estado == 1 ? `<i class="fa fa-check-circle text-success"></i>Cumplida` :
+                        row.estado == 2 ? `<i class="fa fa-exclamation-circle text-danger"></i>Incumplida` :
+                            `<i class="fa  fa-exclamation-triangle text-warning"></i>En espera`}`;
+
+                    // return `<i class="fa fa-circle-o text-success">Incumplida</i>`;
+                    // if (row.estado == 2) { return `Cumplida` }
+                    // else if (row.estado == 1) { return `Incumplida` }
+                    // else if (row.estado == 0) { return `En espera` }
+
                 }
                 my_columns.push(my_item);
             }
@@ -563,7 +670,8 @@ function DataTable(response) {
         })
 
         $('#act-table').DataTable({
-            responsive: true,
+            'responsive': true,
+            'scrollX': true,
             "destroy": true,
             data: response,
             "columns": my_columns,
@@ -598,8 +706,8 @@ function DataTable(response) {
                 [10, 15, 20, "Todos"]
             ]
         });
-        // $('thead > tr> th:nth-child(4)').css({ 'min-width': '140px', 'max-width': '140px' });
-        // $('thead > tr> th:nth-child(7)').css({ 'min-width': '140px', 'max-width': '140px' });
-        // $('thead > tr> th:nth-child(8)').css({ 'min-width': '140px', 'max-width': '140px' });
+        $('thead > tr> th:nth-child(4)').css({ 'min-width': '140px', 'max-width': '140px' });
+        $('thead > tr> th:nth-child(9)').css({ 'min-width': '140px', 'max-width': '140px' });
+        $('thead > tr> th:nth-child(10)').css({ 'min-width': '140px', 'max-width': '140px' });
     }
 }

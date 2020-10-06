@@ -10,39 +10,39 @@ $(document).ready(function () {
         LoadActividad()
         establecer_fecha()
 
-        $('#save').on('click', function(){
-            var actividad_id    = $('#actividad_id').val(),
-                descripcion     = $('#descripcion').val(),
-                fecha           = $('#fecha').val(),
-                evidencias      = $('#evidencias').val();
+        $('#save').on('click', function () {
+            var actividad_id = $('#actividad_id').val(),
+                descripcion = $('#descripcion').val(),
+                fecha = $('#fecha').val(),
+                evidencias = $('#evidencias').val();
 
-                if (actividad_id == '' || descripcion == '' || fecha == '') {
-                    toastr.warning("Complete todos los campos")
-                }
-                else {
-                    $.ajax({
-                        url: '/api/avances',
-                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                        type: 'POST',
-                        data: {
-                            actividad_id: actividad_id,
-                            descripcion: descripcion,
-                            descripcion: descripcion,
-                            fecha_avance: fecha,
-                            evidencias: evidencias
-                        },
+            if (actividad_id == '' || descripcion == '' || fecha == '') {
+                toastr.warning("Complete todos los campos")
+            }
+            else {
+                $.ajax({
+                    url: '/api/avances',
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    type: 'POST',
+                    data: {
+                        actividad_id: actividad_id,
+                        descripcion: descripcion,
+                        descripcion: descripcion,
+                        fecha_avance: fecha,
+                        evidencias: evidencias
+                    },
+                })
+                    .done(function () {
+                        setTimeout(function () { modal.modal("hide") }, 600);
+                        Reload()
                     })
-                        .done(function () {
-                            setTimeout(function () { modal.modal("hide") }, 600);
-                            Reload()
-                        })
-                        .fail(function () {
-                            toastr.error("Ha ocurrido un error");
-                        })
-                        .always(function () {
-                            $("#save").addClass("disabled");
-                        });
-                }
+                    .fail(function () {
+                        toastr.error("Ha ocurrido un error");
+                    })
+                    .always(function () {
+                        $("#save").addClass("disabled");
+                    });
+            }
         })
     })
 
@@ -74,7 +74,7 @@ $(document).ready(function () {
                 }
                 else {
                     $.ajax({
-                        url: '/api/avances/'+id,
+                        url: '/api/avances/' + id,
                         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                         type: 'PUT',
                         data: {
@@ -373,8 +373,10 @@ function DataTable(response) {
                 my_item.title = 'Evidencias';
 
                 my_item.render = function (data, type, row) {
-                    return `<div>
-                                ${row.evidencias == null ? "Sin evidencias" : row.evidencias} 
+                    return `<div align="center">
+                                <a href=" ${row.evidencias} " class="btn btn-default" target="_blank">
+                                    <i class="fa fa-file"></i>
+                                </a>
                             </div>`
                 }
                 my_columns.push(my_item);

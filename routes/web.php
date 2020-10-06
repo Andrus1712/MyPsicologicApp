@@ -39,3 +39,5 @@ Route::resource('comportamientos', 'comportamientoController');
 Route::resource('actividades', 'actividadesController');
 
 Route::resource('avances', 'avancesController');
+
+Route::resource('roles', 'rolesController');

@@ -4,6 +4,53 @@ var AllRegister = []
 $(document).ready(function () {
     Reload()
 
+    $('#comportamientos-table').on('click', '[id^=Btn_act_]', function () {
+        modal.modal('show');
+        ModalActividades()
+        $('#input_actividad').hide()
+        LoadComportamientos()
+        LoadTiposComportamientos()
+
+        $('#save').on('click', function () {
+            var comportamiento_id = $("#comportamiento_id").val(),
+                titulo = $("#titulo").val(),
+                descripcion = $("#descripcion").val(),
+                fecha = $("#fecha").val(),
+                tipo_comportamiento_id = $("#tipo_comportamiento_id").val(),
+                estado = 0 //estado por defecto de las actividades
+
+            if (comportamiento_id == '' || titulo == '' || descripcion == '' || fecha == '' || tipo_comportamiento_id == '') {
+                toastr.warning("Complete todos los campos")
+            } else {
+                $.ajax({
+                    url: '/api/actividades',
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    type: 'POST',
+                    data: {
+                        comportamiento_id: comportamiento_id,
+                        titulo: titulo,
+                        descripcion: descripcion,
+                        fecha: fecha,
+                        estado: estado,
+                        tipo_comportamiento_id: tipo_comportamiento_id,
+                        estado: estado
+                    },
+                })
+                    .done(function () {
+                        setTimeout(function () { modal.modal("hide") }, 600);
+                        Reload()
+                    })
+                    .fail(function () {
+                        toastr.error("Ha ocurrido un error");
+                    })
+                    .always(function () {
+                        $("#save").addClass("disabled");
+                    });
+            }
+
+        })
+    })
+
     $('#comportamientos-table').on('click', '[id^=Btn_Edit_]', function () {
         var id = $(this).attr('data-id');
 
@@ -40,7 +87,7 @@ $(document).ready(function () {
                 }
                 else {
                     $.ajax({
-                        url: '/api/comportamientos/'+id,
+                        url: '/api/comportamientos/' + id,
                         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                         type: 'PUT',
                         data: {
@@ -108,7 +155,7 @@ $(document).ready(function () {
         establecer_fecha()
 
         $('#save').on('click', function () {
-            var cod_comportamiento = Math.random()*9999,
+            var cod_comportamiento = Math.random() * 9999,
                 estudiante_id = $("#estudiante_id").val(),
                 titulo = $("#titulo").val(),
                 descripcion = $("#descripcion").val(),
@@ -136,6 +183,7 @@ $(document).ready(function () {
                     },
                 })
                     .done(function () {
+
                         setTimeout(function () { modal.modal("hide") }, 600);
                         Reload()
                     })
@@ -148,6 +196,7 @@ $(document).ready(function () {
             }
         })
     })
+
 
 });
 
@@ -178,6 +227,50 @@ function establecer_fecha() {
     hoy.setMinutes(hoy.getMinutes() - hoy.getTimezoneOffset());
     hoy = hoy.toJSON().slice(0, 10);
     $("#fecha").val(hoy);
+}
+
+function LoadTiposComportamientos() {
+    $("#tipo_comportamiento_id").select2({
+        placeholder: 'Seleccione el tipo comportamiento',
+        allowClear: true,
+        dropdownParent: modal,
+        width: 'resolve'
+    });
+
+    $.ajax({
+        url: '/api/tipo_comportamientos',
+    })
+        .done(function (response) {
+            for (var i in response.data) {
+                $("#tipo_comportamiento_id").append(`<option value='${response.data[i].id}'>${response.data[i].titulo}</option>`)
+            }
+
+        })
+        .fail(function () {
+            console.log("error");
+        })
+}
+
+function LoadComportamientos() {
+    $("#comportamiento_id").select2({
+        placeholder: 'Seleccione el comportamiento',
+        allowClear: true,
+        dropdownParent: modal,
+        width: 'resolve'
+    });
+
+    $.ajax({
+        url: '/api/comportamientos',
+    })
+        .done(function (response) {
+            for (var i in response.data) {
+                $("#comportamiento_id").append(`<option value='${response.data[i].id}'>${response.data[i].titulo} | ${response.data[i].nombres}  ${response.data[i].apellidos} | CMP${response.data[i].id} </option>`)
+            }
+
+        })
+        .fail(function () {
+            console.log("error");
+        })
 }
 
 function Reload() {
@@ -308,6 +401,94 @@ function Modal() {
     });
 }
 
+function ModalActividades() {
+    modal.find('.modal-content').empty().append(`
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Formulario de Actividades</h4>
+        </div>
+        <div class="modal-body">
+
+            <div class="row">
+
+                <div class="col-md-6">
+
+                    <div class="form-group">
+                        <label >Comportamiento: </label>
+                        <div class="input-group">
+                            <select class="form-control" id="comportamiento_id" style="width: 100%;">
+
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Titulo: </label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                            <input type="text" class="form-control" placeholder="titulo de la actividad" id="titulo">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="form-group">
+                        <label >Tipo de comportamiento: </label>
+                        <div class="input-group">
+                            <select class="form-control" id="tipo_comportamiento_id" style="width: 100%;">
+
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Fecha de la actividad: </label>
+                        <div class="input-group date" id="timepicker">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <input type="text" class="form-control pull-right" id="fecha" >
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="input_actividad">
+                        <label>Estado de la actividad: </label>
+                        <select class="form-control" id="estado">
+                            <option value=""> Selecione un estado </option>
+                            <option value="1"> cumplida </option>
+                            <option value="2"> incumplida </option>
+                            <option value="0"> en espera </option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Descripcion la actividad: </label>
+                        <textarea id="descripcion" class="form-control" style="resize: vertical;" rows="3" placeholder="Escriba aqui la descripción de la actividad ..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+                
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="save">Guardar</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    `)
+    $("#fecha").datetimepicker({
+        format: "YYYY-MM-DD"
+    });
+}
+
+
 function DataTable(response) {
 
     console.log(response)
@@ -361,23 +542,11 @@ function DataTable(response) {
 
                 my_item.render = function (data, type, row) {
                     return `  <div'> 
-                                ${row.id}
+                                CMP${row.id}
                             </div>`
                 }
                 my_columns.push(my_item);
 
-            }
-
-            else if (key == 'cod_comportamiento') {
-
-                my_item.title = 'ID';
-
-                my_item.render = function (data, type, row) {
-                    return `  <div'> 
-                                ${row.cod_comportamiento}
-                            </div>`
-                }
-                my_columns.push(my_item);
             }
 
             else if (key == 'titulo') {
@@ -418,7 +587,7 @@ function DataTable(response) {
 
             else if (key == 'nombre_acudiente') {
 
-                my_item.title = 'Acudeinte';
+                my_item.title = 'Acudiente';
 
                 my_item.render = function (data, type, row) {
                     return `<div>
@@ -448,8 +617,10 @@ function DataTable(response) {
                 my_item.title = 'Multimedia';
 
                 my_item.render = function (data, type, row) {
-                    return `<div>
-                                ${row.multimedia} 
+                    return `<div align="center">
+                                <a href="${row.multimedia} " class="btn btn-default" target="_blank">
+                                    <i class="fa fa-file"></i>
+                                </a>
                             </div>`
                 }
                 my_columns.push(my_item);
@@ -484,7 +655,10 @@ function DataTable(response) {
             ],
 
             "columnDefs": [
-                { "width": "20%", "targets": 8 }
+                { "width": "15%", "targets": 1 },
+                { "width": "20%", "targets": 2 },
+                { "width": "20%", "targets": 7 },
+                { "width": "16%", "targets": 4 }
             ],
 
             "lengthMenu": [

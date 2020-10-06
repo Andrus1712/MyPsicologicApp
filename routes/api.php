@@ -35,3 +35,5 @@ Route::resource('comportamientos', 'comportamientoAPIController');
 Route::resource('actividades', 'actividadesAPIController');
 
 Route::resource('avances', 'avancesAPIController');
+
+Route::resource('roles', 'rolesAPIController');
