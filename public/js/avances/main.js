@@ -14,23 +14,25 @@ $(document).ready(function () {
             var actividad_id = $('#actividad_id').val(),
                 descripcion = $('#descripcion').val(),
                 fecha = $('#fecha').val(),
-                evidencias = $('#evidencias').val();
+                evidencias = $('#evidencias')[0].files[0];
 
-            if (actividad_id == '' || descripcion == '' || fecha == '') {
+            if (actividad_id == '' || descripcion == '' || fecha == '' || evidencias == undefined) {
                 toastr.warning("Complete todos los campos")
             }
             else {
+                var form =new FormData();
+                form.append('actividad_id', actividad_id)
+                form.append('descripcion', descripcion)
+                form.append('fecha_avance', fecha)
+                form.append('evidencias', evidencias)               
+
                 $.ajax({
                     url: '/api/avances',
                     headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                     type: 'POST',
-                    data: {
-                        actividad_id: actividad_id,
-                        descripcion: descripcion,
-                        descripcion: descripcion,
-                        fecha_avance: fecha,
-                        evidencias: evidencias
-                    },
+                    processData: false,
+                    contentType: false,
+                    data: form,
                 })
                     .done(function () {
                         setTimeout(function () { modal.modal("hide") }, 600);
@@ -62,40 +64,57 @@ $(document).ready(function () {
             $("#descripcion").val(filtro[0].avance)
             $("#fecha").val(filtro[0].fecha_avance)
 
+            $('#rutaFile').removeClass('hide')
+            $("#rutaFile").attr('href',filtro[0].evidencias)
+            $('#rutaFile').attr('target', '_blank')
+            $("#rutaFile").text('Ver documento')
+
             $("#update").on('click', function () {
                 var actividad_id = $("#actividad_id").val(),
                     avance = $("#descripcion").val(),
                     descripcion = $("#descripcion").val(),
                     fecha_avance = $("#fecha").val(),
-                    evidencias = $("#evidencias").val()
+                    evidencias = $("#evidencias")[0].files[0] == undefined ? $("#rutaFile").attr('href') : $("#evidencias")[0].files[0];
 
                 if (actividad_id == '' || avance == '' || descripcion == '' || fecha_avance == '') {
                     toastr.warning("Complete todos los campos")
                 }
                 else {
+
+                    var form = new FormData();
+
+                    form.append('actividad_id', actividad_id)
+                    form.append('descripcion', descripcion)
+                    form.append('fecha_avance', fecha_avance)
+                    form.append('evidencias', evidencias) 
+                    form.append('id', id)
+                    form.append('method', 'update')
+                    
+                    
+                    
                     $.ajax({
-                        url: '/api/avances/' + id,
-                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                        type: 'PUT',
-                        data: {
-                            actividad_id: actividad_id,
-                            avance: avance,
-                            descripcion: descripcion,
-                            fecha_avance: fecha_avance,
-                            evidencias: evidencias,
+                        url: '/api/avances',
+                        headers: { 
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                            'X-Requested-With': 'XMLHttpRequest',
                         },
+                        type: 'POST',
+                        processData: false,
+                        contentType: false,
+                        data: form,
+                        
                     })
-                        .done(function () {
-                            setTimeout(function () { modal.modal("hide") }, 600);
-                            toastr.info("información actualizada");
-                            Reload()
-                        })
-                        .fail(function () {
-                            toastr.error("Ha ocurrido un error");
-                        })
-                        .always(function () {
-                            $("#update").addClass("disabled");
-                        });
+                    .done(function () {
+                        setTimeout(function () { modal.modal("hide") }, 600);
+                        toastr.info("información actualizada");
+                        Reload()
+                    })
+                    .fail(function (errorM) {
+                        toastr.error(errorM.responseJSON.message == undefined ? 'Ha ocurrido un error' : errorM.responseJSON.message);
+                    })
+                    .always(function () {
+                        $("#update").addClass("disabled");
+                    });
                 }
             })
         }
@@ -199,6 +218,8 @@ function Modal() {
                     </div>
 
                     <div class="form-group">
+                        <a class="btn btn-secondary hide" id="rutaFile"></a>
+                        <br>
                         <label>Evidencias: </label>
                         <input type="file" id="evidencias">
                         

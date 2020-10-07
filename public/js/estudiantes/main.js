@@ -393,7 +393,11 @@ function DataTable(response) {
 
                                 <div class="btn-group btn-group-circle btn-group-solid" align="center">
 
-                                    <a data-id=${row.id} id="Btn_Edit_${row.id}" class='btn btn-circle btn-sm btn-primary'>
+                                    <a data-id=${row.id} id="Btn_show_${row.id}" class='btn btn-circle btn-sm btn-success'>
+                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                    </a>
+
+                                    <a data-id=${row.id} id="Btn_Edit_${row.id}" class='btn btn-circle btn-sm btn-info'>
                                         <i class="fa fa-edit" aria-hidden="true"></i>
                                     </a>
 
@@ -474,33 +478,19 @@ function DataTable(response) {
 
                 my_item.render = function (data, type, row) {
                     return `<div>
-                                ${row.telefono + " "
-                        + row.correo} 
+                                ${row.telefono}
                             </div>`
                 }
                 my_columns.push(my_item);
             }
 
-            else if (key == 'nombre_acudiente') {
+            else if (key == 'correo') {
 
-                my_item.title = 'Acudiente';
-
-                my_item.render = function (data, type, row) {
-                    return `<div>
-                                ${row.nombre_acudiente + " " + row.apellido_acudiente} 
-                            </div>`
-                }
-                my_columns.push(my_item);
-            }
-
-            else if (key == 'telefono_acudiente') {
-
-                my_item.title = 'Contacto Acudeinte';
+                my_item.title = 'Correo';
 
                 my_item.render = function (data, type, row) {
                     return `<div>
-                                ${row.telefono_acudiente + " "
-                        + row.correo_acudiente} 
+                                ${row.correo} 
                             </div>`
                 }
                 my_columns.push(my_item);
@@ -513,18 +503,6 @@ function DataTable(response) {
                 my_item.render = function (data, type, row) {
                     return `<div>
                                 ${row.grado + "-" + row.curso} 
-                            </div>`
-                }
-                my_columns.push(my_item);
-            }
-
-            else if (key == 'nombre_docente') {
-
-                my_item.title = 'Docente encargado';
-
-                my_item.render = function (data, type, row) {
-                    return `<div>
-                                ${row.nombre_docente + "-" + row.apellidos_docente} 
                             </div>`
                 }
                 my_columns.push(my_item);
@@ -560,7 +538,7 @@ function DataTable(response) {
             ],
 
             "columnDefs": [
-                { "width": "20%", "targets": 10 }
+                { "width": "20%", "targets": 3 }
             ],
 
             "lengthMenu": [

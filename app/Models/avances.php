@@ -29,8 +29,8 @@ class avances extends Model
 
 
     public $fillable = [
+        'id',
         'actividad_id',
-        'tipo_comportamiento_id',
         'descripcion',
         'fecha_avance',
         'evidencias'
@@ -44,7 +44,6 @@ class avances extends Model
     protected $casts = [
         'id' => 'integer',
         'actividad_id' => 'integer',
-        'tipo_comportamiento_id' => 'integer',
         'descripcion' => 'string',
         'fecha_avance' => 'date',
         'evidencias' => 'string'

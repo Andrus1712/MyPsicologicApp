@@ -18,7 +18,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
-Route::resource('acudientes', 'acudienteAPIController');
+Route::resource('acudientes', 'acudienteAPIController');    
 
 Route::resource('estudiantes', 'estudianteAPIController');
 

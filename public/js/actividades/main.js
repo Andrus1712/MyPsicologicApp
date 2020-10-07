@@ -153,11 +153,49 @@ $(document).ready(function () {
 
     // Check estatus
     $('#act-table').on('click', '[id^=btn_cumplido_]', function(){
-        alert("check")
+        var id = $(this).attr('data-id')
+        $.ajax({
+            url: '/api/actividades/' + id,
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            type: 'PUT',
+            data: {
+                estado: 1
+            },
+        })
+        .done(function () {
+            toastr.success("Actividad maecada como cumplida");
+            Reload()
+            ReloadCalendario()
+        })
+        .fail(function () {
+            toastr.error("Ha ocurrido un error");
+        })
+        .always(function () {
+            $("#btn_cumplido_"+id).addClass("disabled");
+        });
     })
 
     $('#act-table').on('click', '[id^=btn_incumplido_]', function(){
-        alert("check imcumplido")
+        var id = $(this).attr('data-id')
+        $.ajax({
+            url: '/api/actividades/' + id,
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            type: 'PUT',
+            data: {
+                estado: 2
+            },
+        })
+        .done(function () {
+            toastr.error("Actividad maecada como icumplida");
+            Reload()
+            ReloadCalendario()
+        })
+        .fail(function () {
+            toastr.error("Ha ocurrido un error");
+        })
+        .always(function () {
+            $("#btn_cumplido_"+id).addClass("disabled");
+        });
     })
 });
 
@@ -513,7 +551,8 @@ function DataTable(response) {
                     return `<div align="center">
 
                                 <div class="btn-group btn-group-circle btn-group-solid" align="center">
-                                    <a data-id=${row.id} id="btn_cumplido_${row.id}" class='btn btn-circle btn-sm btn-success'>
+                                    
+                                    <a data-id=${row.id} id="btn_cumplido_${row.id}" class="btn btn-circle btn-sm btn-success ${row.estado == 1 ? 'disabled' : ''}">
                                         <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
                                     </a>
 
@@ -628,9 +667,9 @@ function DataTable(response) {
 
                 my_item.render = function (data, type, row) {
 
-                    return `${row.estado == 1 ? `<i class="fa fa-check-circle text-success"></i>Cumplida` :
-                        row.estado == 2 ? `<i class="fa fa-exclamation-circle text-danger"></i>Incumplida` :
-                            `<i class="fa  fa-exclamation-triangle text-warning"></i>En espera`}`;
+                    return `${row.estado == 1 ? `<i class="fa fa-check-circle text-success"></i> Cumplida` :
+                        row.estado == 2 ? `<i class="fa fa-exclamation-circle text-danger"></i> Incumplida` :
+                            `<i class="fa  fa-exclamation-triangle text-warning"></i> En espera`}`;
 
                     // return `<i class="fa fa-circle-o text-success">Incumplida</i>`;
                     // if (row.estado == 2) { return `Cumplida` }
@@ -694,11 +733,11 @@ function DataTable(response) {
 
 
             "order": [
-                [0, 'asc']
+                [2, 'asc']
             ],
 
             "columnDefs": [
-                { "width": "20%", "targets": 8 }
+                { "width": "20%", "targets": 8 },
             ],
 
             "lengthMenu": [
@@ -706,8 +745,12 @@ function DataTable(response) {
                 [10, 15, 20, "Todos"]
             ]
         });
+        $('thead > tr> th:nth-child(2)').css({ 'min-width': '140px', 'max-width': '140px' });
+        $('thead > tr> th:nth-child(3)').css({ 'min-width': '80px', 'max-width': '80px' });
         $('thead > tr> th:nth-child(4)').css({ 'min-width': '140px', 'max-width': '140px' });
+        $('thead > tr> th:nth-child(7)').css({ 'min-width': '140px', 'max-width': '140px' });
+        $('thead > tr> th:nth-child(8)').css({ 'min-width': '140px', 'max-width': '140px' });
         $('thead > tr> th:nth-child(9)').css({ 'min-width': '140px', 'max-width': '140px' });
-        $('thead > tr> th:nth-child(10)').css({ 'min-width': '140px', 'max-width': '140px' });
+        // $('thead > tr> th:nth-child(10)').css({ 'min-width': '140px', 'max-width': '140px' });
     }
 }

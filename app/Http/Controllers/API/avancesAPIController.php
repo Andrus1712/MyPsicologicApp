@@ -7,12 +7,15 @@ use App\Http\Requests\API\UpdateavancesAPIRequest;
 use App\Models\avances;
 use App\Repositories\avancesRepository;
 use Illuminate\Http\Request;
+// use Request; 
+
 use App\Http\Controllers\AppBaseController;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Class avancesController
@@ -67,11 +70,45 @@ class avancesAPIController extends AppBaseController
      */
     public function store(CreateavancesAPIRequest $request)
     {
-        $input = $request->all();
+        if(isset($request->id) && $request->method == 'update')
+        {
+            if($request->file('evidencias')){
+                $path = Storage::disk('public')->put('documentosPSI',$request->file('evidencias'));
 
-        $avances = $this->avancesRepository->create($input);
+                $url_evidencia = './'.$path;
+            }else{
+                $url_evidencia = $request->evidencias;
+            }
 
-        return $this->sendResponse($avances->toArray(), 'Avances saved successfully');
+
+            avances::where('id', $request->id)->update([
+                'actividad_id'=> $request->actividad_id,
+                'descripcion' => $request->descripcion,
+                'fecha_avance'=> $request->fecha_avance,
+                'evidencias'  => $url_evidencia,
+            ]);
+            return response()->json(['status' => 'Avances updated successfully.']);
+        }else{
+            
+            if($request->file('evidencias')){
+                $path = Storage::disk('public')->put('documentosPSI',$request->file('evidencias'));
+                $url_evidencia = './'.$path;
+            }else {
+                $url_evidencia = null;
+            }
+    
+            // $input = $request->all();
+    
+            $this->avancesRepository->create([
+                'actividad_id' => $request->actividad_id,
+                'descripcion'  => $request->descripcion,
+                'fecha_avance' => $request->fecha_avance,
+                'evidencias'   => $url_evidencia,
+            ]);
+        
+            return response()->json(['status' => 'Avances saved successfully.']);
+        }
+        
     }
 
     /**
@@ -103,20 +140,31 @@ class avancesAPIController extends AppBaseController
      *
      * @return Response
      */
-    public function update($id, UpdateavancesAPIRequest $request)
+    public function update(avances $avances, UpdateavancesAPIRequest $request)
     {
-        $input = $request->all();
-
-        /** @var avances $avances */
-        $avances = $this->avancesRepository->findWithoutFail($id);
-
-        if (empty($avances)) {
-            return $this->sendError('Avances not found');
+        if($request->ajax()){
+            avances::find($request->id)->update(['descripcion'=>'dasdas']);
+            return response()->json(['mensaje'=>'estado actualizado con exito']);
         }
+        // dd($request->all());
 
-        $avances = $this->avancesRepository->update($input, $id);
 
-        return $this->sendResponse($avances->toArray(), 'avances updated successfully');
+        // if($request->file('evidencias')){
+        //     $path = Storage::disk('public')->put('documentosPSI',$request->file('evidencias'));
+
+        //     $url_evidencia = './'.$path;
+        // }else{
+        //     $url_evidencia = $request->evidencias;
+        // }
+
+
+        // $avances->where('id', $request->id)->update([
+        //     'actividad_id'=> $request->actividad_id,
+        //     'descripcion' => $request->descripcion,
+        //     'fecha_avance'=> $request->fecha_avance,
+        //     'evidencias'  => $url_evidencia,
+        // ]);
+        // return response()->json($avances->all());    
     }
 
     /**

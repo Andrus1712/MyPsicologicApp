@@ -55,15 +55,22 @@
     @yield('css')
 </head>
 
-<body class="skin-purple sidebar-mini">
+<body class="skin-purple-light sidebar-mini">
     @if (!Auth::guest())
     <div class="wrapper">
         <!-- Main Header -->
         <header class="main-header">
 
             <!-- Logo -->
-            <a href="{{ route('home') }}" class="logo">
-                <b>PSI App</b>
+            <a href="{{ route('home') }}" class="logo" style="background-color: darkslateblue;">
+            
+                <!-- mini logo for sidebar mini 50x50 pixels -->
+                <span class="logo-mini"><img src="../img/logo-sm.png">
+                </span>
+                <!-- logo for regular state and mobile devices -->
+                <span class="logo-lg">
+                    <img src="../img/logo-lg.png">
+                </span>
             </a>
 
             <!-- Header Navbar -->

@@ -5,7 +5,7 @@
 <li class="treeview">
     <a href="#">
         <i class="fa fa-users"></i>
-        <span>Grestion de usuarios</span>
+        <span>General</span>
         <span class="pull-right-container">
             <i class="fa fa-angle-left pull-right"></i>
         </span>
@@ -23,9 +23,12 @@
         <li class="{{ Request::is('psicologos*') ? 'active' : '' }}">
             <a href="{{ route('psicologos.index') }}"><i class="fa fa-user-md"></i><span>Psicologos</span></a>
         </li>
+        <li class="{{ Request::is('roles*') ? 'active' : '' }}">
+            <a href="{{ route('roles.index') }}"><i class="fa fa-edit"></i><span>Roles</span></a>
+        </li>
     </ul>
 </li>
-
+{{-- 
 <li class="treeview">
     <a href="#">
         <i class="fa fa-cubes"></i>
@@ -56,12 +59,12 @@
             <a href="#"><i class="fa fa-file-text-o"></i><span>Reportes avanzados</span></a>
         </li>
     </ul>
-</li>
+</li> --}}
 
 
-{{-- <li class="header">Gestion de datos</li> --}}
+<li class="header">Gestión de datos</li>
 
-{{-- <li class="{{ Request::is('comportamientos*') ? 'active' : '' }}">
+<li class="{{ Request::is('comportamientos*') ? 'active' : '' }}">
     <a href="{{ route('comportamientos.index') }}"><i class="fa fa-comments-o"></i><span>Comportamientos</span></a>
 </li>
 
@@ -81,7 +84,9 @@
 <li class="header">Reportes</li>
 <li class="{{ Request::is('reporte_avanzado*') ? 'active' : '' }}">
     <a href="#"><i class="fa fa-file-text-o"></i><span>Reportes avanzados</span></a>
-</li> --}}
+</li>
+
+
 
 {{-- <li class="header">Gestion de usuarios</li> --}}
 
@@ -106,8 +111,4 @@
 
 <li class="{{ Request::is('grupos*') ? 'active' : '' }}">
     <a href="{{ route('grupos.index') }}"><i class="fa fa-users"></i><span>Cursos</span></a>
-</li>
-
-<li class="{{ Request::is('roles*') ? 'active' : '' }}">
-    <a href="{{ route('roles.index') }}"><i class="fa fa-edit"></i><span>Roles</span></a>
 </li>

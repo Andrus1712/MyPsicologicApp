@@ -2827,16 +2827,16 @@
         },
         {
             "name": "swagger-api/swagger-ui",
-            "version": "v3.34.0",
+            "version": "v3.35.0",
             "source": {
                 "type": "git",
-                "url": "git@github.com:swagger-api/swagger-ui.git",
-                "reference": "c20a8c479eaa7897a2ddabcaf5f75e6d41f4525c"
+                "url": "https://github.com/swagger-api/swagger-ui.git",
+                "reference": "db2cca8e8691f48c1e27a543e1cee97e760c0742"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/c20a8c479eaa7897a2ddabcaf5f75e6d41f4525c",
-                "reference": "c20a8c479eaa7897a2ddabcaf5f75e6d41f4525c",
+                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/db2cca8e8691f48c1e27a543e1cee97e760c0742",
+                "reference": "db2cca8e8691f48c1e27a543e1cee97e760c0742",
                 "shasum": ""
             },
             "type": "library",
@@ -2880,7 +2880,7 @@
                 "swagger",
                 "ui"
             ],
-            "time": "2020-09-18T18:46:18+00:00"
+            "time": "2020-10-01T18:14:37+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -3018,7 +3018,7 @@
         },
         {
             "name": "symfony/css-selector",
-            "version": "v5.1.6",
+            "version": "v5.1.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/css-selector.git",
@@ -3127,7 +3127,7 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v4.4.14",
+            "version": "v4.4.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
@@ -3260,16 +3260,16 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "v5.1.6",
+            "version": "v5.1.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "f3194303d3077829dbbc1d18f50288b2a01146f2"
+                "reference": "1a8697545a8d87b9f2f6b1d32414199cc5e20aae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/f3194303d3077829dbbc1d18f50288b2a01146f2",
-                "reference": "f3194303d3077829dbbc1d18f50288b2a01146f2",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/1a8697545a8d87b9f2f6b1d32414199cc5e20aae",
+                "reference": "1a8697545a8d87b9f2f6b1d32414199cc5e20aae",
                 "shasum": ""
             },
             "require": {
@@ -3306,7 +3306,7 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
-            "time": "2020-09-02T16:23:27+00:00"
+            "time": "2020-09-27T14:02:37+00:00"
         },
         {
             "name": "symfony/finder",
