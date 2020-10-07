@@ -41,3 +41,5 @@ Route::resource('actividades', 'actividadesController');
 Route::resource('avances', 'avancesController');
 
 Route::resource('roles', 'rolesController');
+
+Route::resource('modeloSeguimientos', 'modelo_seguimientoController');

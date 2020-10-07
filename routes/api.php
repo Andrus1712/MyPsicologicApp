@@ -18,7 +18,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
-Route::resource('acudientes', 'acudienteAPIController');    
+Route::resource('acudientes', 'acudienteAPIController');
 
 Route::resource('estudiantes', 'estudianteAPIController');
 
@@ -37,3 +37,6 @@ Route::resource('actividades', 'actividadesAPIController');
 Route::resource('avances', 'avancesAPIController');
 
 Route::resource('roles', 'rolesAPIController');
+
+
+Route::resource('modelo_seguimientos', 'modelo_seguimientoAPIController');

@@ -49,6 +49,7 @@ $(document).ready(function () {
             }
 
         })
+    
     })
 
     $('#comportamientos-table').on('click', '[id^=Btn_Edit_]', function () {
@@ -153,6 +154,10 @@ $(document).ready(function () {
         Modal()
         LoadEstudiantes()
         establecer_fecha()
+
+        // $('#btn_add').on('click', function(){
+        //     alert("agregar estudiante")
+        // })
 
         $('#save').on('click', function () {
             var cod_comportamiento = Math.random() * 9999,
@@ -350,7 +355,7 @@ function Modal() {
 
                             </select>
                             <span class="input-group-btn">
-                                <button type="button" class="btn btn-circle btn-sm btn-success">
+                                <button id="btn_add" type="button" class="btn btn-circle btn-sm btn-success">
                                     <i class="fa fa-plus" aria-hidden="true"></i>
                                 </button>
                             </span>

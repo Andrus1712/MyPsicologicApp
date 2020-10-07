@@ -38,8 +38,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css">
 
     {{-- Toastr --}}
-    <link rel="stylesheet" href="assets/toastr/toastr.css">
-    <link rel="stylesheet" href="assets/toastr/toastr.min.css">
+    {{-- <link rel="stylesheet" href="../assets/toastr/toastr.css"> --}}
+    <link rel="stylesheet" href="../assets/toastr/toastr.min.css">
 
     {{-- Full Calendar --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.3.2/main.min.css">
@@ -55,22 +55,15 @@
     @yield('css')
 </head>
 
-<body class="skin-purple-light sidebar-mini">
+<body class="skin-purple sidebar-mini">
     @if (!Auth::guest())
     <div class="wrapper">
         <!-- Main Header -->
         <header class="main-header">
 
             <!-- Logo -->
-            <a href="{{ route('home') }}" class="logo" style="background-color: darkslateblue;">
-            
-                <!-- mini logo for sidebar mini 50x50 pixels -->
-                <span class="logo-mini"><img src="../img/logo-sm.png">
-                </span>
-                <!-- logo for regular state and mobile devices -->
-                <span class="logo-lg">
-                    <img src="../img/logo-lg.png">
-                </span>
+            <a href="{{ route('home') }}" class="logo">
+                <b>PSI App</b>
             </a>
 
             <!-- Header Navbar -->
