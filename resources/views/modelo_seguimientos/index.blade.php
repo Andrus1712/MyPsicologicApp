@@ -33,7 +33,7 @@
 
                 <div class="box box-danger">
                     <div class="box-header with-border">
-                        <h3 class="box-title">Donut Chart</h3>
+                        <h3 class="box-title">Estados de los casos</h3>
 
                         <div class="box-tools pull-right">
                             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
@@ -44,7 +44,23 @@
                         </div>
                     </div>
                     <div class="box-body">
-                        <canvas id="pieChart" style="height: 255px; width: 510px;" height="255" width="510"></canvas>
+                        <div class="row">
+
+                            <div class="col-md-12">
+                                <label>Fecha del registro: </label>
+                                <div id="reportrange1"
+                                    style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+                                    <i class="fa fa-calendar"></i>&nbsp;
+                                    <span></span> <i class="fa fa-caret-down"></i>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <h4 id="not-chart1"></h4>
+
+                        <div id="chartEstamento"></div>
+
                     </div>
                     <!-- /.box-body -->
                 </div>
@@ -53,7 +69,7 @@
 
                 <div class="box box-success">
                     <div class="box-header with-border">
-                        <h3 class="box-title">Bar Chart</h3>
+                        <h3 class="box-title">Clasificacion de los casos</h3>
 
                         <div class="box-tools pull-right">
                             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
@@ -64,9 +80,22 @@
                         </div>
                     </div>
                     <div class="box-body">
-                        <div class="chart">
-                            <canvas id="barChart" style="height: 230px; width: 510px;" height="230" width="510"></canvas>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>Fecha del registro: </label>
+                                <div id="reportrange2"
+                                    style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+                                    <i class="fa fa-calendar"></i>&nbsp;
+                                    <span></span> <i class="fa fa-caret-down"></i>
+                                </div>
+                            </div>
                         </div>
+
+                        <h4 id="not-chart2"></h4>
+
+                        <div id="chartClasificacion"></div>
+
                     </div>
                     <!-- /.box-body -->
                 </div>
@@ -74,6 +103,8 @@
         </div>
     </div>
     </div>
+
     @include('layouts.scripts')
+    @include('layouts.datatables_js')
     <script src="js/modelo_seguimiento/main.js"></script>
 @endsection

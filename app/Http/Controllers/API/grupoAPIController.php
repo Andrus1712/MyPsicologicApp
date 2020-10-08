@@ -46,6 +46,8 @@ class grupoAPIController extends AppBaseController
         return $this->sendResponse($grupos->toArray(), 'Grupos retrieved successfully');
     }
 
+    
+
     /**
      * Store a newly created grupo in storage.
      * POST /grupos

@@ -40,3 +40,5 @@ Route::resource('roles', 'rolesAPIController');
 
 
 Route::resource('modelo_seguimientos', 'modelo_seguimientoAPIController');
+Route::post('/getEstados', 'modelo_seguimientoAPIController@getEstados');
+Route::post('/getClasificacion', 'modelo_seguimientoAPIController@getClasificacion');

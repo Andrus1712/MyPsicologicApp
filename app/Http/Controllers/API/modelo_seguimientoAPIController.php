@@ -39,13 +39,54 @@ class modelo_seguimientoAPIController extends AppBaseController
     public function index(Request $request)
     {
         $modeloSeguimiento = DB::table(DB::raw('modelo_seguimientos modelo'))
-        ->where(DB::raw('modelo.deleted_at', '=', 'NULL'))
-        ->select(DB::raw('modelo.*'))
-        ->get();
+            ->where(DB::raw('modelo.deleted_at', '=', 'NULL'))
+            ->select(DB::raw('modelo.*'))
+            ->get();
 
         return $this->sendResponse($modeloSeguimiento->toArray(), 'Modelo Seguimiento saved successfully');
     }
 
+
+    public function getEstados(Request $request)
+    {
+
+        // eliminamos validaciones innecesarias y ponemos la fecha de hoy por defecto en ambas variables
+        $f1 = $f2 = date('Y-m-d');
+
+        if (!is_null($request->fechaInicial) && !empty($request->fechaInicial) && !is_null($request->fechaFinal) || !empty($request->fechaFinal)) {
+            $f1 = $request->fechaInicial;
+            $f2 = $request->fechaFinal;
+        }
+        $graph = DB::table(DB::raw('modelo_seguimientos modelo'))
+            ->select('modelo.id', DB::raw('modelo.fecha'), DB::raw('modelo.estado')) 
+                    // DB::raw('COUNT(modelo.estado) as cantidad_estado'),
+                    // DB::raw('COUNT(modelo.estado) as cantidad_fecha'))
+            ->whereBetween(DB::raw('modelo.fecha'), [$f1, $f2])
+            ->where(DB::raw('modelo.deleted_at'), '=', null)
+            ->groupBy('modelo.id', DB::raw('modelo.estado'), DB::raw('modelo.fecha'))
+            ->get();
+
+        return response()->json($graph);
+    }
+
+    public function getClasificacion(Request $request)
+    {
+        $f1 = $f2 = date('Y-m-d');
+
+        if (!is_null($request->fechaInicial) && !empty($request->fechaInicial) && !is_null($request->fechaFinal) || !empty($request->fechaFinal)) {
+            $f1 = $request->fechaInicial;
+            $f2 = $request->fechaFinal;
+        }
+
+        $graph = DB::table(DB::raw('modelo_seguimientos modelo'))
+            ->select(DB::raw('modelo.clasificacion_caso_presentado as clasificacion'), DB::raw('COUNT(modelo.id) as cantidad'))
+            ->whereBetween(DB::raw('modelo.fecha'), [$f1, $f2])
+            ->where(DB::raw('modelo.deleted_at'), '=', null)
+            ->groupBy(DB::raw('modelo.clasificacion_caso_presentado'))
+            ->get();
+
+        return response()->json($graph);
+    }
     /**
      * Store a newly created modelo_seguimiento in storage.
      * POST /modeloSeguimientos
@@ -55,7 +96,7 @@ class modelo_seguimientoAPIController extends AppBaseController
      * @return Response
      */
     public function store(Createmodelo_seguimientoAPIRequest $request)
-    {      
+    {
         $input = $request->all();
 
         $modeloSeguimiento = $this->modeloSeguimientoRepository->create($input);
