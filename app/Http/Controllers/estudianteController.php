@@ -8,6 +8,7 @@ use App\Repositories\estudianteRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
 use Flash;
+use Illuminate\Support\Facades\DB;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 
@@ -29,11 +30,114 @@ class estudianteController extends AppBaseController
      */
     public function index(Request $request)
     {
+
+
         $this->estudianteRepository->pushCriteria(new RequestCriteria($request));
         $estudiantes = $this->estudianteRepository->all();
 
         return view('estudiantes.index')
             ->with('estudiantes', $estudiantes);
+    }
+
+    public function getEstudiantes()
+    {
+        $queryUsers = DB::table('role_user')
+            ->select('role_user.*')
+            ->where('role_user.user_id', '=', Auth()->user()->id)
+            ->limit(1)
+            ->get();
+        if (count($queryUsers) != 0) {
+            //ROl psicoorientador
+            if ($queryUsers[0]->role_id == 1) {
+                $estudiantes = DB::table(DB::raw('estudiantes e'))->where(DB::raw('e.deleted_at', '=', 'NULL'))
+                    ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
+                    ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
+                    ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                    ->select(
+                        'e.id',
+                        'e.tipoIdentificacion',
+                        'e.identificacion',
+                        'e.nombres',
+                        'e.apellidos',
+                        'e.edad',
+                        'e.telefono',
+                        'e.correo',
+                        'e.fechaNacimiento',
+                        DB::raw('a.nombres as nombre_acudiente'),
+                        DB::raw('a.apellidos as apellido_acudiente'),
+                        DB::raw('a.telefono as telefono_acudiente'),
+                        DB::raw('a.correo as correo_acudiente'),
+                        'g.grado',
+                        'g.curso',
+                        DB::raw('d.nombres as nombre_docente'),
+                        DB::raw('d.apellidos as apellidos_docente'),
+                        'e.created_at'
+                    )
+                    ->get();
+
+                return response()->json($estudiantes);
+            } else if ($queryUsers[0]->role_id == 2) {
+                $estudiantes = null;
+                return response()->json($estudiantes);
+            } else if ($queryUsers[0]->role_id == 3) {
+                $estudiantes = DB::table(DB::raw('estudiantes e'))->where(DB::raw('e.deleted_at', '=', 'NULL'))
+                    ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
+                    ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
+                    ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                    ->select(
+                        'e.id',
+                        'e.tipoIdentificacion',
+                        'e.identificacion',
+                        'e.nombres',
+                        'e.apellidos',
+                        'e.edad',
+                        'e.telefono',
+                        'e.correo',
+                        'e.fechaNacimiento',
+                        DB::raw('a.nombres as nombre_acudiente'),
+                        DB::raw('a.apellidos as apellido_acudiente'),
+                        DB::raw('a.telefono as telefono_acudiente'),
+                        DB::raw('a.correo as correo_acudiente'),
+                        'g.grado',
+                        'g.curso',
+                        DB::raw('d.nombres as nombre_docente'),
+                        DB::raw('d.apellidos as apellidos_docente'),
+                        'e.created_at'
+                    )
+                    ->get();
+
+                return response()->json($estudiantes);
+            } else if ($queryUsers[0]->role_id == 4) {
+                $estudiantes = DB::table(DB::raw('estudiantes e'))->where(DB::raw('e.deleted_at', '=', 'NULL'))
+                    ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
+                    ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
+                    ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                    ->where(DB::raw('a.correo'), '=', Auth()->user()->email)
+                    ->select(
+                        'e.id',
+                        'e.tipoIdentificacion',
+                        'e.identificacion',
+                        'e.nombres',
+                        'e.apellidos',
+                        'e.edad',
+                        'e.telefono',
+                        'e.correo',
+                        'e.fechaNacimiento',
+                        DB::raw('a.nombres as nombre_acudiente'),
+                        DB::raw('a.apellidos as apellido_acudiente'),
+                        DB::raw('a.telefono as telefono_acudiente'),
+                        DB::raw('a.correo as correo_acudiente'),
+                        'g.grado',
+                        'g.curso',
+                        DB::raw('d.nombres as nombre_docente'),
+                        DB::raw('d.apellidos as apellidos_docente'),
+                        'e.created_at'
+                    )
+                    ->get();
+
+                return response()->json($estudiantes);
+            }
+        }
     }
 
     /**
@@ -152,6 +256,4 @@ class estudianteController extends AppBaseController
 
         return redirect(route('estudiantes.index'));
     }
-
-    
 }

@@ -1,16 +1,19 @@
-<!-- Id Field -->
+{{-- <!-- Id Field -->
 <div class="form-group">
     {!! Form::label('id', 'Id:') !!}
-    <p>{{ $comportamiento->id }}</p>
-</div>
+    <p>{{ $comportamiento[0]->id }}</p>
+</div> --}}
 
 <!-- Tipo Id Field -->
-<div class="form-group">
+{{-- <div class="form-group">
     {!! Form::label('tipo_id', 'Tipo Id:') !!}
-    <p>{{ $comportamiento->tipo_id }}</p>
-</div>
+    @foreach ($comportamiento as $item)
 
-<!-- Estudiante Id Field -->
+    <p>{{ $item->titulo }}</p>
+@endforeach
+</div> --}}
+
+{{-- <!-- Estudiante Id Field -->
 <div class="form-group">
     {!! Form::label('estudiante_id', 'Estudiante Id:') !!}
     <p>{{ $comportamiento->estudiante_id }}</p>
@@ -56,5 +59,64 @@
 <div class="form-group">
     {!! Form::label('updated_at', 'Updated At:') !!}
     <p>{{ $comportamiento->updated_at }}</p>
+</div> --}}
+
+@foreach ($comportamiento as $item)
+<div class="row">
+
+    <div class="col-md-6">
+        <div class="form-group">
+            {!! Form::label('titulo', 'Titulo:') !!}
+            <p>{{ $item->titulo }}</p>
+        </div>
+        <div class="form-group">
+            {!! Form::label('descripcion', 'Descripcion:') !!}
+            <p>{{ $item->descripcion }}</p>
+        </div>
+
+        <div class="form-group">
+            {!! Form::label('fecha', 'Fecha:') !!}
+            <p>{{ $item->fecha }}</p>
+        </div>
+
+        <div class="form-group">
+            {!! Form::label('emisor', 'Emisor:') !!}
+            <p>{{ json_decode($item->emisor)->email }}</p>
+        </div>
+
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group">
+            {!! Form::label('estudiante', 'Estudiante:') !!}
+            <p>{{ $item->nombres }} {{ $item->apellidos }}</p>
+        </div>
+
+        <div class="form-group">
+            {!! Form::label('grupo', 'Grupo:') !!}
+            <p>{{ $item->grado }} {{ $item->curso }}</p>
+        </div>
+
+        <div class="form-group">
+            {!! Form::label('acudiente', 'Acudiente:') !!}
+            <p>{{ $item->nombre_acudiente }} {{ $item->apellido_acudiente }}</p>
+        </div>
+
+        <div class="form-group">
+            {!! Form::label('multimedia', 'Multimedia:') !!}
+            @if ($item->multimedia != null)
+
+            <div>
+                <a href="../{{ $item->multimedia }}" class="btn btn-default" target="_blank">
+                    <i class="fa fa-file"></i>
+                </a>
+            </div>
+            @else
+            <p>Sin Archivos</p>
+            @endif
+        </div>
+
+    </div>
 </div>
 
+@endforeach

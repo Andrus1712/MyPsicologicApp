@@ -12,10 +12,14 @@ use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 
+use App\User;
+use Illuminate\Support\Facades\Hash;
+
 /**
  * Class psicologoController
  * @package App\Http\Controllers\API
  */
+
 use Illuminate\Support\Facades\DB;
 
 class psicologoAPIController extends AppBaseController
@@ -58,6 +62,15 @@ class psicologoAPIController extends AppBaseController
         $input = $request->all();
 
         $psicologo = $this->psicologoRepository->create($input);
+
+
+        $usuario = User::create([
+            'name' => $request->nombres . ' ' . $request->apellidos,
+            'email' => $request->correo,
+            'password' => Hash::make($request->identificacion),
+        ]);
+
+        $usuario->asignarRol(1);
 
         return $this->sendResponse($psicologo->toArray(), 'Psicologo saved successfully');
     }
@@ -102,6 +115,14 @@ class psicologoAPIController extends AppBaseController
             return $this->sendError('Psicologo not found');
         }
 
+        //Actualizamos el user
+        $user = User::where('email', $psicologo->correo)->first();
+
+        $user->name = $request->nombres . ' ' . $request->apellidos;
+        $user->email = $request->correo;
+        $user->save();
+
+        //Actualizamos al psicooreinatdor
         $psicologo = $this->psicologoRepository->update($input, $id);
 
         return $this->sendResponse($psicologo->toArray(), 'psicologo updated successfully');
@@ -119,9 +140,11 @@ class psicologoAPIController extends AppBaseController
     {
         /** @var psicologo $psicologo */
         $psicologo = psicologo::find($id);
+        $user = User::where('email', $psicologo->correo)->first();
 
         $psicologo->delete();
+        $user->delete();
 
-        return response()->json(['status' =>'Actividades deleted successfully']);
+        return response()->json(['status' => 'Actividades deleted successfully']);
     }
 }

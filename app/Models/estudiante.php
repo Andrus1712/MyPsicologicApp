@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Eloquent as Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\actividades;
+use App\User;
 
 /**
  * Class estudiante
@@ -27,7 +29,7 @@ class estudiante extends Model
     use SoftDeletes;
 
     public $table = 'estudiantes';
-    
+
 
     protected $dates = ['deleted_at'];
 
@@ -70,9 +72,15 @@ class estudiante extends Model
      *
      * @var array
      */
-    public static $rules = [
-        
-    ];
+    public static $rules = [];
 
-    
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function actividades()
+    {
+        return $this->hasMany(actividades::class);
+    }
 }

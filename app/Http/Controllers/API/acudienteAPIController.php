@@ -8,9 +8,12 @@ use App\Models\acudiente;
 use App\Repositories\acudienteRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
+use App\Models\estudiante;
 use Response;
-
+use App\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+
 /**
  * Class acudienteController
  * @package App\Http\Controllers\API
@@ -36,9 +39,9 @@ class acudienteAPIController extends AppBaseController
     public function index(Request $request)
     {
         $acudientes = DB::table(DB::raw('acudientes a'))
-                    ->where(DB::raw('a.deleted_at', '=', NULL))
-                    ->select('a.*')
-                    ->get();
+            ->where(DB::raw('a.deleted_at'), '=', NULL)
+            ->select('a.*')
+            ->get();
 
         return $this->sendResponse($acudientes->toArray(), 'Acudientes retrieved successfully');
     }
@@ -56,6 +59,14 @@ class acudienteAPIController extends AppBaseController
         $input = $request->all();
 
         $acudiente = $this->acudienteRepository->create($input);
+
+        $usuario = User::create([
+            'name' => $request->nombres . ' ' . $request->apellidos,
+            'email' => $request->correo,
+            'password' => Hash::make($request->identificacion),
+        ]);
+
+        $usuario->asignarRol(4);
 
         return $this->sendResponse($acudiente->toArray(), 'Acudiente saved successfully');
     }
@@ -100,6 +111,14 @@ class acudienteAPIController extends AppBaseController
             return $this->sendError('Acudiente not found');
         }
 
+        //Actualizamos el user
+        $user = User::where('email', $acudiente->correo)->first();
+
+        $user->name = $request->nombres . ' ' . $request->apellidos;
+        $user->email = $request->correo;
+        $user->save();
+
+        //Actualizamos al Acudiente
         $acudiente = $this->acudienteRepository->update($input, $id);
 
         return $this->sendResponse($acudiente->toArray(), 'acudiente updated successfully');
@@ -116,13 +135,29 @@ class acudienteAPIController extends AppBaseController
     public function destroy($id)
     {
         /** @var acudiente $acudiente */
+        //Buscamos al acudeiete y al usuario
         $acudiente = acudiente::find($id);
+        $user_acudiente = User::where('email', $acudiente->correo)->first();
 
-        // if (empty($acudiente)) {
-        //     return $this->sendError('Acudiente not found');
-        // }
 
+        //Buscamos a los estudiantes de ese acudietne
+        estudiante::where('acudiente_id', $acudiente->id)
+            ->each(function ($estudiante, $key) {
+                $user_est = User::where('email', $estudiante->correo)->first();
+                if ($user_est != null) {
+                    $user_est->delete();
+                }
+                $estudiante->delete();
+            });
+
+
+
+        //emliminamos los registros 
         $acudiente->delete();
+        if ($user_acudiente != null) {
+            $user_acudiente->delete();
+        }
+
 
         return response()->json(['' => 'Acudiente deleted successfully']);
     }

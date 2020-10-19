@@ -8,11 +8,14 @@ use App\Models\comportamiento;
 use App\Repositories\comportamientoRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
+use App\Models\actividades;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+
 /**
  * Class comportamientoController
  * @package App\Http\Controllers\API
@@ -38,15 +41,28 @@ class comportamientoAPIController extends AppBaseController
     public function index(Request $request)
     {
         $comportamientos = DB::table(DB::raw('comportamientos c'))->where(DB::raw('c.deleted_at'), '=', NULL)
-                        ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
-                        ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                        ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
-                        ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
-                        ->where(DB::raw('c.deleted_at', '!=', 'date()'))
-                        ->select('c.id', 'c.cod_comportamiento', 'c.titulo', 'c.descripcion', 'c.fecha',
-                                'e.nombres', 'e.apellidos', DB::raw('a.nombres as nombre_acudiente'), DB::raw('a.apellidos as apellido_acudiente'),
-                                'g.grado', 'g.curso', 'c.multimedia', 'c.emisor', 'e.created_at')
-                        ->get();
+            ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+            ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
+            ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
+            ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+            ->where(DB::raw('c.deleted_at', '!=', 'date()'))
+            ->select(
+                'c.id',
+                'c.cod_comportamiento',
+                'c.titulo',
+                'c.descripcion',
+                'c.fecha',
+                'e.nombres',
+                'e.apellidos',
+                DB::raw('a.nombres as nombre_acudiente'),
+                DB::raw('a.apellidos as apellido_acudiente'),
+                'g.grado',
+                'g.curso',
+                'c.multimedia',
+                'c.emisor',
+                'e.created_at'
+            )
+            ->get();
 
         return $this->sendResponse($comportamientos->toArray(), 'Comportamientos retrieved successfully');
     }
@@ -61,11 +77,48 @@ class comportamientoAPIController extends AppBaseController
      */
     public function store(CreatecomportamientoAPIRequest $request)
     {
-        $input = $request->all();
+        if (isset($request->id) && $request->method == 'update') {
+            if ($request->file('multimedia')) {
+                $path = Storage::disk('public')->put('documentosPSI', $request->file('multimedia'));
 
-        $comportamiento = $this->comportamientoRepository->create($input);
+                $url_multimedia = './' . $path;
+            } else {
+                $url_multimedia = $request->multimedia;
+            }
 
-        return $this->sendResponse($comportamiento->toArray(), 'Comportamiento saved successfully');
+            comportamiento::where('id', $request->id)->update([
+                'cod_comportamiento' => $request->cod_comportamiento,
+                'estudiante_id' => $request->estudiante_id,
+                'titulo' => $request->titulo,
+                'descripcion' => $request->descripcion,
+                'fecha' => $request->fecha,
+                'multimedia'  => $url_multimedia,
+                // 'emisor'  => $request->emisor,
+            ]);
+            return response()->json(['status' => 'Avances updated successfully.']);
+
+        } else {
+            if ($request->file('multimedia')) {
+                $path = Storage::disk('public')->put('documentosPSI', $request->file('multimedia'));
+                $url_multimedia = './' . $path;
+            } else {
+                $url_multimedia = null;
+            }
+
+            // $input = $request->all();
+
+            $this->comportamientoRepository->create([
+                'estudiante_id' => $request->estudiante_id,
+                'titulo' => $request->titulo,
+                'descripcion'  => $request->descripcion,
+                'fecha' => $request->fecha,
+                'multimedia'   => $url_multimedia,
+                'cod_comportamiento'   => $request->cod_comportamiento,
+                'emisor'   => Auth()->user(),
+            ]);
+
+            return response()->json(['status' => 'Avances saved successfully.']);
+        }
     }
 
     /**
@@ -125,7 +178,13 @@ class comportamientoAPIController extends AppBaseController
     {
         /** @var comportamiento $comportamiento */
         $comportamiento = comportamiento::find($id);
-        
+
+        //Buscamos las actividades de este comportamiento
+        actividades::where('comportamiento_id', $comportamiento->id)
+            ->each(function ($actividad, $key) {
+                $actividad->delete();
+            });
+
         $comportamiento->delete();
 
         return response()->json(['status' => 'Comportamiento retrieved successfully']);

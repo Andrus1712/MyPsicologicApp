@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\roles;
+use App\Role;
 use InfyOm\Generator\Common\BaseRepository;
 
 /**
@@ -20,7 +20,7 @@ class rolesRepository extends BaseRepository
      * @var array
      */
     protected $fieldSearchable = [
-        'nombre',
+        'name',
         'descripcion'
     ];
 
@@ -29,6 +29,6 @@ class rolesRepository extends BaseRepository
      **/
     public function model()
     {
-        return roles::class;
+        return Role::class;
     }
 }

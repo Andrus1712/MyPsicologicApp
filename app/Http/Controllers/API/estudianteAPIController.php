@@ -11,7 +11,8 @@ use App\Http\Controllers\AppBaseController;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
-
+use App\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -43,11 +44,25 @@ class estudianteAPIController extends AppBaseController
             ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
             ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
             ->select(
-                'e.id', 'e.tipoIdentificacion', 'e.identificacion', 'e.nombres', 'e.apellidos', 'e.edad', 'e.telefono', 'e.correo', 'e.fechaNacimiento', 
-                DB::raw('a.nombres as nombre_acudiente'), DB::raw('a.apellidos as apellido_acudiente'), DB::raw('a.telefono as telefono_acudiente'), DB::raw('a.correo as correo_acudiente'),
-                'g.grado', 'g.curso',
-                DB::raw('d.nombres as nombre_docente'), DB::raw('d.apellidos as apellidos_docente'),
-                'e.created_at')
+                'e.id',
+                'e.tipoIdentificacion',
+                'e.identificacion',
+                'e.nombres',
+                'e.apellidos',
+                'e.edad',
+                'e.telefono',
+                'e.correo',
+                'e.fechaNacimiento',
+                DB::raw('a.nombres as nombre_acudiente'),
+                DB::raw('a.apellidos as apellido_acudiente'),
+                DB::raw('a.telefono as telefono_acudiente'),
+                DB::raw('a.correo as correo_acudiente'),
+                'g.grado',
+                'g.curso',
+                DB::raw('d.nombres as nombre_docente'),
+                DB::raw('d.apellidos as apellidos_docente'),
+                'e.created_at'
+            )
             ->get();
 
         return $this->sendResponse($estudiantes->toArray(), 'Estudiantes retrieved successfully');
@@ -66,6 +81,18 @@ class estudianteAPIController extends AppBaseController
         $input = $request->all();
 
         $estudiante = $this->estudianteRepository->create($input);
+
+        // 'name', 'email', 'password',
+
+        $usuario = User::create([
+            'name' => $request->nombres . ' ' . $request->apellidos,
+            'email' => $request->correo,
+            'password' => Hash::make($request->identificacion),
+        ]);
+
+
+        $usuario->asignarRol(2);
+
 
         return $this->sendResponse($estudiante->toArray(), 'Estudiante saved successfully');
     }
@@ -110,6 +137,14 @@ class estudianteAPIController extends AppBaseController
             return $this->sendError('Estudiante not found');
         }
 
+        //Actualizamos el user
+        $user = User::where('email', $estudiante->correo)->first();
+
+        $user->name = $request->nombres . ' ' . $request->apellidos;
+        $user->email = $request->correo;
+        $user->save();
+
+        //Actualizamos al estudiante
         $estudiante = $this->estudianteRepository->update($input, $id);
 
         return $this->sendResponse($estudiante->toArray(), 'estudiante updated successfully');
@@ -127,7 +162,11 @@ class estudianteAPIController extends AppBaseController
     {
         /** @var estudiante $estudiante */
         $estudiante = estudiante::find($id);
+
+        $user = User::where('email', $estudiante->correo)->first();
+
         $estudiante->delete();
+        $user->delete();
 
         return response()->json(['status' => 'Estudiante deleted successfully']);
     }

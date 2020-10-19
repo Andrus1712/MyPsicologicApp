@@ -447,6 +447,11 @@ function LoadChartEstado(params) {
                     chart: {
                         type: 'column'
                     },
+                    navigation: {
+                        buttonOptions: {
+                            enabled: true
+                        }
+                    },
                     title: {
                         text: 'Grafico de estados de por fecha'
                     },
@@ -849,7 +854,7 @@ function Modal() {
                             <select class="form-control" id="clasificacion" name="state">
                                 <option value="">Selecione una opcion</option>
                                 <option value="Queja contra estudiante">Queja contra estudiante</option>
-                                <option value="Quedja contra docente">Quedja contra docente</option>
+                                <option value="Queja contra docente">Queja contra docente</option>
                                 <option value="Queja contra directivo">Queja contra directivo</option>
                                 <option value="Queja contra administrativo">Queja contra administrativo</option>
                                 <option value="Queja contra vecino">Queja contra vecino</option>
@@ -967,7 +972,7 @@ function DataTable(response) {
                 my_item.title = '#';
 
                 my_item.render = function (data, type, row) {
-                    return `  <div'> 
+                    return `  <div> 
                                 ${row.id}
                             </div>`
                 }
@@ -981,7 +986,7 @@ function DataTable(response) {
                 my_item.title = 'Fecha';
 
                 my_item.render = function (data, type, row) {
-                    return `  <div'> 
+                    return `  <div> 
                                 ${row.fecha}
                             </div>`
                 }
@@ -1089,7 +1094,7 @@ function DataTable(response) {
         $('#modelo-table').DataTable({
             //responsive: true,
             'scrollX': true,
-            //"destroy": true,
+            "destroy": true,
             data: response,
             "columns": my_columns,
             "language": {
@@ -1105,9 +1110,38 @@ function DataTable(response) {
                 "search": "Buscar:",
                 "zeroRecords": "No se han encontrado registros"
             },
-            dom: 'Bfrtip',
+            responsive: "true",
+            dom: 'Bfrtilp',
             buttons: [
-                'excel'
+                {
+                    extend: 'excelHtml5',
+                    text: '<i class="fas fa-file-excel"></i> ',
+                    titleAttr: 'Exportar a Excel',
+                    className: 'btn btn-success',
+                    exportOptions: {
+                        columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: '<i class="fas fa-file-pdf"></i> ',
+                    titleAttr: 'Exportar a PDF',
+                    className: 'btn btn-danger',
+                    orientation: 'landscape',
+                    pageSize: 'LEGAL',
+                    exportOptions: {
+                        columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+                    }
+                },
+                {
+                    extend: 'print',
+                    text: '<i class="fa fa-print"></i> ',
+                    titleAttr: 'Imprimir',
+                    className: 'btn btn-info',
+                    exportOptions: {
+                        columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+                    }
+                },
             ],
             "order": [
                 [0, 'asc']

@@ -18,6 +18,8 @@ class User extends Authenticatable
         'name', 'email', 'password',
     ];
 
+    public static $rules = [];
+
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -27,11 +29,26 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    public function roles(){
-        return $this->belongsToMany('App\Models\Role');
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class)->withTimestamps();
     }
 
-    public function acudiente(){
-        return $this->hasOne('App\Models\Acudiente');
+    public function asignarRol($role)
+    {
+        $this->roles()->sync($role, false);
+    }
+
+    public function tieneRol()
+    {
+        return $this->roles->flatten()->pluck('name')->unique();
+    }
+
+    public function hasRole($role)
+    {
+        if ($this->roles()->where('name', $role)->first()) {
+            return true;
+        }
+        return false;
     }
 }

@@ -11,9 +11,12 @@
             <div class="box-body">
                 <div class="row" style="padding-left: 20px">
                     @include('comportamientos.show_fields')
-                    <a href="{{ route('comportamientos.index') }}" class="btn btn-default">Back</a>
+                    <a href="{{ route('comportamientos.index') }}" class="btn btn-default">Atrás</a>
                 </div>
             </div>
         </div>
     </div>
+
+    @include('layouts.scripts')
+
 @endsection

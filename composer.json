@@ -8,6 +8,7 @@
         "php": ">=7.0.0",
         "appointer/swaggervel": "dev-master",
         "barryvdh/laravel-ide-helper": "^2.4",
+        "bican/roles": "2.1.*",
         "doctrine/dbal": "~2.3",
         "fideloper/proxy": "~3.3",
         "infyomlabs/adminlte-templates": "5.5.x-dev",
@@ -16,7 +17,7 @@
         "laravel/framework": "5.5.*",
         "laravel/tinker": "~1.0",
         "laravelcollective/html": "^5.5.0",
-        "bican/roles": "2.1.*"
+        "nexmo/laravel": "^2.3"
     },
     "require-dev": {
         "filp/whoops": "~2.0",

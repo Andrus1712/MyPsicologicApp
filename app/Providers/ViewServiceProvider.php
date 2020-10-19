@@ -1,14 +1,21 @@
 <?php
 
-namespace App\Providers;
+namespace App\Providers;
+
+
+
+
+
 use App\Models\Comportamiento;
 use App\Models\Actividade;
+use App\Models\actividades;
 use App\Models\Estudiante;
 use App\Models\TipoComportamiento;
 use App\Models\Docente;
 use App\Models\Grupo;
 use App\Models\Acudiente;
-
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 use View;
 
@@ -36,7 +43,7 @@ class ViewServiceProvider extends ServiceProvider
             $view->with('comportamientoItems', $comportamientoItems);
         });
         View::composer(['avances.fields'], function ($view) {
-            $actividadeItems = Actividade::pluck('id')->toArray();
+            $actividadeItems = Actividades::pluck('id')->toArray();
             $view->with('actividadeItems', $actividadeItems);
         });
         View::composer(['comportamientos.fields'], function ($view) {
@@ -60,7 +67,7 @@ class ViewServiceProvider extends ServiceProvider
             $view->with('acudienteItems', $acudienteItems);
         });
         View::composer(['estudiantes.fields'], function ($view) {
-            $acudienteItems = Acudiente::pluck('nombres','id')->toArray();
+            $acudienteItems = Acudiente::pluck('nombres', 'id')->toArray();
             $view->with('acudienteItems', $acudienteItems);
         });
         //

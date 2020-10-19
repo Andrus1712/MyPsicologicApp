@@ -284,7 +284,7 @@ function DataTable(response) {
 
             else if (key == 'grado') {
 
-                my_item.title = 'grado';
+                my_item.title = 'Curso';
 
                 my_item.render = function (data, type, row) {
                     return `  <div'> 

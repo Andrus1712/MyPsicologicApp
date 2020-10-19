@@ -1,8 +1,13 @@
 var modal = $('#modal-comportamientos')
-var AllRegister = []
+var AllRegister = [];
+
+var CountComp;
+
 
 $(document).ready(function () {
     Reload()
+
+
 
     $('#comportamientos-table').on('click', '[id^=Btn_act_]', function () {
         modal.modal('show');
@@ -49,8 +54,12 @@ $(document).ready(function () {
             }
 
         })
-    
+
     })
+
+    // $('#comportamientos-table').on('click', '[id^=Btn_search_]', function () {
+    //     alert("info acudiente")
+    // })
 
     $('#comportamientos-table').on('click', '[id^=Btn_Edit_]', function () {
         var id = $(this).attr('data-id');
@@ -66,41 +75,54 @@ $(document).ready(function () {
             $("#save").text("Actualizar")
             $("#save").attr("id", 'update')
 
+            $('#rutaFile').removeClass('hide')
+            $("#rutaFile").attr('href', filtro[0].multimedia)
+            $('#rutaFile').attr('target', '_blank')
+            $("#rutaFile").text('Ver documento')
+
             $("#cod_comportamiento").val(filtro[0].cod_comportamiento)
             $("#cod_comportamiento").attr("disabled", true)
             $("#titulo").val(filtro[0].titulo)
             $("#estudiante_id").val(filtro[0].estudiante_id)
             $("#descripcion").val(filtro[0].descripcion)
             $("#fecha").val(filtro[0].fecha)
-            $("#emisor").val(filtro[0].emisor)
+            // $("#emisor").val(filtro[0].emisor)
 
             $("#update").on('click', function () {
-                var cod_comportamiento = $("#cod_comportamiento").val(),
-                    estudiante_id = $("#estudiante_id").val(),
+
+                var estudiante_id = $("#estudiante_id").val(),
                     titulo = $("#titulo").val(),
                     descripcion = $("#descripcion").val(),
                     fecha = $("#fecha").val(),
-                    emisor = "X",
-                    multimedia = $("#multimedia").val();
+                    multimedia = $("#multimedia")[0].files[0] == undefined ? $("#rutaFile").attr('href') : $("#multimedia")[0].files[0];
 
-                if (cod_comportamiento == '' || estudiante_id == '' || titulo == '' || descripcion == '' || fecha == '') {
+                if (estudiante_id == '' || titulo == '' || descripcion == '' || fecha == '') {
                     toastr.warning("Complete todos los campos")
                 }
                 else {
-                    $.ajax({
-                        url: '/api/comportamientos/' + id,
-                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                        type: 'PUT',
-                        data: {
-                            cod_comportamiento: cod_comportamiento,
-                            estudiante_id: estudiante_id,
-                            titulo: titulo,
-                            descripcion: descripcion,
-                            fecha: fecha,
-                            emisor: emisor,
-                            multimedia: multimedia,
 
+                    var form = new FormData();
+                    form.append('estudiante_id', estudiante_id)
+                    form.append('titulo', titulo)
+                    form.append('descripcion', descripcion)
+                    form.append('fecha', fecha)
+                    form.append('cod_comportamiento', 2342)
+                    // form.append('emisor', "x")
+                    form.append('multimedia', multimedia)
+                    form.append('method', 'update')
+                    form.append('id', id)
+
+
+                    $.ajax({
+                        url: '/api/comportamientos',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                            'X-Requested-With': 'XMLHttpRequest'
                         },
+                        type: 'POST',
+                        processData: false,
+                        contentType: false,
+                        data: form,
                     })
                         .done(function () {
                             setTimeout(function () { modal.modal("hide") }, 600);
@@ -165,30 +187,34 @@ $(document).ready(function () {
                 titulo = $("#titulo").val(),
                 descripcion = $("#descripcion").val(),
                 fecha = $("#fecha").val(),
-                emisor = "X",
-                multimedia = $("#multimedia").val();
+                // emisor = "X",
+                multimedia = $('#multimedia')[0].files[0];
 
             if (cod_comportamiento == '' || estudiante_id == '' || titulo == '' || descripcion == '' || fecha == '') {
                 toastr.warning("Complete todos los campos")
             }
             else {
-                $.ajax({
-                    url: '/api/comportamientos',
-                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                    type: 'POST',
-                    data: {
-                        cod_comportamiento: cod_comportamiento,
-                        estudiante_id: estudiante_id,
-                        titulo: titulo,
-                        descripcion: descripcion,
-                        fecha: fecha,
-                        emisor: emisor,
-                        multimedia: multimedia,
+                var form = new FormData();
+                form.append('estudiante_id', estudiante_id)
+                form.append('titulo', titulo)
+                form.append('descripcion', descripcion)
+                form.append('fecha', fecha)
+                // form.append('emisor', emisor)
+                form.append('cod_comportamiento', cod_comportamiento)
+                form.append('multimedia', multimedia)
 
+                $.ajax({
+                    url: '/add_comportamientos',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
+                    type: 'POST',
+                    data: form,
+                    processData: false,
+                    contentType: false,
                 })
                     .done(function () {
-
+                        toastr.success("Comportamiento registrado");
                         setTimeout(function () { modal.modal("hide") }, 600);
                         Reload()
                     })
@@ -202,7 +228,6 @@ $(document).ready(function () {
         })
     })
 
-
 });
 
 function LoadEstudiantes() {
@@ -214,14 +239,22 @@ function LoadEstudiantes() {
     });
 
     $.ajax({
-        url: '/api/estudiantes',
+        url: '/getEstudiantes',
+        type: "GET",
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        dataType: "JSON",
     })
         .done(function (response) {
-            for (var i in response.data) {
-                $("#estudiante_id").append(`<option value='${response.data[i].id}'>${response.data[i].nombres} ${response.data[i].apellidos}</option>`)
+            if (response.length != 0) {
+                for (var i = 0; i < response.length; i++) {
+                    $("#estudiante_id").append(`<option value='${response[i].id}'>${response[i].nombres} ${response[i].apellidos} </option>`)
+                }
+            }else {
+
             }
 
-        })
+
+            })
         .fail(function () {
             console.log("error");
         })
@@ -278,9 +311,9 @@ function LoadComportamientos() {
         })
 }
 
-function Reload() {
+function ReloadCountComp() {
     $.ajax({
-        url: "/api/comportamientos",
+        url: "/getCountComp",
         type: "GET",
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         dataType: "JSON",
@@ -288,9 +321,30 @@ function Reload() {
 
         .done(function (response) {
             if (response.length != 0) {
-                AllRegister = response.data;
+                CountComp = []
+                CountComp = response;
+            } else {
+                console.log('sin datos');
+            }
+        })
 
-                DataTable(response.data);
+        .fail(function () {
+            console.log("error");
+        });
+}
+
+function Reload() {
+    $.ajax({
+        url: "/getComportamientos",
+        type: "GET",
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        dataType: "JSON",
+    })
+
+        .done(function (response) {
+            if (response.length != 0) {
+                AllRegister = response;
+                DataTable(response);
             } else {
                 $('#comportamientos-table').dataTable().fnClearTable();
                 $('#comportamientos-table').dataTable().fnDestroy();
@@ -351,14 +405,9 @@ function Modal() {
                     <div class="form-group">
                         <label >Estudiante: </label>
                         <div class="input-group">
-                            <select class="form-control" id="estudiante_id" style="width: 100%;">
+                            <select class="form-control" id="estudiante_id" style="width: 100%; heigh: 100px;">
 
                             </select>
-                            <span class="input-group-btn">
-                                <button id="btn_add" type="button" class="btn btn-circle btn-sm btn-success">
-                                    <i class="fa fa-plus" aria-hidden="true"></i>
-                                </button>
-                            </span>
                         </div>
                     </div>
 
@@ -386,8 +435,10 @@ function Modal() {
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
+                        <a class="btn btn-secondary hide" id="rutaFile"></a>
+                            <br>
                         <label>Multimedia: </label>
-                        <input type="file" id="multimedia">
+                        <input type="file" name="files[]" id="multimedia" multiple>
                         
                         <p class="help-block">Suba archivo que ayude a reportar el comportamiento.</p>
                     </div>
@@ -496,7 +547,7 @@ function ModalActividades() {
 
 function DataTable(response) {
 
-    console.log(response)
+    //console.log(response)
     if ($.fn.DataTable.isDataTable('#comportamientos-table')) {
         $('#comportamientos-table').dataTable().fnClearTable();
         $('#comportamientos-table').dataTable().fnDestroy();
@@ -554,6 +605,19 @@ function DataTable(response) {
 
             }
 
+            else if (key == 'fecha') {
+
+                my_item.title = 'Fecha de reporte';
+
+                my_item.render = function (data, type, row) {
+                    return `  <div'> 
+                                ${row.fecha}
+                            </div>`
+                }
+                my_columns.push(my_item);
+
+            }
+
             else if (key == 'titulo') {
 
                 my_item.title = 'Titulo';
@@ -597,9 +661,6 @@ function DataTable(response) {
                 my_item.render = function (data, type, row) {
                     return `<div>
                                 ${row.nombre_acudiente + " " + row.apellido_acudiente}
-                                <a data-id=${row.id} id="Btn_search_${row.id}" class='btn btn-circle btn-xs btn-default'>
-                                        <i class="fa fa-search" aria-hidden="true"></i>
-                                    </a>
                             </div>`
                 }
                 my_columns.push(my_item);
@@ -630,10 +691,23 @@ function DataTable(response) {
                 }
                 my_columns.push(my_item);
             }
+
+            else if (key == 'emisor') {
+
+                my_item.title = 'Emisor';
+
+                my_item.render = function (data, type, row) {
+                    return `<div>
+                                ${JSON.parse(row.emisor).email}
+                            </div>`
+                }
+                my_columns.push(my_item);
+            }
         })
 
         $('#comportamientos-table').DataTable({
-            // responsive: true,
+            //'responsive': true,
+            'scrollX': my_columns.length >= 6 ? true : false,
             "destroy": true,
             data: response,
             "columns": my_columns,
@@ -656,21 +730,51 @@ function DataTable(response) {
 
 
             "order": [
-                [0, 'asc']
+                [2, 'asc']
             ],
 
             "columnDefs": [
-                { "width": "15%", "targets": 1 },
                 { "width": "20%", "targets": 2 },
-                { "width": "20%", "targets": 7 },
-                { "width": "16%", "targets": 4 }
             ],
 
             "lengthMenu": [
                 [10, 15, 20, -1],
                 [10, 15, 20, "Todos"]
-            ]
+            ],
+            "createdRow": function (row, data, dataIndex) {
+
+                $.ajax({
+                    url: "/getCountComp",
+                    type: "GET",
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    dataType: "JSON",
+                })
+
+                    .done(function (response) {
+                        if (response.length != 0) {
+                            response.forEach(function (datos, index) {
+                                if (data.id == datos.id) {
+                                    $(row).css('background-color', '#ffedd9');
+                                }
+
+                            });
+                        } else {
+                            console.log('sin datos');
+                        }
+                    })
+
+                    .fail(function () {
+                        console.log("error");
+                    });
+                // if (data.id == "11") {
+                //     $(row).addClass('text-red');
+                // }
+            },
         });
+
+
+
+
     }
 }
 

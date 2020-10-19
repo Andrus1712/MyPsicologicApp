@@ -16,7 +16,7 @@ $(document).ready(function () {
                 fecha = $('#fecha').val(),
                 evidencias = $('#evidencias')[0].files[0];
 
-            if (actividad_id == '' || descripcion == '' || fecha == '' || evidencias == undefined) {
+            if (actividad_id == '' || descripcion == '' || fecha == '') {
                 toastr.warning("Complete todos los campos")
             }
             else {
@@ -35,6 +35,7 @@ $(document).ready(function () {
                     data: form,
                 })
                     .done(function () {
+                        toastr.success("Avance registrado");
                         setTimeout(function () { modal.modal("hide") }, 600);
                         Reload()
                     })
@@ -71,12 +72,11 @@ $(document).ready(function () {
 
             $("#update").on('click', function () {
                 var actividad_id = $("#actividad_id").val(),
-                    avance = $("#descripcion").val(),
                     descripcion = $("#descripcion").val(),
                     fecha_avance = $("#fecha").val(),
                     evidencias = $("#evidencias")[0].files[0] == undefined ? $("#rutaFile").attr('href') : $("#evidencias")[0].files[0];
 
-                if (actividad_id == '' || avance == '' || descripcion == '' || fecha_avance == '') {
+                if (actividad_id == '' || evidencias == '' || descripcion == '' || fecha_avance == '') {
                     toastr.warning("Complete todos los campos")
                 }
                 else {

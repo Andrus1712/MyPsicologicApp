@@ -393,10 +393,6 @@ function DataTable(response) {
 
                                 <div class="btn-group btn-group-circle btn-group-solid" align="center">
 
-                                    <a data-id=${row.id} id="Btn_show_${row.id}" class='btn btn-circle btn-sm btn-success'>
-                                        <i class="fa fa-eye" aria-hidden="true"></i>
-                                    </a>
-
                                     <a data-id=${row.id} id="Btn_Edit_${row.id}" class='btn btn-circle btn-sm btn-info'>
                                         <i class="fa fa-edit" aria-hidden="true"></i>
                                     </a>
@@ -405,6 +401,7 @@ function DataTable(response) {
                                         <i class="fa fa-trash" aria-hidden="true"></i>
                                     </a> 
                                 </div>
+                                
                             </div>`
                 }
                 my_columns.push(my_item);
@@ -495,6 +492,17 @@ function DataTable(response) {
                 }
                 my_columns.push(my_item);
             }
+            else if (key == 'nombre_acudiente') {
+
+                my_item.title = 'Acudiente';
+
+                my_item.render = function (data, type, row) {
+                    return `<div>
+                                ${row.nombre_acudiente + " " + row.apellido_acudiente} 
+                            </div>`
+                }
+                my_columns.push(my_item);
+            }
 
             else if (key == 'grado') {
 
@@ -511,8 +519,8 @@ function DataTable(response) {
         })
 
         $('#estudiantes-table').DataTable({
-            // responsive: true,
-            "destroy": true,
+            "responsive": true,
+            "destroy": false,
             data: response,
             "columns": my_columns,
             "language": {
@@ -538,6 +546,7 @@ function DataTable(response) {
             ],
 
             "columnDefs": [
+                { "width": "20%", "targets": 8 },
                 { "width": "20%", "targets": 3 }
             ],
 

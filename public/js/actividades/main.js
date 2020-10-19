@@ -5,6 +5,7 @@ $(document).ready(function () {
     Reload()
     ReloadCalendario()
 
+
     $('#act-table').on('click', '[id^=Btn_Edit_]', function () {
         var id = $(this).attr('data-id')
         var filtro = AllRegister.filter(f => f.id == id);
@@ -29,7 +30,7 @@ $(document).ready(function () {
             $("#tipo_comportamiento_id").val(filtro[0].tipo_comportamiento_id)
 
             $('#update').on('click', function () {
-                var comportamiento_id = $("#tipo_comportamiento_id").val(),
+                var comportamiento_id = $("#comportamiento_id").val(),
                     titulo = $("#titulo").val(),
                     descripcion = $("#descripcion").val(),
                     fecha = $("#fecha").val(),
@@ -122,7 +123,7 @@ $(document).ready(function () {
                 toastr.warning("Complete todos los campos")
             } else {
                 $.ajax({
-                    url: '/api/actividades',
+                    url: '/add_actividades',
                     headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                     type: 'POST',
                     data: {
@@ -132,7 +133,6 @@ $(document).ready(function () {
                         fecha: fecha,
                         estado: estado,
                         tipo_comportamiento_id: tipo_comportamiento_id,
-                        estado: estado
                     },
                 })
                     .done(function () {
@@ -152,7 +152,7 @@ $(document).ready(function () {
 
 
     // Check estatus
-    $('#act-table').on('click', '[id^=btn_cumplido_]', function(){
+    $('#act-table').on('click', '[id^=btn_cumplido_]', function () {
         var id = $(this).attr('data-id')
         $.ajax({
             url: '/api/actividades/' + id,
@@ -162,20 +162,20 @@ $(document).ready(function () {
                 estado: 1
             },
         })
-        .done(function () {
-            toastr.success("Actividad maecada como cumplida");
-            Reload()
-            ReloadCalendario()
-        })
-        .fail(function () {
-            toastr.error("Ha ocurrido un error");
-        })
-        .always(function () {
-            $("#btn_cumplido_"+id).addClass("disabled");
-        });
+            .done(function () {
+                toastr.success("Actividad marcada como cumplida");
+                Reload()
+                ReloadCalendario()
+            })
+            .fail(function () {
+                toastr.error("Ha ocurrido un error");
+            })
+            .always(function () {
+                $('#btn_cumplido_' + id).addClass("disabled");
+            });
     })
 
-    $('#act-table').on('click', '[id^=btn_incumplido_]', function(){
+    $('#act-table').on('click', '[id^=btn_incumplido_]', function () {
         var id = $(this).attr('data-id')
         $.ajax({
             url: '/api/actividades/' + id,
@@ -185,18 +185,50 @@ $(document).ready(function () {
                 estado: 2
             },
         })
-        .done(function () {
-            toastr.error("Actividad maecada como icumplida");
-            Reload()
-            ReloadCalendario()
-        })
-        .fail(function () {
-            toastr.error("Ha ocurrido un error");
-        })
-        .always(function () {
-            $("#btn_cumplido_"+id).addClass("disabled");
-        });
+            .done(function () {
+                toastr.error("Actividad marcada como icumplida");
+                Reload()
+                ReloadCalendario()
+            })
+            .fail(function () {
+                toastr.error("Ha ocurrido un error");
+            })
+            .always(function () {
+                $('#btn_incumplido_' + id).addClass("disabled");
+            });
     })
+
+    $('#act-table').on('click', '[id^=Btn_info_]', function () {
+        modal.modal('show')
+        var id = $(this).attr('data-id')
+        var filtro = AllRegister.filter(f => f.id == id);
+        modal.find('.modal-content').empty().append(`
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Informacion de la conducta</h4>
+            </div>
+            <div class="modal-body">
+                <h3>${filtro[0].titulo_tipo_comportamiento}</h3>
+                <p>${filtro[0].descripcion_tipo_comportamiento}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+            `)
+    })
+
+    $('#act-table').on('click', '[id^=Btn_show_]', function () {
+        var id = $(this).attr('data-id');
+
+        const filtro = AllRegister.filter(f => f.id == id);
+
+        if (filtro.length != 0) {
+            modal.modal('show');
+            ModalShow(filtro);
+        }
+    });
+
+
 });
 
 function validarFechaMenorActual(date) {
@@ -253,6 +285,21 @@ function LoadComportamientos() {
         .fail(function () {
             console.log("error");
         })
+}
+
+function ModalInfo() {
+    modal.find('.modal-content').empty().append(`
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Informacion de la conducta</h4>
+            </div>
+            <div class="modal-body">
+                <p>${AllRegister}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+            `)
 }
 
 function Modal() {
@@ -380,97 +427,26 @@ function ReloadCalendario() {
         dayMaxEvents: true, // allow "more" link when too many events
         events: [{}],
         eventClick: function (info) {
+
             var actividadFilter = JSON.parse(info.event.groupId);
+
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             const event = new Date(actividadFilter.fecha.replace('-', '/'));
-            // console.log(actividadFilter)
-            modal.modal('show')
-            modal.find('.modal-content').empty().append(`
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Actividad ${actividadFilter.titulo}</h4>
-            </div>
-            <div class="modal-body">
 
-                <div class="row">
-
-                    <div class="col-md-6">
-                        <div class="clearfix"></div>
-
-                        <div class="box box-widget">
-                            <div class="box-header">
-                                <h3 class="box-title">Informacion de la actividad</h3>
-                            </div>
-                            <div class="box-body with-border">
-                                <div class="form-group">
-                                    <label>Estado</label>
-                                    <input type="text" class="form-control" value="${actividadFilter.estado == 0 ? "En espera" : actividadFilter.estado == 1 ? "Cumplida" : "Inclumplida"}" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Fecha</label>
-                                    <input type="text" class="form-control" value="${event.toLocaleDateString('es-CO', options)}" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Descripción</label>
-                                    <textarea class="form-control" readonly>${actividadFilter.descripcion}</textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
-                        
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="clearfix"></div>
-                        <div class="box box-widget">
-                            <div class="box-header with-border">
-                                <h3 class="box-title">Datos del estudiante</h3>
-                            </div>
-                            <div class="box-body">
-                                <div class="form-group">
-                                    <label>Estudiante</label>
-                                    <input type="text" class="form-control" value="${actividadFilter.nombre_estudiante} ${actividadFilter.apellido_estudiante}" readonly>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="clearfix"></div>
-
-                        <div class="box box-widget">
-                            <div class="box-header with-border">
-                                <h3 class="box-title">Datos del Comportamiento</h3>
-                            </div>
-                            <div class="box-body">
-                                <div class="form-group">
-                                    <label>Titulo de comportamiento</label>
-                                    <input type="text" class="form-control" value="${actividadFilter.titulo_comportamiento}" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Tipo de comportamiento</label>
-                                    <input type="text" class="form-control" value="${actividadFilter.titulo_tipo_comportamiento}" readonly>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="clearfix"></div>
-                    </div>
-
-                <div>
-
-                
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-            </div>
-            `)
+            if (actividadFilter.titulo_tipo_comportamiento == null) {
+                modal.modal('show')
+                ModalEst(actividadFilter, event, options);
+            } else {
+                modal.modal('show')
+                ModalPsico(actividadFilter, event, options);
+            }
 
         }
     });
     calendar.render();
 
     $.ajax({
-        url: "/api/actividades",
+        url: "/getActividades",
         type: "GET",
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         dataType: "JSON",
@@ -479,13 +455,13 @@ function ReloadCalendario() {
         .done(function (response) {
             if (response.length != 0) {
 
-                for (var i = 0; i < response.data.length; i++) {
+                for (var i = 0; i < response.length; i++) {
                     calendar.addEvent({
-                        id: response.data[i].id,
-                        groupId: JSON.stringify(response.data[i]),
-                        title: response.data[i].titulo,
-                        start: response.data[i].fecha,
-                        backgroundColor: response.data[i].estado == 0 ? '#F4A460' : response.data[i].estado == 1 ? '#3CB371' : '#FF6347',
+                        id: response[i].id,
+                        groupId: JSON.stringify(response[i]),
+                        title: response[i].titulo,
+                        start: response[i].fecha,
+                        backgroundColor: response[i].estado == 0 ? '#F4A460' : response[i].estado == 1 ? '#3CB371' : '#FF6347',
                         borderColor: "gray",
                     })
                 }
@@ -498,9 +474,302 @@ function ReloadCalendario() {
         });
 }
 
+function ModalShow(filtro) {
+    modal.find('.modal-content').empty().append(`
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Actividad: ${filtro[0].titulo}</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+
+                    <div class="col-md-6">
+
+                        <div class="box box-widget">
+                            <div class="box-header">
+                                <h3 class="box-title">Informacion de la actividad</h3>
+                            </div>
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label>Estado</label>
+                                    <p>${filtro[0].estado == 0 ? "En espera" : filtro[0].estado == 1 ? "Cumplida" : "Inclumplida"} </p>
+                                </div>
+                                <div class="form-group">
+                                    <label>Fecha</label>
+                                    <p>${filtro[0].fecha}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label>Descripción</label>
+                                    <p>${filtro[0].descripcion}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="box box-widget">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Datos del Comportamiento</h3>
+                            </div>
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label>Titulo de comportamiento</label>
+                                    <p>${filtro[0].titulo_comportamiento}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label>Descripcion del comportamiento</label>
+                                    <p>${filtro[0].descripcion_comportamiento}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label>Conducta</label>
+                                    <p>${filtro[0].titulo_tipo_comportamiento}</p>
+                                </div>
+                            </div>
+                        </div>
+                       
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="box box-widget">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Datos del Estudiante</h3>
+                            </div>
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label>Estudiante</label>
+                                    <p>${filtro[0].nombre_estudiante} ${filtro[0].apellido_estudiante}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label>teléfono</label>
+                                    <p>${filtro[0].telefono_estudiante}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label>Correo</label>
+                                    <p>${filtro[0].correo_estudiante}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="box box-widget">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Datos del Acudiente</h3>
+                            </div>
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label>Acudiente</label>
+                                    <p>${filtro[0].nombre_acudiente} ${filtro[0].apellido_acudiente}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label>teléfono</label>
+                                    <p>${filtro[0].telefono_acudiente}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label>Correo</label>
+                                    <p>${filtro[0].correo_acudiente}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+            `)
+}
+
+function ModalEst(actividadFilter, event, options) {
+    modal.find('.modal-content').empty().append(`
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Actividad: ${actividadFilter.titulo}</h4>
+    </div>
+    <div class="modal-body">
+
+        <div class="row">
+
+            <div class="col-md-6">
+
+                <div class="box box-widget">
+                    <div class="box-header">
+                        <h3 class="box-title">Informacion de la actividad</h3>
+                    </div>
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label>Estado</label>
+                            <p>${actividadFilter.estado == 0 ? "En espera" : actividadFilter.estado == 1 ? "Cumplida" : "Inclumplida"}</p>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha</label>
+                            <p>${event.toLocaleDateString('es-CO', options)}</p>
+                        </div>
+                        <div class="form-group">
+                            <label>Descripción</label>
+                            <p>${actividadFilter.descripcion}</p>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="col-md-6">
+                <div class="box box-widget">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Datos del Comportamiento</h3>
+                    </div>
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label>Titulo de comportamiento</label>
+                            <p>${actividadFilter.titulo_comportamiento}</p>
+                        </div>
+                        <div class="form-group">
+                            <label>Titulo de comportamiento</label>
+                            <p>${actividadFilter.descripcion_comportamiento}</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+
+        </div>
+
+
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+    </div>
+    `)
+}
+
+function ModalPsico(actividadFilter, event, options) {
+
+    modal.find('.modal-content').empty().append(`
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Actividad: ${actividadFilter.titulo}</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+
+                    <div class="col-md-6">
+
+                        <div class="box box-widget">
+                            <div class="box-header">
+                                <h3 class="box-title">Informacion de la actividad</h3>
+                            </div>
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label>Estado</label>
+                                    <p>${actividadFilter.estado == 0 ? "En espera" : actividadFilter.estado == 1 ? "Cumplida" : "Inclumplida"} </p>
+                                </div>
+                                <div class="form-group">
+                                    <label>Fecha</label>
+                                    <p>${event.toLocaleDateString('es-CO', options)}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label>Descripción</label>
+                                    <p>${actividadFilter.descripcion}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="box box-widget">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Datos del Comportamiento</h3>
+                            </div>
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label>Titulo de comportamiento</label>
+                                    <p>${actividadFilter.titulo_comportamiento}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label>Titulo de comportamiento</label>
+                                    <p>${actividadFilter.descripcion_comportamiento}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label>Tipo de comportamiento</label>
+                                    <p>${actividadFilter.titulo_tipo_comportamiento}</p>
+                                </div>
+                            </div>
+                        </div>
+                       
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="box box-widget">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Datos del Estudiante</h3>
+                            </div>
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label>Estudiante</label>
+                                    <p>${actividadFilter.nombre_estudiante} ${actividadFilter.apellido_estudiante}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label>teléfono</label>
+                                    <p>${actividadFilter.telefono_estudiante}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label>Correo</label>
+                                    <p>${actividadFilter.correo_estudiante}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="box box-widget">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Datos del Acudiente</h3>
+                            </div>
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label>Acudiente</label>
+                                    <p>${actividadFilter.nombre_acudiente} ${actividadFilter.apellido_acudiente}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label>teléfono</label>
+                                    <p>${actividadFilter.telefono_acudiente}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label>Correo</label>
+                                    <p>${actividadFilter.correo_acudiente}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+            `)
+}
+
 function Reload() {
     $.ajax({
-        url: "/api/actividades",
+        url: "/getActividades",
         type: "GET",
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         dataType: "JSON",
@@ -508,8 +777,10 @@ function Reload() {
 
         .done(function (response) {
             if (response.length != 0) {
-                AllRegister = response.data;
-                DataTable(response.data);
+                AllRegister = response;
+                DataTable(response);
+
+
             } else {
                 $('#actividades-table').dataTable().fnClearTable();
                 $('#actividades-table').dataTable().fnDestroy();
@@ -522,10 +793,9 @@ function Reload() {
         });
 }
 
-
 function DataTable(response) {
 
-    console.log("datatable", response)
+    // console.log("datatable", response)
     if ($.fn.DataTable.isDataTable('#act-table')) {
         $('#act-table').dataTable().fnClearTable();
         $('#act-table').dataTable().fnDestroy();
@@ -553,11 +823,11 @@ function DataTable(response) {
                                 <div class="btn-group btn-group-circle btn-group-solid" align="center">
                                     
                                     <a data-id=${row.id} id="btn_cumplido_${row.id}" class="btn btn-circle btn-sm btn-success ${row.estado == 1 ? 'disabled' : ''}">
-                                        <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+                                        <i class="fa fa-thumbs-up" aria-hidden="true"></i>
                                     </a>
 
-                                    <a data-id=${row.id} id="btn_incumplido_${row.id}" class='btn btn-circle btn-sm btn-danger'>
-                                        <i class="fa fa-thumbs-o-down" aria-hidden="true"></i>
+                                    <a data-id=${row.id} id="btn_incumplido_${row.id}" class="btn btn-circle btn-sm btn-danger ${row.estado == 2 ? 'disabled' : ''}">
+                                        <i class="fa fa-thumbs-down" aria-hidden="true"></i>
                                     </a>
                                 </div>
                             </div>`
@@ -572,15 +842,18 @@ function DataTable(response) {
                 my_item.title = 'Actividades';
 
                 my_item.render = function (data, type, row) {
-                    return `<div align="center">
-                                <div class="btn-group btn-group-circle btn-group-solid" align="center">
-                                    <a data-id=${row.id} id="Btn_Edit_${row.id}" class='btn btn-circle btn-sm btn-primary'>
-                                        <i class="fa fa-edit" aria-hidden="true"></i>
-                                    </a>
-                                    <a data-id=${row.id} id="Btn_delete_${row.id}" class='btn btn-circle btn-sm btn-danger'>
-                                        <i class="fa fa-trash" aria-hidden="true"></i>
-                                    </a> 
-                                </div>
+                    return `<div class="btn-group">
+                                
+                                <a data-id=${row.id} id="Btn_show_${row.id}" class='btn btn-sm btn-info'>
+                                    <i class="fa fa-eye" aria-hidden="true"></i>
+                                </a>
+                                <a data-id=${row.id} id="Btn_Edit_${row.id}" class='btn btn-sm btn-primary'>
+                                    <i class="fa fa-edit" aria-hidden="true"></i>
+                                </a>
+                                <a data-id=${row.id} id="Btn_delete_${row.id}" class='btn btn-sm btn-danger'>
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </a> 
+                                
                             </div>`
 
                 }
@@ -667,9 +940,9 @@ function DataTable(response) {
 
                 my_item.render = function (data, type, row) {
 
-                    return `${row.estado == 1 ? `<i class="fa fa-check-circle text-success"></i> Cumplida` :
-                        row.estado == 2 ? `<i class="fa fa-exclamation-circle text-danger"></i> Incumplida` :
-                            `<i class="fa  fa-exclamation-triangle text-warning"></i> En espera`}`;
+                    return `${row.estado == 1 ? `<i class="fa fa-check-circle" style="color: green;"></i> Cumplida` :
+                        row.estado == 2 ? `<i class="fa fa-exclamation-circle" style="color: red;"></i> Incumplida` :
+                            `<i class="fa  fa-exclamation-triangle" style="color: orange;" ></i> En espera`}`;
 
                     // return `<i class="fa fa-circle-o text-success">Incumplida</i>`;
                     // if (row.estado == 2) { return `Cumplida` }
@@ -698,9 +971,9 @@ function DataTable(response) {
 
                 my_item.render = function (data, type, row) {
                     return `<div>
-                                ${row.titulo_tipo_comportamiento} <a data-id=${row.id} id="Btn_search_${row.id}" class='btn btn-circle btn-xs btn-default'>
-                                                    <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                                </a>
+                                ${row.titulo_tipo_comportamiento} <a data-id=${row.id} id="Btn_info_${row.id}" class='btn btn-circle btn-xs btn-default'>
+                                    <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                </a>
                             </div>`
                 }
                 my_columns.push(my_item);
@@ -710,7 +983,7 @@ function DataTable(response) {
 
         $('#act-table').DataTable({
             'responsive': true,
-            'scrollX': true,
+            'scrollX': my_columns.length >= 8 ? true : false,
             "destroy": true,
             data: response,
             "columns": my_columns,
@@ -737,7 +1010,9 @@ function DataTable(response) {
             ],
 
             "columnDefs": [
-                { "width": "20%", "targets": 8 },
+                { "width": "10%", "targets": 1 },
+                { "width": "20%", "targets": 2 },
+                { "width": "30%", "targets": 3 },
             ],
 
             "lengthMenu": [
@@ -745,12 +1020,12 @@ function DataTable(response) {
                 [10, 15, 20, "Todos"]
             ]
         });
-        $('thead > tr> th:nth-child(2)').css({ 'min-width': '140px', 'max-width': '140px' });
-        $('thead > tr> th:nth-child(3)').css({ 'min-width': '80px', 'max-width': '80px' });
-        $('thead > tr> th:nth-child(4)').css({ 'min-width': '140px', 'max-width': '140px' });
-        $('thead > tr> th:nth-child(7)').css({ 'min-width': '140px', 'max-width': '140px' });
-        $('thead > tr> th:nth-child(8)').css({ 'min-width': '140px', 'max-width': '140px' });
-        $('thead > tr> th:nth-child(9)').css({ 'min-width': '140px', 'max-width': '140px' });
+        // $('thead > tr> th:nth-child(2)').css({ 'min-width': '140px', 'max-width': '140px' });
+        // $('thead > tr> th:nth-child(3)').css({ 'min-width': '80px', 'max-width': '80px' });
+        // $('thead > tr> th:nth-child(4)').css({ 'min-width': '140px', 'max-width': '140px' });
+        // $('thead > tr> th:nth-child(7)').css({ 'min-width': '140px', 'max-width': '140px' });
+        // $('thead > tr> th:nth-child(8)').css({ 'min-width': '140px', 'max-width': '140px' });
+        // $('thead > tr> th:nth-child(10)').css({ 'min-width': '140px', 'max-width': '140px' });
         // $('thead > tr> th:nth-child(10)').css({ 'min-width': '140px', 'max-width': '140px' });
     }
 }

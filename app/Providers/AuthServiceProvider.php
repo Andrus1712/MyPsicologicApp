@@ -25,6 +25,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Gate::before(function ($user, $role){
+            return $user->tieneRol()->contains($role);
+        });
     }
 }
