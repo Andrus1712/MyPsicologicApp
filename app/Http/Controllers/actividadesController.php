@@ -256,8 +256,8 @@ class actividadesController extends AppBaseController
         // $nexmo = app('Nexmo\Client');
 
         // $nexmo->message()->send([
-        //     'to'   => '573177765722',
-        //     'from' => '57'.$est->telefono,
+        //     'to'   => '57'.$est->telefono,
+        //     'from' => '573177765722',
         //     'text' => 'Hola '. $est->nombres . ', Tienes una nueva actividad: ' . $request->titulo .' fecha:'. $request->fecha
         // ]);
 

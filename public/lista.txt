@@ -1,0 +1,16 @@
+Listado de Actividades a desarrollar:
+
+1. Crear middlewares(permisos)
+
+2. Historial de actividades(Andres-Trabajando)
+
+3. Subir multiples archivos
+
+4. Crear vistas para la pagina de inicio
+
+5. Solucion de consultas (tabla comportamientos->Comportamientos que no 
+                    tengan actividades se marcan el naranja )
+
+6. Generar repeortes con plantillas a formato world o pdf
+
+7. Correcion de errores (el que salga)

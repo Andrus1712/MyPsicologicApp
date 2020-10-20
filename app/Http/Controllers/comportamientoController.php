@@ -347,12 +347,16 @@ class comportamientoController extends AppBaseController
                         //Notificacion via sms
                         // $nexmo = app('Nexmo\Client');
                         // $nexmo->message()->send([
-                        //     'to'   => '573177765722',
-                        //     'from' => '57'.$psi->telefono,
+                        //     'to'   => '57'.$psi->telefono,
+                        //     'from' => '573177765722',
                         //     'text' => 'Hola '. $psi->nombres . ', Hay un nuevo comportamiento registrado: ' . $comportamiento->titulo .' Descripcion:'. $comportamiento->descripcion
                         // ]);
                     }
                 });
+
+
+
+
 
 
             return response()->json(['status' => 'Comportamiento saved successfully.']);
