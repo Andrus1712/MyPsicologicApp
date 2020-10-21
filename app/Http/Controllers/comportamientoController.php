@@ -190,6 +190,9 @@ class comportamientoController extends AppBaseController
                     ->groupBy(DB::raw('co.id'))
                     ->get();
 
+                    if(count($array) != 0)
+                {
+
                 foreach ($array as $a) {
                     $data[] = $a->id;
                 }
@@ -223,6 +226,12 @@ class comportamientoController extends AppBaseController
                     ->whereNotIn(DB::raw('c.id'), $data)
                     ->get();
                 return response()->json($contador);
+
+            }else
+            {
+                $contador= [];
+                return response()->json($contador);
+            }
             } else if ($queryUsers[0]->role_id == 4) {
 
                 //Consultar cuantos comportamientos no tienen asignada actividades

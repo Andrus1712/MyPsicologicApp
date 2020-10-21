@@ -107,7 +107,8 @@
             @if ($item->multimedia != null)
 
             <div>
-                <a href="../{{ $item->multimedia }}" class="btn btn-default" target="_blank">
+                <input id="ruta_archivo" type="hidden" name="" value="{{ $item->multimedia }}">
+                <a class="btn btn-default" id="showfile">
                     <i class="fa fa-file"></i>
                 </a>
             </div>
@@ -120,3 +121,4 @@
 </div>
 
 @endforeach
+
