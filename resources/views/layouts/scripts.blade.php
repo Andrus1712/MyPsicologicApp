@@ -54,4 +54,11 @@
 {{-- DaterangeTime --}}
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
+{{-- FileSave.js --}}
+<script src="../assets/FileSaver/src/FileSaver.js"></script>
+
+{{-- Save World --}}
+<script src="../assets/jQuery-Word-Export/jquery.wordexport.js"></script>
+
+
 <script src="../js/session.js"></script>

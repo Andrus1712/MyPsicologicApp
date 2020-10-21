@@ -21,7 +21,7 @@ class rolesRepository extends BaseRepository
      */
     protected $fieldSearchable = [
         'name',
-        'descripcion'
+        'slug'
     ];
 
     /**

@@ -17,6 +17,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/reportes', function () {
+    return view('reporte');
+});
+
 
 Auth::routes();
 
@@ -49,7 +53,7 @@ Route::get('/getCountAct', 'actividadesController@getCountAct');
 
 Route::resource('avances', 'avancesController');
 
-// Route::get('/roles', 'rolesController@index');
+Route::resource('roles', 'rolesController');
 
 Route::resource('modeloSeguimientos', 'modelo_seguimientoController');
 

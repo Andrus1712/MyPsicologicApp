@@ -1,0 +1,53 @@
+ver:                    codigo permiso
+1 ver estudiantes           v1
+2 ver docentes              v2
+3 ver acudientes            v3
+4 ver psicologos            v4
+5 ver comportamientos       v5
+6 ver actividades           v6
+7 ver avances               v7
+8 ver cursos                v8
+
+editar
+1 editar estudiantes        e1
+2 editar docentes           e2
+3 editar acudientes         e3
+4 editar psicologos         e4
+5 editar comportamientos    e5
+6 editar actividades        e6
+7 editar avances            e7
+8 editar cursos             e8
+
+eliminar
+1 elimnar estudiantes       d1
+2 eliminar docentes         d2
+3 eliminar acudientes       d3
+4 eliminar psicologos       d4
+5 eliminar comportamientos  d5
+6 eliminar actividades      d6
+7 eliminar avances          d7
+8 eliminar cursos           d8
+
+crear
+1 crear estudiantes         c1
+2 crear docentes            c2
+3 crear acudientes          c3
+4 crear psicologos          c4
+5 crear comportamientos     c5
+6 crear actividades         c6
+7 crear avances             c7
+8 crear cursos              c8
+
+especial
+1 crear usuarios            x1
+2 editar usuarios           x2
+3 eliminar usuarios         x3
+4 ver usuarios              x4
+
+1 crear roles               x5
+2 editar roles              x6
+3 eliminar roles            x7
+4 ver roles                 x8
+
+1 generar reportes          x9
+2 Modulo seguimientos       x10

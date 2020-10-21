@@ -20,28 +20,28 @@ class RoleTableSeeder extends Seeder
 
         DB::table('roles')->insert([
             'name' => 'Psicoorientador',
-            'descripcion' => 'Es la perosna encargada de llevar a cabo los procesos de seeguimiento y monitereo de los estudiantes; Encargado de asignar citas; Edicion y eliminacion de datos',
+            'slug' => 'psi-user',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
 
         DB::table('roles')->insert([
             'name' => 'Estudiante',
-            'descripcion' => 'Encargado de realizar las activiades; Puede ver actividades y sus avances',
+            'slug' => 'est-user',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
 
         DB::table('roles')->insert([
             'name' => 'Docente',
-            'descripcion' => 'Encargado de reportar comportamientos; Puede ver comportamientos',
+            'slug' => 'doc-user',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
 
         DB::table('roles')->insert([
             'name' => 'Acudiente',
-            'descripcion' => 'Encargado de reportar comportamientos; Puede ver comportamientos y actividades de los estudiantes acudidos',
+            'slug' => 'acu-user',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);

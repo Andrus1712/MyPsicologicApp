@@ -407,7 +407,7 @@ function LoadChartEstado(params) {
                 }
 
                 arreglo = [...new Set(cat)];
-                console.log("fechas sin repetir | " + arreglo);
+                // console.log("fechas sin repetir | " + arreglo);
                 var contR = 0;
                 var contE = 0;
                 var contS = 0;
@@ -770,8 +770,6 @@ function LoadCharClasificacion(data) {
     cb(start, end);
 
 }
-
-
 
 function Modal() {
     modal.find('.modal-content').empty().append(`

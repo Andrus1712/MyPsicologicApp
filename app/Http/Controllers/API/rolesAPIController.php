@@ -36,90 +36,107 @@ class rolesAPIController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $this->rolesRepository->pushCriteria(new RequestCriteria($request));
-        $this->rolesRepository->pushCriteria(new LimitOffsetCriteria($request));
-        $roles = $this->rolesRepository->all();
+        $roles = Role::all();
+        
+        foreach ($roles as $role){
+            $role->permissions;
+        }
+        // $this->rolesRepository->pushCriteria(new RequestCriteria($request));
+        // $this->rolesRepository->pushCriteria(new LimitOffsetCriteria($request));
+        // $roles = $this->rolesRepository->all();
 
         return $this->sendResponse($roles->toArray(), 'Roles retrieved successfully');
     }
 
-    // /**
-    //  * Store a newly created roles in storage.
-    //  * POST /roles
-    //  *
-    //  * @param CreaterolesAPIRequest $request
-    //  *
-    //  * @return Response
-    //  */
-    // public function store(CreaterolesAPIRequest $request)
-    // {
-    //     $input = $request->all();
+    /**
+     * Store a newly created roles in storage.
+     * POST /roles
+     *
+     * @param CreaterolesAPIRequest $request
+     *
+     * @return Response
+     */
+    public function store(Request $request)
+    {
+        // $roles = $this->rolesRepository->create($input);
 
-    //     $roles = $this->rolesRepository->create($input);
+        $lista_permisos = $request->permission;
 
-    //     return $this->sendResponse($roles->toArray(), 'Roles saved successfully');
-    // }
+        dd($lista_permisos);
+        // $roles = Role::create([
+        //     'name' => $request->name,
+        //     'slug' => $request->slug,
+        // ]);
 
-    // /**
-    //  * Display the specified roles.
-    //  * GET|HEAD /roles/{id}
-    //  *
-    //  * @param  int $id
-    //  *
-    //  * @return Response
-    //  */
-    // public function show($id)
-    // {
-    //     /** @var roles $roles */
-    //     $roles = $this->rolesRepository->findWithoutFail($id);
+        // foreach ($lista_permisos as $permiso) {
+        //     $p = Permissions::where('name', $permiso->name);
+        // }
 
-    //     if (empty($roles)) {
-    //         return $this->sendError('Roles not found');
-    //     }
 
-    //     return $this->sendResponse($roles->toArray(), 'Roles retrieved successfully');
-    // }
 
-    // /**
-    //  * Update the specified roles in storage.
-    //  * PUT/PATCH /roles/{id}
-    //  *
-    //  * @param  int $id
-    //  * @param UpdaterolesAPIRequest $request
-    //  *
-    //  * @return Response
-    //  */
-    // public function update($id, UpdaterolesAPIRequest $request)
-    // {
-    //     $input = $request->all();
+        return $this->sendResponse($roles->toArray(), 'Roles saved successfully');
+    }
 
-    //     /** @var roles $roles */
-    //     $roles = $this->rolesRepository->findWithoutFail($id);
+    /**
+     * Display the specified roles.
+     * GET|HEAD /roles/{id}
+     *
+     * @param  int $id
+     *
+     * @return Response
+     */
+    public function show($id)
+    {
+        /** @var roles $roles */
+        $roles = $this->rolesRepository->findWithoutFail($id);
 
-    //     if (empty($roles)) {
-    //         return $this->sendError('Roles not found');
-    //     }
+        if (empty($roles)) {
+            return $this->sendError('Roles not found');
+        }
 
-    //     $roles = $this->rolesRepository->update($input, $id);
+        return $this->sendResponse($roles->toArray(), 'Roles retrieved successfully');
+    }
 
-    //     return $this->sendResponse($roles->toArray(), 'roles updated successfully');
-    // }
+    /**
+     * Update the specified roles in storage.
+     * PUT/PATCH /roles/{id}
+     *
+     * @param  int $id
+     * @param UpdaterolesAPIRequest $request
+     *
+     * @return Response
+     */
+    public function update($id, UpdaterolesAPIRequest $request)
+    {
+        $input = $request->all();
 
-    // /**
-    //  * Remove the specified roles from storage.
-    //  * DELETE /roles/{id}
-    //  *
-    //  * @param  int $id
-    //  *
-    //  * @return Response
-    //  */
-    // public function destroy($id)
-    // {
-    //     /** @var roles $roles */
-    //     $roles = Role::find($id);
+        /** @var roles $roles */
+        $roles = $this->rolesRepository->findWithoutFail($id);
 
-    //     $roles->delete();
+        if (empty($roles)) {
+            return $this->sendError('Roles not found');
+        }
 
-    //     return response()->json(['' => 'Roles deleted successfully']);
-    // }
+        $roles = $this->rolesRepository->update($input, $id);
+
+        return $this->sendResponse($roles->toArray(), 'roles updated successfully');
+    }
+
+    /**
+     * Remove the specified roles from storage.
+     * DELETE /roles/{id}
+     *
+     * @param  int $id
+     *
+     * @return Response
+     */
+    public function destroy($id)
+    {
+        /** @var roles $roles */
+        $roles = Role::find($id);
+
+        $roles->delete();
+
+        return response()->json(['' => 'Roles deleted successfully']);
+    }
 }
