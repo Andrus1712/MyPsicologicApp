@@ -521,6 +521,7 @@ function DataTable(response) {
         $('#estudiantes-table').DataTable({
             "responsive": true,
             "destroy": false,
+            "scrollX": true,
             data: response,
             "columns": my_columns,
             "language": {

@@ -295,6 +295,12 @@ $(document).ready(function () {
                         case 'jpg':
                             icon = 'fa-file-image-o';
                             break;
+                        case 'mp3':
+                            icon = 'fa-file-audio-o bg-secondary';
+                            break;
+                        case 'mp4':
+                            icon = 'fa-file-movie-o bg-secondary';
+                            break;
                     }
                     html += `
                     <div class="col-md-3">
@@ -657,7 +663,7 @@ function ModalActividades() {
 
 function DataTable(response) {
 
-    //console.log(response)
+    console.table(response)
     if ($.fn.DataTable.isDataTable('#comportamientos-table')) {
         $('#comportamientos-table').dataTable().fnClearTable();
         $('#comportamientos-table').dataTable().fnDestroy();
@@ -793,7 +799,6 @@ function DataTable(response) {
                 my_item.title = 'Multimedia';
 
                 my_item.render = function (data, type, row) {
-                    console.log(row.multimedia)
                     return `<div align="center">
                                 <a class="btn btn-default ${row.multimedia == 'undefined' || row.multimedia == null ? 'disabled' : ''}" id="Btn_file_${row.id}" data-id=${row.id} >
                                     <i class="fa fa-file"></i>

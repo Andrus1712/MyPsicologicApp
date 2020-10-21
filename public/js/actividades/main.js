@@ -593,7 +593,7 @@ function ReloadCalendario() {
                     })
                 }
             } else {
-                alert("Sin actividades")
+                console.log("Sin actividades")
             }
         })
         .fail(function () {
