@@ -161,17 +161,24 @@ class comportamientoController extends AppBaseController
                     ->where(DB::raw('a.deleted_at'), '=', NULL)
                     ->groupBy(DB::raw('co.id'))
                     ->get();
-
-                foreach ($array as $a) {
-                    $data[] = $a->id;
+                if(count($array) != 0)
+                {
+                    foreach ($array as $a) {
+                        $data[] = $a->id;
+                    }
+                
+                    $contador = DB::table(DB::raw('comportamientos c'))
+                        ->select(DB::raw('c.id'))
+                        ->where(DB::raw('c.deleted_at'), '=', NULL)
+                        ->whereNotIn(DB::raw('c.id'), $data)
+                        ->get();
+                    return response()->json($contador);
+                }else
+                {
+                    $contador= [];
+                    return response()->json($contador);
                 }
-
-                $contador = DB::table(DB::raw('comportamientos c'))
-                    ->select(DB::raw('c.id'))
-                    ->where(DB::raw('c.deleted_at'), '=', NULL)
-                    ->whereNotIn(DB::raw('c.id'), $data)
-                    ->get();
-                return response()->json($contador);
+                
             } else if ($queryUsers[0]->role_id == 2) {
 
                 //Consultar cuantos comportamientos no tienen asignada actividades
@@ -273,14 +280,21 @@ class comportamientoController extends AppBaseController
 
     public function add_comportamientos(Request $request)
     {
-
+        // dd($request->all());
+        
         if (isset($request->id) && $request->method == 'update') {
-            if ($request->file('multimedia')) {
-                $path = Storage::disk('public')->put('documentosPSI', $request->file('multimedia'));
+            
+            $url_multimedia = $request->archivos != 0 ? '' : $request->tempMultimedia;
 
-                $url_multimedia = './' . $path;
-            } else {
-                $url_multimedia = $request->multimedia;
+            for($i=0; $i<$request->archivos; $i++)
+            {
+                if(is_numeric($i))
+                {
+                    if ($request->file("file$i")) {
+                        $path = Storage::disk('public')->put('documentosPSI', $request->file("file$i"));
+                        $url_multimedia .= 'PSIAPP./' . $path;
+                    }
+                }                    
             }
 
             comportamiento::where('id', $request->id)->update([
@@ -294,12 +308,20 @@ class comportamientoController extends AppBaseController
             ]);
             return response()->json(['status' => 'Avances updated successfully.']);
         } else {
-            if ($request->file('multimedia')) {
-                $path = Storage::disk('public')->put('documentosPSI', $request->file('multimedia'));
-                $url_multimedia = './' . $path;
-            } else {
-                $url_multimedia = null;
+            $url_multimedia = $request->archivos != 0 ? '' : null;
+
+            for($i=0; $i<$request->archivos; $i++)
+            {
+                if(is_numeric($i))
+                {
+                    if ($request->file("file$i")) {
+                        $path = Storage::disk('public')->put('documentosPSI', $request->file("file$i"));
+                        $url_multimedia .= 'PSIAPP./' . $path;
+                    }
+                }                    
             }
+            // dd($archivosR);
+            
 
             $emisor = auth()->user();
 

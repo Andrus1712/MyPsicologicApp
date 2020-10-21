@@ -21,7 +21,7 @@ class CreateComportamientosTable extends Migration
             $table->string('descripcion');
             $table->date('fecha');
             $table->string('emisor');
-            $table->string('multimedia', 500)->nullable();
+            $table->string('multimedia', 5000)->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('estudiante_id')->references('id')->on('estudiantes');

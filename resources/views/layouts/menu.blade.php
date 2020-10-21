@@ -61,35 +61,25 @@
 </li>
 
 @can('Psicoorientador')
-<li class="treeview">
-    <a href="#">
-        <i class="fa fa-archive"></i>
-        <span>Gestion de usuarios</span>
-        <span class="pull-right-container">
-            <i class="fa fa-angle-left pull-right"></i>
-        </span>
-    </a>
-    <ul class="treeview-menu">
-
-        <li class="{{ Request::is('estudiantes*') ? 'active' : '' }}">
-            <a href="{{ route('estudiantes.index') }}"><i class="fa fa-user-graduate"></i><span>Estudiantes</span></a>
-        </li>
-        <li class="{{ Request::is('docentes*') ? 'active' : '' }}">
-            <a href="{{ route('docentes.index') }}"><i class="fa fa-chalkboard-teacher"></i><span>Docentes</span></a>
-        </li>
-        <li class="{{ Request::is('acudientes*') ? 'active' : '' }}">
-            <a href="{{ route('acudientes.index') }}"><i class="fa fa-user-friends"></i><span>Acudientes</span></a>
-        </li>
-        <li class="{{ Request::is('psicologos*') ? 'active' : '' }}">
-            <a href="{{ route('psicologos.index') }}"><i class="fa fa-user-md"></i><span>Psicoorientador</span></a>
-        </li>
-
-        <li class="{{ Request::is('usuarios*') ? 'active' : '' }}">
-            <a href="{{ route('usuarios.index') }}"><i class="fa fa-users-cog"></i><span>Roles</span></a>
-        </li>
-
-    </ul>
+<li class="header">General</li>
+    
+<li class="{{ Request::is('estudiantes*') ? 'active' : '' }}">
+    <a href="{{ route('estudiantes.index') }}"><i class="fa fa-user-graduate"></i><span>Estudiantes</span></a>
 </li>
+<li class="{{ Request::is('docentes*') ? 'active' : '' }}">
+    <a href="{{ route('docentes.index') }}"><i class="fa fa-chalkboard-teacher"></i><span>Docentes</span></a>
+</li>
+<li class="{{ Request::is('acudientes*') ? 'active' : '' }}">
+    <a href="{{ route('acudientes.index') }}"><i class="fa fa-user-friends"></i><span>Acudientes</span></a>
+</li>
+<li class="{{ Request::is('psicologos*') ? 'active' : '' }}">
+    <a href="{{ route('psicologos.index') }}"><i class="fa fa-user-md"></i><span>Psicoorientador</span></a>
+</li>
+
+<li class="{{ Request::is('usuarios*') ? 'active' : '' }}">
+    <a href="{{ route('usuarios.index') }}"><i class="fa fa-users-cog"></i><span>Roles</span></a>
+</li>
+
 @endcan
 
 

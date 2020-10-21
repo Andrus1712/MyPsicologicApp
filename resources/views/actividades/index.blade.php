@@ -7,14 +7,21 @@
     <h1 class="pull-right">
 
         @can('Psicoorientador')
-        <div class="btn-group">
-            <a class="btn bg-olive margin" style="margin-top: -10px;margin-bottom: 5px" id="add-actividades"><i
-                    class="fa fa-plus"></i> Agregar Actividad</a>
-        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="btn-group">
+                    <a class="btn bg-olive margin" style="margin-top: -10px;margin-bottom: 5px" id="add-actividades"><i
+                            class="fa fa-plus"></i> Agregar Actividad</a>
+                </div>
 
-        <div class="btn-group">
-            <a class="btn bg-info margin" style="margin-top: -10px;margin-bottom: 5px" id="reprogramar"><i
-                    class="fa fa-clock"></i> Reprogramar cita</a>
+            </div>
+            <div class="col-md-6">
+                <div class="btn-group">
+                    <a class="btn bg-info margin" style="margin-top: -10px;margin-bottom: 5px" id="reprogramar"><i
+                            class="fa fa-clock"></i> Reprogramar cita</a>
+                </div>
+
+            </div>
         </div>
         @endcan
 
@@ -37,8 +44,8 @@
                 <div class="box-header with-border">
                     <h3 class="box-title">Tabla de actividades</h3>
                     <div class="box-tools pull-right">
-                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
-                                class="fa fa-minus"></i>
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
                         </button>
                     </div>
                     <!-- /.box-tools -->

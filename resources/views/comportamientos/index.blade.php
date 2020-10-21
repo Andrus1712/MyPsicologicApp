@@ -19,7 +19,7 @@
                 <h3 class="box-title">Tabla de comportamientos</h3>
             </div>
             <div class="box-body">
-                    @include('comportamientos.table')
+                @include('comportamientos.table')
             </div>
         </div>
 

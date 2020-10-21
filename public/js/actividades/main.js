@@ -150,6 +150,43 @@ $(document).ready(function () {
         })
     })
 
+    $('#reprogramar').on('click', function () {
+        modal.modal('show');
+        ModalReprogramar();
+        LoadActividades();
+
+        // $('#actividad_id').on('change', function(){
+        //     var fec = $('#actividad_id').attr('name');
+        //     alert(fec)
+        // })
+
+        $('#save').on('click', function () {
+            fecha = $("#fecha").val()
+            var id = $("#actividad_id").val();
+            var fechaReprogramar = $('#fechaReprogramar').val();
+
+            $.ajax({
+                url: '/api/actividades/' + id,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                type: 'PUT',
+                data: {
+                    fecha: fechaReprogramar,
+                    method: "reprogramar",
+                },
+            })
+                .done(function () {
+                    toastr.info("Actividad reprogramada");
+                    Reload()
+                    ReloadCalendario()
+                })
+                .fail(function () {
+                    toastr.error("Ha ocurrido un error");
+                })
+            //     .always(function () {
+            //         $('#btn_cumplido_' + id).addClass("disabled");
+            //     });
+        });
+    });
 
     // Check estatus
     $('#act-table').on('click', '[id^=btn_cumplido_]', function () {
@@ -230,6 +267,29 @@ $(document).ready(function () {
 
 
 });
+
+function LoadActividades() {
+    $("#actividad_id").select2({
+        placeholder: 'Seleccione la actividad',
+        allowClear: true,
+        dropdownParent: modal,
+        width: 'resolve'
+    });
+
+    $.ajax({
+        url: '/api/actividades',
+    })
+        .done(function (response) {
+            for (var i in response.data) {
+                $("#actividad_id").append(`<option name="${response.data[i].fecha}" value='${response.data[i].id}'>ATC${response.data[i].id} | ${response.data[i].titulo} | ${response.data[i].nombre_estudiante} ${response.data[i].apellido_estudiante} | ${response.data[i].fecha}</option>`)
+            }
+            // $('#fecha').val(response.data[i].fecha);
+
+        })
+        .fail(function () {
+            console.log("error");
+        })
+}
 
 function validarFechaMenorActual(date) {
     var x = new Date();
@@ -385,6 +445,73 @@ function Modal() {
         </div>
     `)
     $("#fecha").datetimepicker({
+        format: "YYYY-MM-DD"
+    });
+}
+
+function ModalReprogramar() {
+    modal.find('.modal-content').empty().append(`
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Formulario de Actividades</h4>
+        </div>
+        <div class="modal-body">
+
+            <div class="row">
+
+                <div class="col-md-12">
+
+                    <div class="form-group">
+                        <label >Actividad: </label>
+                        <div class="input-group">
+                            <select class="form-control" id="actividad_id" style="width: 100%;">
+
+                            </select>
+                        </div>
+                    </div>   
+
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Fecha de la actividad: </label>
+                        <div class="input-group date" id="timepicker">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <input type="text" class="form-control pull-right" id="fecha" >
+                        </div>
+                    </div>
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                    <div class="form-group">
+                        <label>Reprogramar Para: </label>
+                        <div class="input-group date" id="timepicker">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <input type="text" class="form-control pull-right" id="fechaReprogramar" >
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="save">Guardar</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    `)
+    $("#fechaReprogramar").datetimepicker({
         format: "YYYY-MM-DD"
     });
 }
@@ -842,7 +969,7 @@ function DataTable(response) {
                 my_item.title = 'Actividades';
 
                 my_item.render = function (data, type, row) {
-                    return `<div class="btn-group">
+                    return `<div class="btn-group" align="center">
                                 
                                 <a data-id=${row.id} id="Btn_show_${row.id}" class='btn btn-sm btn-info'>
                                     <i class="fa fa-eye" aria-hidden="true"></i>
@@ -866,8 +993,8 @@ function DataTable(response) {
                 my_item.title = '#';
 
                 my_item.render = function (data, type, row) {
-                    return `  <div'> 
-                                ${row.id}
+                    return `  <div align="center"> 
+                                ACT${row.id}
                             </div>`
                 }
                 my_columns.push(my_item);
@@ -1010,9 +1137,10 @@ function DataTable(response) {
             ],
 
             "columnDefs": [
-                { "width": "10%", "targets": 1 },
-                { "width": "20%", "targets": 2 },
-                { "width": "30%", "targets": 3 },
+                // { "width": "10%", "targets": 1 },
+                // { "width": "20%", "targets": 2 },
+                // { "width": "30%", "targets": 3 },
+
             ],
 
             "lengthMenu": [
@@ -1020,7 +1148,15 @@ function DataTable(response) {
                 [10, 15, 20, "Todos"]
             ]
         });
-        // $('thead > tr> th:nth-child(2)').css({ 'min-width': '140px', 'max-width': '140px' });
+        $('thead > tr> th:nth-child(1)').css({ 'min-width': '30px', 'max-width': '30px' });
+        $('thead > tr> th:nth-child(2)').css({ 'min-width': '90px', 'max-width': '90px' });
+        $('thead > tr> th:nth-child(3)').css({ 'min-width': '90px', 'max-width': '90px' });
+        $('thead > tr> th:nth-child(4)').css({ 'min-width': '140px', 'max-width': '140px' });
+        $('thead > tr> th:nth-child(7)').css({ 'min-width': '140px', 'max-width': '140px' });
+        $('thead > tr> th:nth-child(8)').css({ 'min-width': '140px', 'max-width': '140px' });
+        $('thead > tr> th:nth-child(9)').css({ 'min-width': '160px', 'max-width': '160px' });
+        $('thead > tr> th:nth-child(11)').css({ 'min-width': '130px', 'max-width': '130px' });
+        // $('thead > tr> th:nth-child(2)').css({ 'min-width': '160px', 'max-width': '140px' });
         // $('thead > tr> th:nth-child(3)').css({ 'min-width': '80px', 'max-width': '80px' });
         // $('thead > tr> th:nth-child(4)').css({ 'min-width': '140px', 'max-width': '140px' });
         // $('thead > tr> th:nth-child(7)').css({ 'min-width': '140px', 'max-width': '140px' });

@@ -15,8 +15,12 @@ class CreateHistorialActividadesTable extends Migration
     {
         Schema::create('historial_actividades', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('actividad_id');
+            $table->integer('actividad_id')->unsigned();
+            $table->string('fecha_historial');
             $table->timestamps();
+
+            $table->softDeletes();
+            $table->foreign('actividad_id')->references('id')->on('actividades');
         });
     }
 

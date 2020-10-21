@@ -114,6 +114,20 @@
                                         </li>
                                     </ul>
                                     @endif
+                                    @if ($notification->type == 'App\Notifications\ActividadPospuesta')
+                                    <ul class="menu">
+                                        <li>
+                                            <a id="readNotification" data-id="{{$notification->id}}"
+                                                href="/actividades/{{$notification->data['id']}}">
+                                                <i class="mr-3 pull-left fa fa-clock text-red"></i>
+                                                Actividad Pospuesta | {{ $notification->data['titulo'] }}
+
+                                                <small
+                                                    class="ml-3 pull-right">{{ $notification->created_at->diffForHumans() }}</small>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    @endif
                                     @if ($notification->type == 'App\Notifications\NuevoComportamiento')
                                     <ul class="menu">
                                         <li>
@@ -202,7 +216,7 @@
                                 <div class="pull-right">
                                     <a href="{!! url('/logout') !!}" class="btn btn-default btn-flat"
                                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                        Sign out
+                                        Salir
                                     </a>
                                     <form id="logout-form" action="{{ url('/logout') }}" method="POST"
                                         style="display: none;">

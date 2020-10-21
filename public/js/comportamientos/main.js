@@ -60,7 +60,8 @@ $(document).ready(function () {
     // $('#comportamientos-table').on('click', '[id^=Btn_search_]', function () {
     //     alert("info acudiente")
     // })
-
+    
+    
     $('#comportamientos-table').on('click', '[id^=Btn_Edit_]', function () {
         var id = $(this).attr('data-id');
 
@@ -75,10 +76,10 @@ $(document).ready(function () {
             $("#save").text("Actualizar")
             $("#save").attr("id", 'update')
 
-            $('#rutaFile').removeClass('hide')
-            $("#rutaFile").attr('href', filtro[0].multimedia)
-            $('#rutaFile').attr('target', '_blank')
-            $("#rutaFile").text('Ver documento')
+            // $('#rutaFile').removeClass('hide')
+            // $("#rutaFile").attr('href', filtro[0].multimedia)
+            // $('#rutaFile').attr('target', '_blank')
+            // $("#rutaFile").text('Ver documento')
 
             $("#cod_comportamiento").val(filtro[0].cod_comportamiento)
             $("#cod_comportamiento").attr("disabled", true)
@@ -93,8 +94,7 @@ $(document).ready(function () {
                 var estudiante_id = $("#estudiante_id").val(),
                     titulo = $("#titulo").val(),
                     descripcion = $("#descripcion").val(),
-                    fecha = $("#fecha").val(),
-                    multimedia = $("#multimedia")[0].files[0] == undefined ? $("#rutaFile").attr('href') : $("#multimedia")[0].files[0];
+                    fecha = $("#fecha").val()
 
                 if (estudiante_id == '' || titulo == '' || descripcion == '' || fecha == '') {
                     toastr.warning("Complete todos los campos")
@@ -102,19 +102,30 @@ $(document).ready(function () {
                 else {
 
                     var form = new FormData();
+
+                    var archivos = 0;
+                    form.append('tempMultimedia', filtro[0].multimedia)
+
+                    jQuery.each(jQuery('#multimedia')[0].files, function(i, file) {
+                        form.append('file'+i, file);
+                        archivos++;
+                    });
+                    form.append('archivos', archivos);
+
+
                     form.append('estudiante_id', estudiante_id)
                     form.append('titulo', titulo)
                     form.append('descripcion', descripcion)
                     form.append('fecha', fecha)
                     form.append('cod_comportamiento', 2342)
                     // form.append('emisor', "x")
-                    form.append('multimedia', multimedia)
+                    // form.append('multimedia', multimedia)
                     form.append('method', 'update')
                     form.append('id', id)
 
 
                     $.ajax({
-                        url: '/api/comportamientos',
+                        url: '/add_comportamientos',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                             'X-Requested-With': 'XMLHttpRequest'
@@ -136,6 +147,7 @@ $(document).ready(function () {
                             $("#update").addClass("disabled");
                         });
                 }
+                modal.find('.modal-content').empty()
             })
         }
     })
@@ -188,20 +200,28 @@ $(document).ready(function () {
                 descripcion = $("#descripcion").val(),
                 fecha = $("#fecha").val(),
                 // emisor = "X",
-                multimedia = $('#multimedia')[0].files[0];
+                multimedia = $("#multimedia")[0].files;
 
             if (cod_comportamiento == '' || estudiante_id == '' || titulo == '' || descripcion == '' || fecha == '') {
                 toastr.warning("Complete todos los campos")
             }
             else {
                 var form = new FormData();
+                var archivos = 0;
+                jQuery.each(jQuery('#multimedia')[0].files, function(i, file) {
+                    form.append('file'+i, file);
+                    archivos++;
+                });
+                form.append('archivos', archivos);
+
+
                 form.append('estudiante_id', estudiante_id)
                 form.append('titulo', titulo)
                 form.append('descripcion', descripcion)
                 form.append('fecha', fecha)
                 // form.append('emisor', emisor)
                 form.append('cod_comportamiento', cod_comportamiento)
-                form.append('multimedia', multimedia)
+                // form.append('multimedia', multimedia)
 
                 $.ajax({
                     url: '/add_comportamientos',
@@ -228,6 +248,96 @@ $(document).ready(function () {
         })
     })
 
+
+    $('#comportamientos-table').on('click', '[id^=Btn_file_]', function () {
+        modal.modal('show')
+        var id = $(this).attr('data-id');
+
+        const filtro = AllRegister.filter(f => f.id == id);
+        
+        if(filtro.length != 0)
+        {
+            var json = filtro[0].multimedia.split('PSIAPP');
+            var html = ''
+            var a=0;
+            for(var i=0; i<json.length; i++)
+            {
+                if( json[i] != '')
+                {
+                    var icon = 'fa fa-file';
+
+                    var extension = json[i].split('.')[2];
+                    console.log(extension)
+
+                    switch(extension)
+                    {
+                        case 'doc':
+                            icon = 'fa-file-word-o';
+                            break;
+                        case 'docx':
+                            icon = 'fa-file-word-o';
+                            break;
+                        case 'xlsx':
+                            icon = 'fa-file-excel-o bg-success bg-green';
+                            break;
+                        case 'pdf':
+                            icon = 'fa-file-pdf bg-danger bg-red';
+                            break;
+                        case 'txt':
+                            icon = 'fa-file-text';
+                            break;
+                        case 'jpeg':
+                            icon = 'fa-file-image-o';
+                            break;
+                        case 'png':
+                            icon = 'fa-file-image-o';
+                            break;
+                        case 'jpg':
+                            icon = 'fa-file-image-o';
+                            break;
+                    }
+                    html += `
+                    <div class="col-md-3">
+                        <div class="box box-default">
+                            <div class="box-header with-border">
+                                <i class="fa fa-book"></i>
+                                <h3 class="box-title">Archivo ${a+1}</h3>
+                            </div>
+                            <div class="box-body">
+                                <div class="form-group" align="center">
+                                    <a target="_blank" href="${json[i]}" type="button" style="font-size: 2em;" class="btn-link">
+                                        <i class="fa ${icon}"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>`
+                    
+                    a++;
+                }
+                
+            }
+
+
+            
+            
+
+            modal.find('.modal-content').empty().append(`
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Archivos cargados</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        ${html}
+                    </div>
+                    
+                </div>
+            `)
+        }
+        
+    });
 });
 
 function LoadEstudiantes() {
@@ -341,20 +451,20 @@ function Reload() {
         dataType: "JSON",
     })
 
-        .done(function (response) {
-            if (response.length != 0) {
-                AllRegister = response;
-                DataTable(response);
-            } else {
-                $('#comportamientos-table').dataTable().fnClearTable();
-                $('#comportamientos-table').dataTable().fnDestroy();
-                $('#comportamientos-table thead').empty()
-            }
-        })
+    .done(function (response) {
+        if (response.length != 0) {
+            AllRegister = response;
+            DataTable(response);
+        } else {
+            $('#comportamientos-table').dataTable().fnClearTable();
+            $('#comportamientos-table').dataTable().fnDestroy();
+            $('#comportamientos-table thead').empty()
+        }
+    })
 
-        .fail(function () {
-            console.log("error");
-        });
+    .fail(function () {
+        console.log("error");
+    });
 }
 
 // function ReloadAct() {
@@ -683,8 +793,9 @@ function DataTable(response) {
                 my_item.title = 'Multimedia';
 
                 my_item.render = function (data, type, row) {
+                    console.log(row.multimedia)
                     return `<div align="center">
-                                <a href="${row.multimedia} " class="btn btn-default" target="_blank">
+                                <a class="btn btn-default ${row.multimedia == 'undefined' || row.multimedia == null ? 'disabled' : ''}" id="Btn_file_${row.id}" data-id=${row.id} >
                                     <i class="fa fa-file"></i>
                                 </a>
                             </div>`
@@ -732,47 +843,19 @@ function DataTable(response) {
             "order": [
                 [2, 'asc']
             ],
-
-            "columnDefs": [
-                { "width": "20%", "targets": 2 },
-            ],
-
             "lengthMenu": [
                 [10, 15, 20, -1],
                 [10, 15, 20, "Todos"]
             ],
-            "createdRow": function (row, data, dataIndex) {
-
-                $.ajax({
-                    url: "/getCountComp",
-                    type: "GET",
-                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                    dataType: "JSON",
-                })
-
-                    .done(function (response) {
-                        if (response.length != 0) {
-                            response.forEach(function (datos, index) {
-                                if (data.id == datos.id) {
-                                    $(row).css('background-color', '#ffedd9');
-                                }
-
-                            });
-                        } else {
-                            console.log('sin datos');
-                        }
-                    })
-
-                    .fail(function () {
-                        console.log("error");
-                    });
-                // if (data.id == "11") {
-                //     $(row).addClass('text-red');
-                // }
-            },
         });
 
-
+        $('thead > tr> th:nth-child(1)').css({ 'min-width': '30px', 'max-width': '30px' });
+        $('thead > tr> th:nth-child(2)').css({ 'min-width': '100px', 'max-width': '100px' });
+        $('thead > tr> th:nth-child(3)').css({ 'min-width': '160px', 'max-width': '160px' });
+        $('thead > tr> th:nth-child(4)').css({ 'min-width': '80px', 'max-width': '80px' });
+        $('thead > tr> th:nth-child(5)').css({ 'min-width': '120px', 'max-width': '120px' });
+        $('thead > tr> th:nth-child(6)').css({ 'min-width': '120px', 'max-width': '120px' });
+        $('thead > tr> th:nth-child(10)').css({ 'min-width': '120px', 'max-width': '120px' })
 
 
     }
