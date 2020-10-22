@@ -9,7 +9,7 @@
         @can('Psicoorientador')
         <div class="row">
             <div class="col-md-6">
-                <div class="btn-group">
+                <div class="btn-group" style="margin-bottom: 10px;">
                     <a class="btn bg-olive margin" style="margin-top: -10px;margin-bottom: 5px" id="add-actividades"><i
                             class="fa fa-plus"></i> Agregar Actividad</a>
                 </div>

@@ -516,10 +516,10 @@ function LoadChartEstado(params) {
 
 
 
-                $("#chatEstados").removeClass('hide');
+                $("#chartEstamento").removeClass('hide');
                 if (arreglo.length == 0) {
                     $("#not-chart1").text('No hay datos registrados ')
-                    $("#chartEstados").addClass('hide');
+                    $("#chartEstamento").addClass('hide');
                 } else {
                     $("#not-chart1").text('')
                 }
@@ -549,123 +549,6 @@ function LoadChartEstado(params) {
 
 
 }
-
-// function LoadChartEstamento(data) {
-
-//     var start = moment().subtract(29, 'days');
-//     var end = moment();
-
-
-//     var inicio, final;
-//     function cb(start, end) {
-//         inicio = start.format('YYYY-MM_DD');
-//         final = end.format('YYYY-MM-DD')
-//         $('#fechaR').val(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-//     }
-
-//     $('#fechaR').daterangepicker({
-//         startDate: start,
-//         endDate: end,
-//         opens: "right",
-//         drops: "up",
-//         ranges: {
-//             'Today': [moment(), moment()],
-//             'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-//             'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-//             'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-//             'This Month': [moment().startOf('month'), moment().endOf('month')],
-//             'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-//         }
-//     }, cb);
-
-//     cb(start, end);
-
-//     //-------------
-//     //- PIE CHART -
-//     //-------------
-//     // Get context with jQuery - using jQuery's .get() method.
-//     var pieDataResponse = []
-//     $("#estadoModelo").on('change', function () {
-//         if ($(this).val() == '') {
-//             $("#pieChart").addClass('hide');
-//         } else {
-//             $.ajax({
-//                 url: "/api/getSeguimiento",
-//                 type: "POST",
-//                 headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-//                 dataType: "JSON",
-//                 data: { fechaInicial: inicio, fechaFinal: final, estado: $(this).val() }
-//             })
-
-//                 .done(function (response) {
-//                     pieDataResponse = []
-//                     for (var i = 0; i < response.length; i++) {
-//                         pieDataResponse.push(
-//                             {
-//                                 name: response[i].fecha,
-//                                 y: response[i].cantidad
-//                             }
-//                         )
-//                     }
-
-//                     Highcharts.chart('pieChart', {
-//                         chart: {
-//                             plotBackgroundColor: null,
-//                             plotBorderWidth: null,
-//                             plotShadow: false,
-//                             type: 'pie'
-//                         },
-//                         title: {
-//                             text: 'Reporte de estados por fecha'
-//                         },
-//                         tooltip: {
-//                             pointFormat: '{series.name}: <b>{point.y:.f}</b>'
-//                         },
-//                         accessibility: {
-//                             point: {
-//                                 valueSuffix: ' casos'
-//                             }
-//                         },
-//                         plotOptions: {
-//                             pie: {
-//                                 allowPointSelect: true,
-//                                 cursor: 'pointer',
-//                                 dataLabels: {
-//                                     enabled: true,
-//                                     format: '<b>{point.name}</b>: {point.y:f} caso(s)'
-//                                 },
-//                                 showInLegend: true
-//                             }
-//                         },
-//                         series: [{
-//                             name: 'Casos',
-//                             colorByPoint: true,
-//                             data: pieDataResponse
-//                         }]
-//                     });
-
-
-
-
-
-//                     $("#pieChart").removeClass('hide');
-//                     if (pieDataResponse.length == 0) {
-//                         $("#not-chart").text('No hay datos registrados ')
-//                         $("#pieChart").addClass('hide');
-//                     } else {
-//                         $("#not-chart").text('')
-//                     }
-
-//                 })
-
-//                 .fail(function () {
-//                     console.log("error");
-//                 });
-//         }
-
-//     });
-
-// }
 
 function LoadCharClasificacion(data) {
 

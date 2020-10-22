@@ -17,18 +17,19 @@ class CreateRolesTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->string('slug');
+            $table->string('descripcion')->nullable();
             $table->timestamps();
         });
 
         Schema::create('role_user', function (Blueprint $table) {
-            $table->primary('user_id', 'role_id');
-            
+            $table->increments('id');
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('role_id');
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-
             $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
+
+            // $table->primary(['user_id', 'role_id']);
         });
     }
 

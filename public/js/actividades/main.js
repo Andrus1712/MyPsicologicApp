@@ -137,7 +137,9 @@ $(document).ready(function () {
                 })
                     .done(function () {
                         setTimeout(function () { modal.modal("hide") }, 600);
+                        toastr.success("Actividad creada");
                         Reload()
+                        ReloadCalendario()
                     })
                     .fail(function () {
                         toastr.error("Ha ocurrido un error");
@@ -155,11 +157,6 @@ $(document).ready(function () {
         ModalReprogramar();
         LoadActividades();
 
-        // $('#actividad_id').on('change', function(){
-        //     var fec = $('#actividad_id').attr('name');
-        //     alert(fec)
-        // })
-
         $('#save').on('click', function () {
             fecha = $("#fecha").val()
             var id = $("#actividad_id").val();
@@ -175,6 +172,7 @@ $(document).ready(function () {
                 },
             })
                 .done(function () {
+                    setTimeout(function () { modal.modal('hide') }, 600);
                     toastr.info("Actividad reprogramada");
                     Reload()
                     ReloadCalendario()
@@ -182,9 +180,9 @@ $(document).ready(function () {
                 .fail(function () {
                     toastr.error("Ha ocurrido un error");
                 })
-            //     .always(function () {
-            //         $('#btn_cumplido_' + id).addClass("disabled");
-            //     });
+                .always(function () {
+                    $('#save').addClass("disabled");
+                });
         });
     });
 
@@ -510,33 +508,11 @@ function ModalReprogramar() {
             <button type="button" class="btn btn-primary" id="save">Guardar</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
-    `)
+    `);
     $("#fechaReprogramar").datetimepicker({
         format: "YYYY-MM-DD"
     });
 }
-
-// function LoadCalendario() {
-//     var calendarEl = document.getElementById('calendar');
-//     var calendar = new FullCalendar.Calendar(calendarEl, {
-//         timeZone: 'America/Bogota',
-//         locale: 'es',
-//         themeSystem: 'bootstrap',
-//         headerToolbar: {
-//             left: 'prev,next today',
-//             center: 'title',
-//             right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
-//         },
-//         weekNumbers: true,
-//         dayMaxEvents: true, // allow "more" link when too many events
-//         events: [{
-
-//         }]
-//     });
-
-//     calendar.render();
-// }
-
 
 function ReloadCalendario() {
     var calendarEl = document.getElementById('calendar');

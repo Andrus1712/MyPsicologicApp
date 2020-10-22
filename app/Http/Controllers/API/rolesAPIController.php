@@ -8,6 +8,7 @@ use App\Role;
 use App\Repositories\rolesRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
+use App\Permission;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
@@ -37,8 +38,8 @@ class rolesAPIController extends AppBaseController
     public function index(Request $request)
     {
         $roles = Role::all();
-        
-        foreach ($roles as $role){
+
+        foreach ($roles as $role) {
             $role->permissions;
         }
         // $this->rolesRepository->pushCriteria(new RequestCriteria($request));
@@ -62,17 +63,16 @@ class rolesAPIController extends AppBaseController
 
         $lista_permisos = $request->permission;
 
-        dd($lista_permisos);
-        // $roles = Role::create([
-        //     'name' => $request->name,
-        //     'slug' => $request->slug,
-        // ]);
+        $roles = Role::create([
+            'name' => $request->name,
+            'slug' => $request->slug,
+            'descripcion' => $request->descripcion,
+        ]);
 
-        // foreach ($lista_permisos as $permiso) {
-        //     $p = Permissions::where('name', $permiso->name);
-        // }
-
-
+        foreach ($lista_permisos as $key => $permiso) {
+            $p = Permission::where('slug', $permiso)->limit(1)->get();
+            $roles->asignarPermisos($p);
+        }
 
         return $this->sendResponse($roles->toArray(), 'Roles saved successfully');
     }
@@ -106,20 +106,32 @@ class rolesAPIController extends AppBaseController
      *
      * @return Response
      */
-    public function update($id, UpdaterolesAPIRequest $request)
+    public function update($id, Request $request)
     {
-        $input = $request->all();
+        $lista_permisos = $request->permission;
 
         /** @var roles $roles */
-        $roles = $this->rolesRepository->findWithoutFail($id);
+        $role = Role::find($id);
 
-        if (empty($roles)) {
+        if (empty($role)) {
             return $this->sendError('Roles not found');
         }
 
-        $roles = $this->rolesRepository->update($input, $id);
+        $role->name = $request->name;
+        $role->descripcion = $request->descripcion;
+        $role->slug = $request->slug;
+        $role->save();
 
-        return $this->sendResponse($roles->toArray(), 'roles updated successfully');
+        $role->permissions()->detach();
+
+        if ($lista_permisos != 0) {
+            foreach ($lista_permisos as $key => $permiso) {
+                $p = Permission::where('slug', $permiso)->limit(1)->get();
+                $role->asignarPermisos($p);
+            }
+        }
+
+        return $this->sendResponse($role->toArray(), 'roles updated successfully');
     }
 
     /**

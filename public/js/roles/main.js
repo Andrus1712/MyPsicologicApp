@@ -21,6 +21,12 @@ $(document).ready(function () {
                 this.checked = checked;
             });
         });
+        $('#sistema_all').on('click', function () {
+            var checked = this.checked;
+            $('input[name="sistema"]').each(function () {
+                this.checked = checked;
+            });
+        });
         $('#especial_all').on('click', function () {
             var checked = this.checked;
             $('input[name="especial"]').each(function () {
@@ -43,20 +49,23 @@ $(document).ready(function () {
         $('#save').on('click', function () {
 
             var name = $('#name').val(),
-                slug = $('#slug').val();
+                descripcion = $('#descripcion').val();
+
+            var substr = name.substr(0, 3);
+            var slug = substr.concat("-user");
 
             $("input:checkbox:checked").each(
                 function () {
-                    if($(this).val() != 'on'){
+                    if ($(this).val() != 'on') {
                         ArrayPermisos.push($(this).val());
                         // alert("El checkbox con valor " + $(this).val() + " está seleccionado");
                     }
                 }
             );
 
-            console.table(ArrayPermisos);
+            //console.table(ArrayPermisos);
 
-            if (name == '' | slug == '') {
+            if (name == '') {
                 toastr.warning("Complete todos los campos")
             } else {
                 $.ajax({
@@ -66,6 +75,7 @@ $(document).ready(function () {
                     data: {
                         name: name,
                         slug: slug,
+                        descripcion: descripcion,
                         permission: ArrayPermisos,
                     }
                 })
@@ -85,24 +95,87 @@ $(document).ready(function () {
 
     $('#roles-table').on('click', '[id^=Btn_Edit_]', function () {
         var id = $(this).attr('data-id');
-
         const filtro = AllRegister.filter(f => f.id == id);
 
         if (filtro != 0) {
             modal.modal('show')
             Modal()
 
+            var ArrayPermisos = [];
+
+            $('#ver_all').on('click', function () {
+                var checked = this.checked;
+                $('input[name="ver"]').each(function () {
+                    this.checked = checked;
+                });
+            });
+            $('#editar_all').on('click', function () {
+                var checked = this.checked;
+                $('input[name="editar"]').each(function () {
+                    this.checked = checked;
+                });
+            });
+            $('#sistema_all').on('click', function () {
+                var checked = this.checked;
+                $('input[name="sistema"]').each(function () {
+                    this.checked = checked;
+                });
+            });
+            $('#especial_all').on('click', function () {
+                var checked = this.checked;
+                $('input[name="especial"]').each(function () {
+                    this.checked = checked;
+                });
+            });
+            $('#crear_all').on('click', function () {
+                var checked = this.checked;
+                $('input[name="crear"]').each(function () {
+                    this.checked = checked;
+                });
+            });
+            $('#eliminar_all').on('click', function () {
+                var checked = this.checked;
+                $('input[name="eliminar"]').each(function () {
+                    this.checked = checked;
+                });
+            });
+
             $("#save").text("Actualizar")
             $("#save").attr("id", 'update')
 
             $('#name').val(filtro[0].name);
-            $('#slug').val(filtro[0].slug);
+            $('#descripcion').val(filtro[0].descripcion);
+
+
+
+            var datos = filtro[0].permissions;
+
+            $.each(datos, function (i, value) {
+                $("input[id=" + value.id + " ]").prop("checked", true);
+            });
+            // $("input:checkbox").each(
+            //     function () {
+            //         $("input[type=checkbox]").prop("checked", true);
+            //     }
+            // );
+
 
             $("#update").on('click', function () {
                 var name = $('#name').val(),
-                    slug = $('#slug').val();
+                    descripcion = $('#descripcion').val();
+                var substr = name.substr(0, 3);
+                var slug = substr.concat("-user");
 
-                if (name == '' | slug == '') {
+                $("input:checkbox:checked").each(
+                    function () {
+                        if ($(this).val() != 'on') {
+                            ArrayPermisos.push($(this).val());
+                            // mandamos el valor del slug
+                        }
+                    }
+                );
+
+                if (name == '') {
                     toastr.warning("Complete todos los campos")
                 } else {
                     $.ajax({
@@ -112,6 +185,8 @@ $(document).ready(function () {
                         data: {
                             name: name,
                             slug: slug,
+                            descripcion: descripcion,
+                            permission: ArrayPermisos,
                         }
                     })
                         .done(function () {
@@ -201,7 +276,11 @@ crear
 7 crear avances             c7
 8 crear cursos              c8
 
-especial
+seguimiento
+1 generar reportes          x9
+2 Modulo seguimientos       x10
+
+sistema
 1 crear usuarios            x1
 2 editar usuarios           x2
 3 eliminar usuarios         x3
@@ -212,8 +291,6 @@ especial
 3 eliminar roles            x7
 4 ver roles                 x8
 
-1 generar reportes          x9
-2 Modulo seguimientos       x10
 */
 
 function Modal() {
@@ -224,7 +301,7 @@ function Modal() {
     </div>
     <div class="modal-body">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-6">
 
                 <div class="form-group">
                     <label>Nombre de Rol: </label>
@@ -234,11 +311,14 @@ function Modal() {
                     </div>
                 </div>
 
+                </div>
+                <div class="col-md-6">
+
                 <div class="form-group">
                     <label>Descripcion: </label>
                     <div class="input-group">
                         <span class="input-group-addon"><i class="fa fa-book"></i></span>
-                        <input type="text" class="form-control" placeholder="Descripcion" id="slug">
+                        <input type="text" class="form-control" placeholder="Descripcion" id="descripcion">
                     </div>
                 </div>
 
@@ -249,251 +329,245 @@ function Modal() {
 
             <div class="col-md-6">
 
-                <label>Ver: </label> 
+                <label style="margin-right: 15px;">Ver: </label> 
                 <label><input id="ver_all" type="checkbox">Select all</input></label>
                 <div class="form-group">
-                    <div class="checkbox">
-                        <label>
-                            <input value="v1" name="ver" type="checkbox">ver estudiantes
-                        </label>
-                    </div>
 
                     <div class="checkbox">
                         <label>
-                            <input value="v2" name="ver" type="checkbox">ver docentes
+                            <input id="1" value="show.estudiantes" name="ver" type="checkbox">ver estudiantes
                         </label>
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input value="v3" name="ver"type="checkbox">ver acudientes
-                        </label>
-                    </div>
-
-                    <div class="checkbox">
-                        <label>
-                            <input value="v4" name="ver" type="checkbox">ver psicoorentadores
+                            <input id="2" value="show.docentes" name="ver" type="checkbox">ver docentes
                         </label>
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input value="v5" name="ver" type="checkbox">ver comportamientos
+                            <input id="3" value="show.acudiestes" name="ver"type="checkbox">ver acudientes
                         </label>
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input value="v6" name="ver" type="checkbox">ver actividades  
+                            <input id="4" value="show.psicologos" name="ver" type="checkbox">ver psicoorentadores
                         </label>
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input value="v7" name="ver" type="checkbox">ver avances  
+                            <input id="5" value="show.comportamientos" name="ver" type="checkbox">ver comportamientos
                         </label>
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input value="v8" name="ver" type="checkbox">ver cursos 
+                            <input id="6" value="show.actividades" name="ver" type="checkbox">ver actividades  
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="7" value="show.avances" name="ver" type="checkbox">ver avances  
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="8" value="show.cursos" name="ver" type="checkbox">ver cursos 
                         </label>
                     </div>
                     
                     
-                    <label>Editar: </label>
+                    <label style="margin-right: 15px;">Editar: </label>
                     <label><input id="editar_all" type="checkbox">Select all</input></label>
                     <div class="checkbox">
                         <label>
-                            <input value="e1" name="editar" type="checkbox">editar estudiantes
+                            <input id="9" value="edit.estudiantes" name="editar" type="checkbox">editar estudiantes
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="10" value="edit.docentes" name="editar" type="checkbox">editar docentes
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="11" value="edit.acudientes" name="editar" type="checkbox">edtar acudientes
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="12" value="edit.psicologos" name="editar" type="checkbox">editar psicoorentadores
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="13" value="edit.comportamientos" name="editar" type="checkbox">editar comportamientos
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="14" value="edit.actividades" name="editar" type="checkbox">editar actividades  
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="15" value="edit.avances" name="editar" type="checkbox">editar avances  
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="16" value="edit.cursos" name="editar" type="checkbox">editar cursos 
                         </label>
                     </div>
 
+                    <label style="margin-right: 15px;">Sistema: </label>
+                    <label><input id="sistema_all" type="checkbox">Select all</input></label>
                     <div class="checkbox">
                         <label>
-                            <input value="e2" name="editar" type="checkbox">editar docentes
+                            <input id="35" value="create.user" name="sistema" type="checkbox">crear usuarios
                         </label>
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input value="e3" name="editar" type="checkbox">edtar acudientes
-                        </label>
-                    </div>
-
-                    <div class="checkbox">
-                        <label>
-                            <input value="e4" name="editar" type="checkbox">editar psicoorentadores
+                            <input id="36" value="edit.user" name="sistema" type="checkbox">editar usuarios
                         </label>
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input value="e5" name="editar" type="checkbox">editar comportamientos
+                            <input id="37" value="delete.user" name="sistema" type="checkbox">eliminar usuarios
                         </label>
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input value="e6" name="editar" type="checkbox">editar actividades  
+                            <input id="38" value="show.user" name="sistema" type="checkbox">ver usuarios
                         </label>
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input value="e7" name="editar" type="checkbox">editar avances  
+                            <input id="39" value="create.roles" name="sistema" type="checkbox">crear roles
                         </label>
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input value="e8" name="editar" type="checkbox">editar cursos 
+                            <input id="40" value="edit.roles" name="sistema" type="checkbox">editar roles  
                         </label>
                     </div>
-
-                
-
-                    <label>Especiales: </label>
-                    <label><input id="especial_all" type="checkbox">Select all</input></label>
                     <div class="checkbox">
                         <label>
-                            <input value="x1" name="especial" type="checkbox">ver usuarios
+                            <input id="41" value="delete.roles" name="sistema" type="checkbox">eliminar roles  
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="42" value="show.roles" name="sistema" type="checkbox">ver roles 
                         </label>
                     </div>
 
-                    <div class="checkbox">
-                        <label>
-                            <input value="x2" name="especial" type="checkbox">crear usuarios
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input value="x3" name="especial" type="checkbox">eliminar usuarios
-                        </label>
-                    </div>
-
-                    <div class="checkbox">
-                        <label>
-                            <input value="x4" name="especial" type="checkbox">editar usuarios
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input value="x5" name="especial" type="checkbox">ver roles
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input value="x6" name="especial" type="checkbox">crear roles  
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input value="x7" name="especial" type="checkbox">eliminar roles  
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input value="x8" name="especial" type="checkbox">editar roles 
-                        </label>
-                    </div>
-
-                    <div class="checkbox">
-                        <label>
-                            <input value="x9" name="especial" type="checkbox">modulo seguimeinto
-                        </label>
-                    </div>
-
-                    <div class="checkbox">
-                        <label>
-                            <input value="x10" name="especial" type="checkbox">generar reportes
-                        </label>
-                    </div>
                 </div>
 
 
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                <label>Crear: </label>
-                <label><input id="crear_all" type="checkbox">Select all</input></label>
+
+                    <label style="margin-right: 15px;">Crear: </label>
+                    <label><input id="crear_all" type="checkbox">Select all</input></label>
                     <div class="checkbox">
                         <label>
-                            <input value="c1" name="crear" type="checkbox">crear estudiantes
+                            <input id="25" value="create.estudiantes" name="crear" type="checkbox">crear estudiantes
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="26" value="create.docentes" name="crear" type="checkbox">crear docentes
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="27" value="create.acudientes" name="crear" type="checkbox">crear acudientes
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="28" value="create.psicologos" name="crear" type="checkbox">crear psicoorentadores
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="29" value="create.comportamientos" name="crear" type="checkbox">crear comportamientos
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="30" value="create.actividades" name="crear" type="checkbox">crear actividades  
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="31" value="create.avances" name="crear" type="checkbox">crear avances  
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="32" value="create.cursos" name="crear" type="checkbox">crear cursos 
                         </label>
                     </div>
 
+                    <label style="margin-right: 15px;">Eliminar: </label>
+                    <label><input id="eliminar_all" type="checkbox">Select all</input></label>
                     <div class="checkbox">
                         <label>
-                            <input value="c2" name="crear" type="checkbox">crear docentes
+                            <input id="17" value="delete.estudiantes" name="eliminar" type="checkbox">eliminar estudiantes
                         </label>
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input value="c3" name="crear" type="checkbox">crear acudientes
+                            <input id="18" value="delete.docentes" name="eliminar" type="checkbox">eliminar docentes
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="19" value="delete.acudiente" name="eliminar" type="checkbox">eliminar acudientes
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="20" value="delete.psicologos" name="eliminar" type="checkbox">eliminar psicoorentadores
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="21" value="delete.comportamientos" name="eliminar" type="checkbox">eliminar comportamientos
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="22" value="delete.actividades" name="eliminar" type="checkbox">eliminar actividades  
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="23" value="delete.avances" name="eliminar" type="checkbox">eliminar avances  
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="24" value="delete.cursos" name="eliminar" type="checkbox">eliminar cursos 
+                        </label>
+                    </div>
+                
+
+                    <label style="margin-right: 15px;">Especial: </label>
+                    <label><input id="especial_all" type="checkbox">Select all</input></label>
+                    <div class="checkbox">
+                        <label>
+                            <input id="33" value="make.reportes" name="especial" type="checkbox">generar reportes
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="34" value="modulo.seguimiento" name="especial" type="checkbox">modulo seguimiento
                         </label>
                     </div>
 
-                    <div class="checkbox">
-                        <label>
-                            <input value="c4" name="crear" type="checkbox">crear psicoorentadores
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input value="c5" name="crear" type="checkbox">crear comportamientos
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input value="c6" name="crear" type="checkbox">crear actividades  
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input value="c7" name="crear" type="checkbox">crear avances  
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input value="c8" name="crear" type="checkbox">crear cursos 
-                        </label>
-                    </div>
-
-                <label>Eliminar: </label>
-                <label><input id="eliminar_all" type="checkbox">Select all</input></label>
-                    <div class="checkbox">
-                        <label>
-                            <input value="d1" name="eliminar" type="checkbox">eliminar estudiantes
-                        </label>
-                    </div>
-
-                    <div class="checkbox">
-                        <label>
-                            <input value="d2" name="eliminar" type="checkbox">eliminar docentes
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input value="d3" name="eliminar" type="checkbox">eliminar acudientes
-                        </label>
-                    </div>
-
-                    <div class="checkbox">
-                        <label>
-                            <input value="d4" name="eliminar" type="checkbox">eliminar psicoorentadores
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input value="d5" name="eliminar" type="checkbox">eliminar comportamientos
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input value="d6" name="eliminar" type="checkbox">eliminar actividades  
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input value="d7" name="eliminar" type="checkbox">eliminar avances  
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input value="d8" name="eliminar" type="checkbox">eliminar cursos 
-                        </label>
-                    </div>
                 </div>
 
             </div>
@@ -532,6 +606,14 @@ function Reload() {
         });
 }
 
+function multiple(valor, multiple) {
+    var resto = valor % multiple;
+    if (resto == 0)
+        return true;
+    else
+        return false;
+}
+
 function DataTable(response) {
     if ($.fn.DataTable.isDataTable('#roles-table')) {
         $('#roles-table').dataTable().fnClearTable();
@@ -548,7 +630,7 @@ function DataTable(response) {
             var my_item = {};
             // my_item.class = "filter_C";
             my_item.data = key;
-            if (key == 'created_at') {
+            if (key == 'permissions') {
 
                 my_item.title = 'Acción';
 
@@ -607,19 +689,24 @@ function DataTable(response) {
                 }
                 my_columns.push(my_item);
             }
-            else if (key == 'permissions') {
+            else if (key == 'created_at') {
 
                 my_item.title = 'Permisos';
 
-                var html = '';
                 my_item.render = function (data, type, row) {
 
+                    var html = '';
 
                     if (row.permissions.length != 0) {
                         for (var i = 0; i < row.permissions.length; i++) {
-                            html += `<span class="label bg-blue">
+                            html += `<span style="margin-right: 5px;" class="label label-default">
                                         ${row.permissions[i].name}
                                     </span>`
+
+                            if (i > 2 && multiple(i, 4)) {
+                                html += `<br>`
+                            }
+
 
                         }
                         return `<div class="pull-right-container">
@@ -636,7 +723,7 @@ function DataTable(response) {
         })
 
         $('#roles-table').DataTable({
-            //responsive: false,
+            responsive: false,
             'scrollX': false,
             "destroy": true,
             data: response,

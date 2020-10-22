@@ -77,7 +77,11 @@
 </li>
 
 <li class="{{ Request::is('usuarios*') ? 'active' : '' }}">
-    <a href="{{ route('usuarios.index') }}"><i class="fa fa-users-cog"></i><span>Roles</span></a>
+    <a href="{{ route('usuarios.index') }}"><i class="fa fa-users"></i><span>Gestionar Usuarios</span></a>
+</li>
+
+<li class="{{ Request::is('roles*') ? 'active' : '' }}">
+    <a href="{{ route('roles.index') }}"><i class="fa fa-users-cog"></i><span>Configuracion</span></a>
 </li>
 
 @endcan
