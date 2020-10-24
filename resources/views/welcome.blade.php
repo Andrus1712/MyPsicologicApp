@@ -58,7 +58,8 @@
           <li><a href="#portfolio"> ¿Quiénes somos?</a></li>
           <li><a href="#contact"> Contactanos</a></li>
           <li><a href="#team">Team</a></li>
-          <li><a href="/login">Ingresar</a></li>
+          <li><a href="{{url('/legal')}}">Legal</a></li>
+          <li><a href="{{url('/login')}}">Ingresar</a></li>
         </ul>
       </nav><!-- #nav-menu-container -->
 

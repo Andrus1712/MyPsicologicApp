@@ -34,7 +34,7 @@
 </head>
 <body class="hold-transition login-page" 
     style="
-        background-image: url('https://cr00.epimg.net/radio/imagenes/2020/03/16/monteria/1584313357_861182_1584313547_noticia_normal.jpg');
+        background-image: url('https://i.ibb.co/GTtpTKG/Sin-t-tulo-2.png');
         background-repeat: no-repeat;
         background-size: 100%;">
 <div class="login-box">

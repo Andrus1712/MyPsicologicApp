@@ -21,6 +21,9 @@ Route::get('/reportes', function () {
     return view('reporte');
 });
 
+Route::get('/legal', function(){
+    return view('legal');
+});
 
 Auth::routes();
 
