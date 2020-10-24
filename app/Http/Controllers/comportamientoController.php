@@ -10,8 +10,10 @@ use App\Models\acudiente;
 use Illuminate\Http\Request;
 use App\Models\comportamiento;
 use App\Models\psicologo;
+use App\Models\tipoComportamiento;
 use App\Notifications\NuevoComportamiento;
 use App\Role;
+use Carbon\Carbon;
 use PDF;
 use Illuminate\Support\Facades\Storage;
 use Flash;
@@ -32,10 +34,30 @@ class comportamientoController extends AppBaseController
 
     public function createPDF()
     {
-        $data = comportamiento::all();
+        // $data = tipoComportamiento::all();
+        $data = DB::table(DB::raw('tipo_comportamientos tp'))->where(DB::raw('tp.deleted_at'), '=', NULL)
+        ->join(DB::raw('actividades ac'), 'ac.tipo_comportamiento_id', '=', 'tp.id')
+        ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
+        ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+        ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
+        ->select(
+            DB::raw('tp.titulo'),
+            DB::raw('c.titulo  AS casos'),
+            DB::raw('g.grado AS nivel'),
+            DB::raw('ac.estado'),
+            DB::raw('ac.titulo AS estrategia')
+        )
+        ->groupBy(DB::raw('tp.titulo'), 
+                  DB::raw('ac.estado'),
+                  DB::raw('g.grado'),
+                  DB::raw('ac.titulo'),
+                  DB::raw('c.titulo'))
+        ->get();
+        
         // dd($data);
-        view()->share('comportamientos', $data);
-        $pdf = PDF::loadView('pdf_view', $data);
+        view()->share('comportamientos', ['data' => $data, 'fecha'=> Carbon::now()->format('d-m-Y')]);
+        $pdf = PDF::loadView('pdf_view', $data)
+                ->setPaper('a4', 'landscape');
 
         return $pdf->stream('pdf_file.pdf');
     }

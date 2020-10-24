@@ -31,7 +31,6 @@ class avancesAPIController extends AppBaseController
 
     public function __construct(avancesRepository $avancesRepo)
     {
-        $this->middleware('auth');
         $this->avancesRepository = $avancesRepo;
     }
 

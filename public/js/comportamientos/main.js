@@ -359,9 +359,9 @@ function LoadEstudiantes() {
         dataType: "JSON",
     })
         .done(function (response) {
-            if (response.length != 0) {
-                for (var i = 0; i < response.length; i++) {
-                    $("#estudiante_id").append(`<option value='${response[i].id}'>${response[i].nombres} ${response[i].apellidos} </option>`)
+            if (response.estudiantes.length != 0) {
+                for (var i = 0; i < response.estudiantes.length; i++) {
+                    $("#estudiante_id").append(`<option value='${response.estudiantes[i].id}'>${response.estudiantes[i].nombres} ${response.estudiantes[i].apellidos} </option>`)
                 }
             } else {
 

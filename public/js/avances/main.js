@@ -359,7 +359,7 @@ function Reload() {
             if (response.length != 0) {
                 AllRegister = response.avances;
                 permisos = response.permisos;
-                DataTable(response);
+                DataTable(response.avances);
             } else {
                 $('#avances-table').dataTable().fnClearTable();
                 $('#avances-table').dataTable().fnDestroy();

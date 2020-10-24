@@ -1,5 +1,6 @@
 var modal = $('#modal-actividades');
 var AllRegister = []
+var permisos = []
 
 $(document).ready(function () {
     Reload()
@@ -277,7 +278,7 @@ $(document).ready(function () {
                     historial = response;
                     modal.modal('show');
                     ModalHistorial(historial);
-                }else{
+                } else {
                     toastr.warning('No existe historial actualmente')
                 }
             })
@@ -389,8 +390,8 @@ function ModalHistorial(historial) {
                     <th scope="row">${historial[i]}</th>
                     <td>${historial[i].fecha}</td>
                     <td>${historial[i].fecha_historial}</td>
-                    <td>${historial[i].estado_actividad == 1 ? `<i class="fa fa-check-circle" style="color: green;"></i> Cumplida`:
-                    historial[i].estado_actividad == 2 ? `<i class="fa fa-exclamation-circle" style="color: red;"></i> Incumplida` :
+                    <td>${historial[i].estado_actividad == 1 ? `<i class="fa fa-check-circle" style="color: green;"></i> Cumplida` :
+                historial[i].estado_actividad == 2 ? `<i class="fa fa-exclamation-circle" style="color: red;"></i> Incumplida` :
                     `<i class="fa  fa-exclamation-triangle" style="color: orange;" ></i> En espera`}</td>
                 </tr>`;
 
@@ -619,15 +620,15 @@ function ReloadCalendario() {
     })
 
         .done(function (response) {
-            if (response.length != 0) {
+            if (response.actividades.length != 0) {
 
-                for (var i = 0; i < response.length; i++) {
+                for (var i = 0; i < response.actividades.length; i++) {
                     calendar.addEvent({
-                        id: response[i].id,
-                        groupId: JSON.stringify(response[i]),
-                        title: response[i].titulo,
-                        start: response[i].fecha,
-                        backgroundColor: response[i].estado == 0 ? '#F4A460' : response[i].estado == 1 ? '#3CB371' : '#FF6347',
+                        id: response.actividades[i].id,
+                        groupId: JSON.stringify(response.actividades[i]),
+                        title: response.actividades[i].titulo,
+                        start: response.actividades[i].fecha,
+                        backgroundColor: response.actividades[i].estado == 0 ? '#F4A460' : response.actividades[i].estado == 1 ? '#3CB371' : '#FF6347',
                         borderColor: "gray",
                     })
                 }
@@ -943,8 +944,9 @@ function Reload() {
 
         .done(function (response) {
             if (response.length != 0) {
-                AllRegister = response;
-                DataTable(response);
+                AllRegister = response.actividades;
+                permisos = response.permisos;
+                DataTable(response.actividades);
 
 
             } else {
@@ -984,47 +986,69 @@ function DataTable(response) {
                 my_item.title = 'Culminación';
 
                 my_item.render = function (data, type, row) {
-                    return `<div align="center">
+                    var html2 = '';
+                    // for (let i = 0; i < permisos.length; i++) {
 
-                                <div class="btn-group btn-group-circle btn-group-solid" align="center">
-                                    
-                                    <a data-id=${row.id} id="btn_cumplido_${row.id}" class="btn btn-circle btn-sm btn-success ${row.estado == 1 ? 'disabled' : ''}">
+                    //     if (permisos[i] == "edit.ctividades") {
+                            html2 += `
+                                    <a data-id=${row.id} id="btn_cumplido_${row.id}" class="btn btn-circle btn-sm btn-success ">
                                         <i class="fa fa-thumbs-up" aria-hidden="true"></i>
                                     </a>
 
-                                    <a data-id=${row.id} id="btn_incumplido_${row.id}" class="btn btn-circle btn-sm btn-danger ${row.estado == 2 ? 'disabled' : ''}">
+                                    <a data-id=${row.id} id="btn_incumplido_${row.id}" class="btn btn-circle btn-sm btn-danger ">
                                         <i class="fa fa-thumbs-down" aria-hidden="true"></i>
                                     </a>
-                                </div>
-                            </div>`
-
+                                    `
+                        // }
+                        return `<div align="center">
+                                    <div class="btn-group btn-group-circle btn-group-solid" align="center">
+                                        ${html2}
+                                    </div>
+                                </div>`;
+                    // }
                 }
-                my_columns.push(my_item);
 
+                if (permisos.length != 0) {
+                    my_columns.push(my_item);
+                }
             }
 
-            if (key == 'deleted_at') {
+            else if (key == 'deleted_at') {
 
                 my_item.title = 'Actividades';
 
                 my_item.render = function (data, type, row) {
-                    return `<div class="btn-group" align="center">
-                                
-                                <a data-id=${row.id} id="Btn_show_${row.id}" class='btn btn-sm btn-info'>
-                                    <i class="fa fa-eye" aria-hidden="true"></i>
-                                </a>
-                                <a data-id=${row.id} id="Btn_Edit_${row.id}" class='btn btn-sm btn-primary'>
-                                    <i class="fa fa-edit" aria-hidden="true"></i>
-                                </a>
-                                <a data-id=${row.id} id="Btn_delete_${row.id}" class='btn btn-sm btn-danger'>
-                                    <i class="fa fa-trash" aria-hidden="true"></i>
-                                </a> 
-                                
-                            </div>`
+                    var html = '';
+                    for (let i = 0; i < permisos.length; i++) {
+                        if (permisos[i] == "delete.actividades") {
+                            html += `
+                                    <a data-id=${row.id} id="Btn_delete_${row.id}" class='btn btn-circle btn-sm btn-danger'>
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </a> `
+                        } else if (permisos[i] == "edit.actividades") {
+                            html += `
+                                    <a data-id=${row.id} id="Btn_Edit_${row.id}" class='btn btn-circle btn-sm btn-primary'>
+                                        <i class="fa fa-edit" aria-hidden="true"></i>
+                                    </a>
+                                    `
+                        } else if (permisos[i] == "show.actividades") {
+                            html += `
+                                    <a data-id=${row.id} id="Btn_show_${row.id}" class='btn btn-sm btn-info'>
+                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                    </a> 
+                                    `
+                        }
+                    }
+                    return `<div align="center">
+                                <div class="btn-group btn-group-circle btn-group-solid" align="center">
+                                    ${html}
+                                </div>
+                            </div>`;
 
                 }
-                my_columns.push(my_item);
-
+                if (permisos.length != 0) {
+                    my_columns.push(my_item);
+                }
             }
 
             else if (key == 'id') {
@@ -1044,7 +1068,6 @@ function DataTable(response) {
                 my_item.title = 'Titulo Actividad';
 
                 my_item.render = function (data, type, row) {
-                    console.log(row)
                     return `  <div'> 
                                 ${row.titulo} <a data-id=${row.id} id="Btn_historial_${row.id}" class='btn btn-circle btn-xs btn-default'>
                                         <i class="fa fa-clock" aria-hidden="true"></i>
@@ -1148,7 +1171,9 @@ function DataTable(response) {
                 my_columns.push(my_item);
             }
 
+
         })
+
 
         $('#act-table').DataTable({
             'responsive': true,

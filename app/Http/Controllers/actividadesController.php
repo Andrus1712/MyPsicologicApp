@@ -192,6 +192,10 @@ class actividadesController extends AppBaseController
         //Permisos que tiene el usuario
         $permisos = [];
 
+        if ($user->havePermission('show.actividades')) {
+            array_push($permisos, "show.actividades");
+        }
+
         if ($user->havePermission('edit.actividades')) {
             array_push($permisos, "edit.actividades");
         }
