@@ -59,136 +59,147 @@ class actividadesController extends AppBaseController
         $user = Auth()->user();
 
         $rol = $user->tieneRol();
-        if ($rol == 'psi-user') {
-            $actividades = DB::table(DB::raw('actividades ac'))->where(DB::raw('ac.deleted_at', '=', NULL))
-                ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
-                ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
-                ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
-                ->select(
-                    'ac.id',
-                    'ac.titulo',
-                    'ac.fecha',
-                    'ac.descripcion',
-                    'ac.estado',
-                    DB::raw('c.titulo as titulo_comportamiento'),
-                    DB::raw('c.descripcion as descripcion_comportamiento'),
-                    DB::raw('e.nombres as nombre_estudiante'),
-                    DB::raw('e.apellidos as apellido_estudiante'),
-                    DB::raw('e.telefono as telefono_estudiante'),
-                    DB::raw('e.correo as correo_estudiante'),
-                    DB::raw('a.nombres as nombre_acudiente'),
-                    DB::raw('a.apellidos as apellido_acudiente'),
-                    DB::raw('a.telefono as telefono_acudiente'),
-                    DB::raw('a.correo as correo_acudiente'),
-                    DB::raw('tc.titulo as titulo_tipo_comportamiento'),
-                    DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
-                    'ac.created_at',
-                    'ac.deleted_at'
-                )
-                ->get();
-        } else if ($rol == 'est-user') {
-            $actividades = DB::table(DB::raw('actividades ac'))->where(DB::raw('ac.deleted_at', '=', NULL))
-                ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
-                ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
-                ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
-                ->select(
-                    'ac.id',
-                    'ac.titulo',
-                    'ac.fecha',
-                    'ac.descripcion',
-                    'ac.estado',
-                    DB::raw('c.titulo as titulo_comportamiento'),
-                    DB::raw('c.descripcion as descripcion_comportamiento')
-                )
-                ->where(DB::raw('e.correo'), '=', Auth()->user()->email)
-                ->get();
-        } else if ($rol == 'doc-user') {
-            $actividades = DB::table(DB::raw('actividades ac'))->where(DB::raw('ac.deleted_at', '=', NULL))
-                ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
-                ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
-                ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
-                ->select(
-                    'ac.id',
-                    'ac.titulo',
-                    'ac.fecha',
-                    'ac.descripcion',
-                    'ac.estado',
-                    DB::raw('c.titulo as titulo_comportamiento'),
-                    DB::raw('c.descripcion as descripcion_comportamiento'),
-                    DB::raw('e.nombres as nombre_estudiante'),
-                    DB::raw('e.apellidos as apellido_estudiante'),
-                    DB::raw('e.telefono as telefono_estudiante'),
-                    DB::raw('e.correo as correo_estudiante'),
-                    DB::raw('a.nombres as nombre_acudiente'),
-                    DB::raw('a.apellidos as apellido_acudiente'),
-                    DB::raw('a.telefono as telefono_acudiente'),
-                    DB::raw('a.correo as correo_acudiente'),
-                    DB::raw('tc.titulo as titulo_tipo_comportamiento'),
-                    DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
-                    'ac.created_at',
-                    'ac.deleted_at'
-                )
-                ->get();
-        } else if ($rol == 'acu-user') {
-            $actividades = DB::table(DB::raw('actividades ac'))->where(DB::raw('ac.deleted_at', '=', NULL))
-                ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
-                ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
-                ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
-                ->select(
-                    'ac.id',
-                    'ac.titulo',
-                    'ac.fecha',
-                    'ac.descripcion',
-                    'ac.estado',
-                    DB::raw('c.titulo as titulo_comportamiento'),
-                    DB::raw('c.descripcion as descripcion_comportamiento'),
-                    DB::raw('e.nombres as nombre_estudiante'),
-                    DB::raw('e.apellidos as apellido_estudiante'),
-                    DB::raw('e.telefono as telefono_estudiante'),
-                    DB::raw('e.correo as correo_estudiante'),
-                    DB::raw('a.nombres as nombre_acudiente'),
-                    DB::raw('a.apellidos as apellido_acudiente'),
-                    DB::raw('a.telefono as telefono_acudiente'),
-                    DB::raw('a.correo as correo_acudiente'),
-                    DB::raw('tc.titulo as titulo_tipo_comportamiento'),
-                    DB::raw('tc.descripcion as descripcion_tipo_comportamiento')
-                )
-                ->where(DB::raw('a.correo'), '=', Auth()->user()->email)
-                ->get();
-        } else {
-            $actividades = DB::table(DB::raw('actividades ac'))->where(DB::raw('ac.deleted_at', '=', NULL))
-                ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
-                ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
-                ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
-                ->select(
-                    'ac.id',
-                    'ac.titulo',
-                    'ac.fecha',
-                    'ac.descripcion',
-                    'ac.estado',
-                    DB::raw('c.titulo as titulo_comportamiento'),
-                    DB::raw('c.descripcion as descripcion_comportamiento'),
-                    DB::raw('e.nombres as nombre_estudiante'),
-                    DB::raw('e.apellidos as apellido_estudiante'),
-                    DB::raw('e.telefono as telefono_estudiante'),
-                    DB::raw('e.correo as correo_estudiante'),
-                    DB::raw('a.nombres as nombre_acudiente'),
-                    DB::raw('a.apellidos as apellido_acudiente'),
-                    DB::raw('a.telefono as telefono_acudiente'),
-                    DB::raw('a.correo as correo_acudiente'),
-                    DB::raw('tc.titulo as titulo_tipo_comportamiento'),
-                    DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
-                    'ac.created_at',
-                    'ac.deleted_at'
-                )
-                ->get();
-        }
 
+        $queryUsers = DB::table('role_user')
+            ->select('role_user.*')
+            ->where('role_user.user_id', '=', Auth()->user()->id)
+            ->limit(1)
+            ->get();
+        if (count($queryUsers) != 0) {
+            if ($queryUsers[0]->role_id == 1) {
+                $actividades = DB::table(DB::raw('actividades ac'))->where(DB::raw('ac.deleted_at', '=', NULL))
+                    ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
+                    ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+                    ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    ->select(
+                        'ac.id',
+                        'ac.titulo',
+                        'ac.fecha',
+                        'ac.descripcion',
+                        'ac.estado',
+                        DB::raw('c.titulo as titulo_comportamiento'),
+                        DB::raw('c.descripcion as descripcion_comportamiento'),
+                        DB::raw('e.nombres as nombre_estudiante'),
+                        DB::raw('e.apellidos as apellido_estudiante'),
+                        DB::raw('e.telefono as telefono_estudiante'),
+                        DB::raw('e.correo as correo_estudiante'),
+                        DB::raw('a.nombres as nombre_acudiente'),
+                        DB::raw('a.apellidos as apellido_acudiente'),
+                        DB::raw('a.telefono as telefono_acudiente'),
+                        DB::raw('a.correo as correo_acudiente'),
+                        DB::raw('tc.titulo as titulo_tipo_comportamiento'),
+                        DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
+                        'ac.created_at',
+                        'ac.deleted_at'
+                    )
+                    ->get();
+            } else if ($queryUsers[0]->role_id == 2) {
+                $actividades = DB::table(DB::raw('actividades ac'))->where(DB::raw('ac.deleted_at', '=', NULL))
+                    ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
+                    ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+                    ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    ->where(DB::raw('e.correo'), '=', Auth()->user()->email)
+                    ->select(
+                        'ac.id',
+                        'ac.titulo',
+                        'ac.fecha',
+                        'ac.descripcion',
+                        'ac.estado',
+                        DB::raw('c.titulo as titulo_comportamiento'),
+                        DB::raw('c.descripcion as descripcion_comportamiento'),
+                        'ac.created_at',
+                        'ac.deleted_at'
+                    )
+                    ->get();
+            } else if ($queryUsers[0]->role_id == 3) {
+                $actividades = DB::table(DB::raw('actividades ac'))->where(DB::raw('ac.deleted_at', '=', NULL))
+                    ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
+                    ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+                    ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    ->select(
+                        'ac.id',
+                        'ac.titulo',
+                        'ac.fecha',
+                        'ac.descripcion',
+                        'ac.estado',
+                        DB::raw('c.titulo as titulo_comportamiento'),
+                        DB::raw('c.descripcion as descripcion_comportamiento'),
+                        DB::raw('e.nombres as nombre_estudiante'),
+                        DB::raw('e.apellidos as apellido_estudiante'),
+                        DB::raw('e.telefono as telefono_estudiante'),
+                        DB::raw('e.correo as correo_estudiante'),
+                        DB::raw('a.nombres as nombre_acudiente'),
+                        DB::raw('a.apellidos as apellido_acudiente'),
+                        DB::raw('a.telefono as telefono_acudiente'),
+                        DB::raw('a.correo as correo_acudiente'),
+                        DB::raw('tc.titulo as titulo_tipo_comportamiento'),
+                        DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
+                        'ac.created_at',
+                        'ac.deleted_at'
+                    )
+                    ->get();
+            } else if ($queryUsers[0]->role_id == 4) {
+                $actividades = DB::table(DB::raw('actividades ac'))->where(DB::raw('ac.deleted_at', '=', NULL))
+                    ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
+                    ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+                    ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    ->select(
+                        'ac.id',
+                        'ac.titulo',
+                        'ac.fecha',
+                        'ac.descripcion',
+                        'ac.estado',
+                        DB::raw('c.titulo as titulo_comportamiento'),
+                        DB::raw('c.descripcion as descripcion_comportamiento'),
+                        DB::raw('e.nombres as nombre_estudiante'),
+                        DB::raw('e.apellidos as apellido_estudiante'),
+                        DB::raw('e.telefono as telefono_estudiante'),
+                        DB::raw('e.correo as correo_estudiante'),
+                        DB::raw('a.nombres as nombre_acudiente'),
+                        DB::raw('a.apellidos as apellido_acudiente'),
+                        DB::raw('a.telefono as telefono_acudiente'),
+                        DB::raw('a.correo as correo_acudiente'),
+                        DB::raw('tc.titulo as titulo_tipo_comportamiento'),
+                        DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
+                        'ac.created_at',
+                        'ac.deleted_at'
+                    )
+                    ->where(DB::raw('a.correo'), '=', Auth()->user()->email)
+                    ->get();
+            } else {
+                $actividades = DB::table(DB::raw('actividades ac'))->where(DB::raw('ac.deleted_at', '=', NULL))
+                    ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
+                    ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+                    ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    ->select(
+                        'ac.id',
+                        'ac.titulo',
+                        'ac.fecha',
+                        'ac.descripcion',
+                        'ac.estado',
+                        DB::raw('c.titulo as titulo_comportamiento'),
+                        DB::raw('c.descripcion as descripcion_comportamiento'),
+                        DB::raw('e.nombres as nombre_estudiante'),
+                        DB::raw('e.apellidos as apellido_estudiante'),
+                        DB::raw('e.telefono as telefono_estudiante'),
+                        DB::raw('e.correo as correo_estudiante'),
+                        DB::raw('a.nombres as nombre_acudiente'),
+                        DB::raw('a.apellidos as apellido_acudiente'),
+                        DB::raw('a.telefono as telefono_acudiente'),
+                        DB::raw('a.correo as correo_acudiente'),
+                        DB::raw('tc.titulo as titulo_tipo_comportamiento'),
+                        DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
+                        'ac.created_at',
+                        'ac.deleted_at'
+                    )
+                    ->get();
+            }
+        }
         //Permisos que tiene el usuario
         $permisos = [];
 

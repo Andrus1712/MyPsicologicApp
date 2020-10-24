@@ -702,15 +702,14 @@ function DataTable(response) {
                             html += `
                                     <a data-id=${row.id} id="Btn_act_${row.id}" class='btn btn-circle btn-sm btn-success'>
                                         <i class="fa fa-calendar-plus-o" aria-hidden="true"></i>
-                                    </a> 
-                                    `
+                                    </a> `
                         }
                     }
                     return `<div align="center">
                                 <div class="btn-group btn-group-circle btn-group-solid" align="center">
                                     ${html}
                                 </div>
-                            </div>`
+                            </div>`;
 
                 }
                 if (permisos.length != 0) {

@@ -49,33 +49,43 @@ class acudienteController extends AppBaseController
         $user = Auth()->user();
 
         $rol = $user->tieneRol();
-        if ($rol == 'psi-user') {
-            $acudientes = DB::table(DB::raw('acudientes a'))
-                ->where(DB::raw('a.deleted_at'), '=', NULL)
-                ->select('a.*')
-                ->get();
-        } else if ($rol == 'est-user') {
-            $acudientes = DB::table(DB::raw('acudientes a'))
-                ->where(DB::raw('a.deleted_at'), '=', NULL)
-                ->join(DB::raw('estudiante e'), 'e.acudiente_id', '=', 'a.id')
-                ->select('a.*')
-                ->get();
-        } else if ($rol == 'doc-user') {
-            $acudientes = DB::table(DB::raw('acudientes a'))
-                ->where(DB::raw('a.deleted_at'), '=', NULL)
-                ->select('a.*')
-                ->get();
-        } else if ($rol == 'acu-user') {
-            $acudientes = DB::table(DB::raw('acudientes a'))
-                ->where(DB::raw('a.deleted_at'), '=', NULL)
-                ->select('a.*')
-                ->get();
-        } else {
-            $acudientes = DB::table(DB::raw('acudientes a'))
-                ->where(DB::raw('a.deleted_at'), '=', NULL)
-                ->select('a.*')
-                ->get();
+
+
+        $queryUsers = DB::table('role_user')
+            ->select('role_user.*')
+            ->where('role_user.user_id', '=', Auth()->user()->id)
+            ->limit(1)
+            ->get();
+        if (count($queryUsers) != 0) {
+            if ($queryUsers[0]->role_id == 1) {
+                $acudientes = DB::table(DB::raw('acudientes a'))
+                    ->where(DB::raw('a.deleted_at'), '=', NULL)
+                    ->select('a.*')
+                    ->get();
+            } else if ($queryUsers[0]->role_id == 2) {
+                $acudientes = DB::table(DB::raw('acudientes a'))
+                    ->where(DB::raw('a.deleted_at'), '=', NULL)
+                    ->join(DB::raw('estudiante e'), 'e.acudiente_id', '=', 'a.id')
+                    ->select('a.*')
+                    ->get();
+            } else if ($queryUsers[0]->role_id == 3) {
+                $acudientes = DB::table(DB::raw('acudientes a'))
+                    ->where(DB::raw('a.deleted_at'), '=', NULL)
+                    ->select('a.*')
+                    ->get();
+            } else if ($queryUsers[0]->role_id == 4) {
+                $acudientes = DB::table(DB::raw('acudientes a'))
+                    ->where(DB::raw('a.deleted_at'), '=', NULL)
+                    ->select('a.*')
+                    ->get();
+            } else {
+                $acudientes = DB::table(DB::raw('acudientes a'))
+                    ->where(DB::raw('a.deleted_at'), '=', NULL)
+                    ->select('a.*')
+                    ->get();
+            }
         }
+
 
         //Permisos que tiene el usuario
         $permisos = [];

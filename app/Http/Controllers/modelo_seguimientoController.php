@@ -48,34 +48,38 @@ class modelo_seguimientoController extends AppBaseController
         $user = Auth()->user();
 
         $rol = $user->tieneRol();
-        if ($rol == 'psi-user') {
-            $modeloSeguimiento = DB::table(DB::raw('modelo_seguimientos modelo'))
-                ->where(DB::raw('modelo.deleted_at', '=', 'NULL'))
-                ->select(DB::raw('modelo.*'))
-                ->get();
-        }
-        if ($rol == 'doc-user') {
-            $modeloSeguimiento = DB::table(DB::raw('modelo_seguimientos modelo'))
-                ->where(DB::raw('modelo.deleted_at', '=', 'NULL'))
-                ->select(DB::raw('modelo.*'))
-                ->get();
-        }
-        if ($rol == 'est-user') {
-            $modeloSeguimiento = DB::table(DB::raw('modelo_seguimientos modelo'))
-                ->where(DB::raw('modelo.deleted_at', '=', 'NULL'))
-                ->select(DB::raw('modelo.*'))
-                ->get();
-        }
-        if ($rol == 'acu-user') {
-            $modeloSeguimiento = DB::table(DB::raw('modelo_seguimientos modelo'))
-                ->where(DB::raw('modelo.deleted_at', '=', 'NULL'))
-                ->select(DB::raw('modelo.*'))
-                ->get();
-        } else {
-            $modeloSeguimiento = DB::table(DB::raw('modelo_seguimientos modelo'))
-                ->where(DB::raw('modelo.deleted_at', '=', 'NULL'))
-                ->select(DB::raw('modelo.*'))
-                ->get();
+        $queryUsers = DB::table('role_user')
+            ->select('role_user.*')
+            ->where('role_user.user_id', '=', Auth()->user()->id)
+            ->limit(1)
+            ->get();
+        if (count($queryUsers) != 0) {
+            if ($queryUsers[0]->role_id == 1) {
+                $modeloSeguimiento = DB::table(DB::raw('modelo_seguimientos modelo'))
+                    ->where(DB::raw('modelo.deleted_at', '=', 'NULL'))
+                    ->select(DB::raw('modelo.*'))
+                    ->get();
+            } else if ($queryUsers[0]->role_id == 2) {
+                $modeloSeguimiento = DB::table(DB::raw('modelo_seguimientos modelo'))
+                    ->where(DB::raw('modelo.deleted_at', '=', 'NULL'))
+                    ->select(DB::raw('modelo.*'))
+                    ->get();
+            } else if ($queryUsers[0]->role_id == 3) {
+                $modeloSeguimiento = DB::table(DB::raw('modelo_seguimientos modelo'))
+                    ->where(DB::raw('modelo.deleted_at', '=', 'NULL'))
+                    ->select(DB::raw('modelo.*'))
+                    ->get();
+            } else if ($queryUsers[0]->role_id == 4) {
+                $modeloSeguimiento = DB::table(DB::raw('modelo_seguimientos modelo'))
+                    ->where(DB::raw('modelo.deleted_at', '=', 'NULL'))
+                    ->select(DB::raw('modelo.*'))
+                    ->get();
+            } else {
+                $modeloSeguimiento = DB::table(DB::raw('modelo_seguimientos modelo'))
+                    ->where(DB::raw('modelo.deleted_at', '=', 'NULL'))
+                    ->select(DB::raw('modelo.*'))
+                    ->get();
+            }
         }
 
         //Permisos que tiene el usuario

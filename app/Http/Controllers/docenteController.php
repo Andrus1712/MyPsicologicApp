@@ -49,31 +49,38 @@ class docenteController extends AppBaseController
         $user = Auth()->user();
 
         $rol = $user->tieneRol();
-        if ($rol == 'psi-user') {
-            $docentes = DB::table(DB::raw('docentes d'))
-                ->where(DB::raw('d.deleted_at', '=', NULL))
-                ->select('d.*')
-                ->get();
-        } else if ($rol == 'est-user') {
-            $docentes = DB::table(DB::raw('docentes d'))
-                ->where(DB::raw('d.deleted_at', '=', NULL))
-                ->select('d.*')
-                ->get();
-        } else if ($rol == 'doc-user') {
-            $docentes = DB::table(DB::raw('docentes d'))
-                ->where(DB::raw('d.deleted_at', '=', NULL))
-                ->select('d.*')
-                ->get();
-        } else if ($rol == 'acu-user') {
-            $docentes = DB::table(DB::raw('docentes d'))
-                ->where(DB::raw('d.deleted_at', '=', NULL))
-                ->select('d.*')
-                ->get();
-        } else {
-            $docentes = DB::table(DB::raw('docentes d'))
-                ->where(DB::raw('d.deleted_at', '=', NULL))
-                ->select('d.*')
-                ->get();
+        $queryUsers = DB::table('role_user')
+            ->select('role_user.*')
+            ->where('role_user.user_id', '=', Auth()->user()->id)
+            ->limit(1)
+            ->get();
+        if (count($queryUsers) != 0) {
+            if ($queryUsers[0]->role_id == 1) {
+                $docentes = DB::table(DB::raw('docentes d'))
+                    ->where(DB::raw('d.deleted_at', '=', NULL))
+                    ->select('d.*')
+                    ->get();
+            } else if ($queryUsers[0]->role_id == 2) {
+                $docentes = DB::table(DB::raw('docentes d'))
+                    ->where(DB::raw('d.deleted_at', '=', NULL))
+                    ->select('d.*')
+                    ->get();
+            } else if ($queryUsers[0]->role_id == 3) {
+                $docentes = DB::table(DB::raw('docentes d'))
+                    ->where(DB::raw('d.deleted_at', '=', NULL))
+                    ->select('d.*')
+                    ->get();
+            } else if ($queryUsers[0]->role_id == 4) {
+                $docentes = DB::table(DB::raw('docentes d'))
+                    ->where(DB::raw('d.deleted_at', '=', NULL))
+                    ->select('d.*')
+                    ->get();
+            } else {
+                $docentes = DB::table(DB::raw('docentes d'))
+                    ->where(DB::raw('d.deleted_at', '=', NULL))
+                    ->select('d.*')
+                    ->get();
+            }
         }
 
         //Permisos que tiene el usuario

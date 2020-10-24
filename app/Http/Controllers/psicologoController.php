@@ -58,31 +58,38 @@ class psicologoController extends AppBaseController
         $user = Auth()->user();
 
         $rol = $user->tieneRol();
-        if ($rol == 'psi-user') {
-            $psicologos = DB::table(DB::raw('psicologos p'))
-                ->where(DB::raw('p.deleted_at', '=', 'NULL'))
-                ->select('p.*')
-                ->get();
-        } else if ($rol == 'est-user') {
-            $psicologos = DB::table(DB::raw('psicologos p'))
-                ->where(DB::raw('p.deleted_at', '=', 'NULL'))
-                ->select('p.*')
-                ->get();
-        } else if ($rol == 'doc-user') {
-            $psicologos = DB::table(DB::raw('psicologos p'))
-                ->where(DB::raw('p.deleted_at', '=', 'NULL'))
-                ->select('p.*')
-                ->get();
-        } else if ($rol == 'acu-user') {
-            $psicologos = DB::table(DB::raw('psicologos p'))
-                ->where(DB::raw('p.deleted_at', '=', 'NULL'))
-                ->select('p.*')
-                ->get();
-        } else {
-            $psicologos = DB::table(DB::raw('psicologos p'))
-                ->where(DB::raw('p.deleted_at', '=', 'NULL'))
-                ->select('p.*')
-                ->get();
+        $queryUsers = DB::table('role_user')
+            ->select('role_user.*')
+            ->where('role_user.user_id', '=', Auth()->user()->id)
+            ->limit(1)
+            ->get();
+        if (count($queryUsers) != 0) {
+            if ($queryUsers[0]->role_id == 1) {
+                $psicologos = DB::table(DB::raw('psicologos p'))
+                    ->where(DB::raw('p.deleted_at', '=', 'NULL'))
+                    ->select('p.*')
+                    ->get();
+            } else if ($queryUsers[0]->role_id == 2) {
+                $psicologos = DB::table(DB::raw('psicologos p'))
+                    ->where(DB::raw('p.deleted_at', '=', 'NULL'))
+                    ->select('p.*')
+                    ->get();
+            } else if ($queryUsers[0]->role_id == 3) {
+                $psicologos = DB::table(DB::raw('psicologos p'))
+                    ->where(DB::raw('p.deleted_at', '=', 'NULL'))
+                    ->select('p.*')
+                    ->get();
+            } else if ($queryUsers[0]->role_id == 4) {
+                $psicologos = DB::table(DB::raw('psicologos p'))
+                    ->where(DB::raw('p.deleted_at', '=', 'NULL'))
+                    ->select('p.*')
+                    ->get();
+            } else {
+                $psicologos = DB::table(DB::raw('psicologos p'))
+                    ->where(DB::raw('p.deleted_at', '=', 'NULL'))
+                    ->select('p.*')
+                    ->get();
+            }
         }
 
         //Permisos que tiene el usuario

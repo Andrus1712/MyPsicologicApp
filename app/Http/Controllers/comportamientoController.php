@@ -123,130 +123,137 @@ class comportamientoController extends AppBaseController
         $user = Auth()->user();
 
         $rol = $user->tieneRol();
-        if ($rol == 'psi-user') {
-            $comportamientos = DB::table(DB::raw('comportamientos c'))->where(DB::raw('c.deleted_at'), '=', NULL)
-                ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
-                ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
-                ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
-                ->where(DB::raw('c.deleted_at', '!=', 'date()'))
-                ->select(
-                    'c.id',
-                    'c.cod_comportamiento',
-                    'c.titulo',
-                    'c.descripcion',
-                    'c.fecha',
-                    'c.emisor',
-                    'e.nombres',
-                    'e.apellidos',
-                    DB::raw('a.nombres as nombre_acudiente'),
-                    DB::raw('a.apellidos as apellido_acudiente'),
-                    'g.grado',
-                    'g.curso',
-                    'c.multimedia',
-                    'c.emisor',
-                    'e.created_at'
-                )->get();
-        } else if ($rol == 'est-user') {
-            $comportamientos = DB::table(DB::raw('comportamientos c'))->where(DB::raw('c.deleted_at'), '=', NULL)
-                ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
-                ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
-                ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
-                ->where(DB::raw('c.deleted_at', '!=', 'date()'))
-                ->where(DB::raw('c.emisor'), '=', auth()->user())
-                ->select(
-                    'c.id',
-                    'c.cod_comportamiento',
-                    'c.titulo',
-                    'c.descripcion',
-                    'c.fecha',
-                    'c.emisor',
-                    'e.nombres',
-                    'e.apellidos',
-                    DB::raw('a.nombres as nombre_acudiente'),
-                    DB::raw('a.apellidos as apellido_acudiente'),
-                    'g.grado',
-                    'g.curso',
-                    'c.multimedia',
-                    'c.emisor',
-                    'e.created_at'
-                )->get();
-        } else if ($rol == 'doc-user') {
-            $comportamientos = DB::table(DB::raw('comportamientos c'))->where(DB::raw('c.deleted_at'), '=', NULL)
-                ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
-                ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
-                ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
-                ->where(DB::raw('c.deleted_at', '!=', 'date()'))
-                ->where(DB::raw('c.emisor'), '=', auth()->user())
-                ->select(
-                    'c.id',
-                    'c.cod_comportamiento',
-                    'c.titulo',
-                    'c.descripcion',
-                    'c.fecha',
-                    'c.emisor',
-                    'e.nombres',
-                    'e.apellidos',
-                    DB::raw('a.nombres as nombre_acudiente'),
-                    DB::raw('a.apellidos as apellido_acudiente'),
-                    'g.grado',
-                    'g.curso',
-                    'c.multimedia',
-                    'c.emisor',
-                    'e.created_at'
-                )->get();
-        } else if ($rol == 'acu-user') {
-            $comportamientos = DB::table(DB::raw('comportamientos c'))->where(DB::raw('c.deleted_at'), '=', NULL)
-                ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
-                ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
-                ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
-                ->where(DB::raw('c.deleted_at', '!=', 'date()'))
-                ->where(DB::raw('c.emisor'), '=', auth()->user())
-                ->where(DB::raw('e.acudiente_id'), '=', DB::raw('a.id'))
-                ->select(
-                    'c.id',
-                    'c.cod_comportamiento',
-                    'c.titulo',
-                    'c.descripcion',
-                    'c.fecha',
-                    'c.emisor',
-                    'e.nombres',
-                    'e.apellidos',
-                    DB::raw('a.nombres as nombre_acudiente'),
-                    DB::raw('a.apellidos as apellido_acudiente'),
-                    'g.grado',
-                    'g.curso',
-                    'c.multimedia',
-                    'c.emisor',
-                    'e.created_at'
-                )->get();
-        } else {
-            $comportamientos = DB::table(DB::raw('comportamientos c'))->where(DB::raw('c.deleted_at'), '=', NULL)
-                ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
-                ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
-                ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
-                ->where(DB::raw('c.deleted_at', '!=', 'date()'))
-                ->select(
-                    'c.id',
-                    'c.cod_comportamiento',
-                    'c.titulo',
-                    'c.descripcion',
-                    'c.fecha',
-                    'c.emisor',
-                    'e.nombres',
-                    'e.apellidos',
-                    DB::raw('a.nombres as nombre_acudiente'),
-                    DB::raw('a.apellidos as apellido_acudiente'),
-                    'g.grado',
-                    'g.curso',
-                    'c.multimedia',
-                    'c.emisor',
-                    'e.created_at'
-                )->get();
+        $queryUsers = DB::table('role_user')
+            ->select('role_user.*')
+            ->where('role_user.user_id', '=', Auth()->user()->id)
+            ->limit(1)
+            ->get();
+        if (count($queryUsers) != 0) {
+            if ($queryUsers[0]->role_id == 1) {
+                $comportamientos = DB::table(DB::raw('comportamientos c'))->where(DB::raw('c.deleted_at'), '=', NULL)
+                    ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+                    ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
+                    ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
+                    ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                    ->where(DB::raw('c.deleted_at', '!=', 'date()'))
+                    ->select(
+                        'c.id',
+                        'c.cod_comportamiento',
+                        'c.titulo',
+                        'c.descripcion',
+                        'c.fecha',
+                        'c.emisor',
+                        'e.nombres',
+                        'e.apellidos',
+                        DB::raw('a.nombres as nombre_acudiente'),
+                        DB::raw('a.apellidos as apellido_acudiente'),
+                        'g.grado',
+                        'g.curso',
+                        'c.multimedia',
+                        'c.emisor',
+                        'e.created_at'
+                    )->get();
+            } else if ($queryUsers[0]->role_id == 2) {
+                $comportamientos = DB::table(DB::raw('comportamientos c'))->where(DB::raw('c.deleted_at'), '=', NULL)
+                    ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+                    ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
+                    ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
+                    ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                    ->where(DB::raw('c.deleted_at', '!=', 'date()'))
+                    ->where(DB::raw('c.estudiante_id'), '=', 'e.id')
+                    ->select(
+                        'c.id',
+                        'c.cod_comportamiento',
+                        'c.titulo',
+                        'c.descripcion',
+                        'c.fecha',
+                        // 'c.emisor',
+                        // 'e.nombres',
+                        // 'e.apellidos',
+                        DB::raw('a.nombres as nombre_acudiente'),
+                        DB::raw('a.apellidos as apellido_acudiente'),
+                        'g.grado',
+                        'g.curso',
+                        // 'c.multimedia',
+                        'c.emisor',
+                        'e.created_at'
+                    )->get();
+            } else if ($queryUsers[0]->role_id == 3) {
+                $comportamientos = DB::table(DB::raw('comportamientos c'))->where(DB::raw('c.deleted_at'), '=', NULL)
+                    ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+                    ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
+                    ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
+                    ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                    ->where(DB::raw('c.deleted_at', '!=', 'date()'))
+                    ->where(DB::raw('c.emisor'), '=', auth()->user())
+                    ->select(
+                        'c.id',
+                        'c.cod_comportamiento',
+                        'c.titulo',
+                        'c.descripcion',
+                        'c.fecha',
+                        'c.emisor',
+                        'e.nombres',
+                        'e.apellidos',
+                        DB::raw('a.nombres as nombre_acudiente'),
+                        DB::raw('a.apellidos as apellido_acudiente'),
+                        'g.grado',
+                        'g.curso',
+                        'c.multimedia',
+                        'c.emisor',
+                        'e.created_at'
+                    )->get();
+            } else if ($queryUsers[0]->role_id == 4) {
+                $comportamientos = DB::table(DB::raw('comportamientos c'))
+                    ->where(DB::raw('c.deleted_at'), '=', NULL)
+                    ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+                    ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
+                    ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
+                    ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                    ->where(DB::raw('c.deleted_at', '!=', 'date()'))
+                    ->where(DB::raw('a.correo'), '=', $user->email)
+                    ->select(
+                        'c.id',
+                        'c.cod_comportamiento',
+                        'c.titulo',
+                        'c.descripcion',
+                        'c.fecha',
+                        'e.nombres',
+                        'e.apellidos',
+                        DB::raw('a.nombres as nombre_acudiente'),
+                        DB::raw('a.apellidos as apellido_acudiente'),
+                        'g.grado',
+                        'g.curso',
+                        'c.multimedia',
+                        'c.emisor',
+                        'a.correo',
+                        'e.created_at'
+                    )->get();
+            } else {
+                $comportamientos = DB::table(DB::raw('comportamientos c'))->where(DB::raw('c.deleted_at'), '=', NULL)
+                    ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+                    ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
+                    ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
+                    ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                    ->where(DB::raw('c.deleted_at', '!=', 'date()'))
+                    ->select(
+                        'c.id',
+                        'c.cod_comportamiento',
+                        'c.titulo',
+                        'c.descripcion',
+                        'c.fecha',
+                        'c.emisor',
+                        'e.nombres',
+                        'e.apellidos',
+                        DB::raw('a.nombres as nombre_acudiente'),
+                        DB::raw('a.apellidos as apellido_acudiente'),
+                        'g.grado',
+                        'g.curso',
+                        'c.multimedia',
+                        'c.emisor',
+                        'e.created_at'
+                    )->get();
+            }
         }
 
         //Permisos que tiene el usuario
@@ -258,13 +265,6 @@ class comportamientoController extends AppBaseController
 
         if ($user->havePermission('delete.comportamientos')) {
             array_push($permisos, "delete.comportamientos");
-        }
-
-        if ($user->havePermission('create.comportamientos')) {
-            array_push($permisos, "create.comportamientos");
-        }
-        if ($user->havePermission('create.actividades')) {
-            array_push($permisos, "create.actividades");
         }
 
         $datos = [

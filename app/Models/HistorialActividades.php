@@ -19,6 +19,7 @@ class HistorialActividades extends Model
     public $fillable = [
         'actividad_id',
         'fecha_historial',
+        'estado_actividad'
     ];
 
     /**
