@@ -469,7 +469,7 @@ function DataTable(response) {
 
         $('#user-table').DataTable({
             responsive: false,
-            'scrollX': true,
+            'scrollX': screen.width < 400 ? true : false,
             "destroy": true,
             data: response,
             "columns": my_columns,
@@ -506,6 +506,13 @@ function DataTable(response) {
                 [10, 15, 20, "Todos"]
             ]
         });
+
+        $('thead > tr> th:nth-child(1)').css({ 'min-width': '30px', 'max-width': '30px' });
+        $('thead > tr> th:nth-child(2)').css({ 'min-width': '100px', 'max-width': '100px' });
+        $('thead > tr> th:nth-child(3)').css({ 'min-width': '160px', 'max-width': '160px' });
+        $('thead > tr> th:nth-child(4)').css({ 'min-width': '80px', 'max-width': '80px' });
+        $('thead > tr> th:nth-child(5)').css({ 'min-width': '120px', 'max-width': '120px' });
+        $('thead > tr> th:nth-child(6)').css({ 'min-width': '120px', 'max-width': '120px' });
 
 
     }

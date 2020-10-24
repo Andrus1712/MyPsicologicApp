@@ -732,7 +732,7 @@ function DataTable(response) {
 
         $('#roles-table').DataTable({
             responsive: false,
-            'scrollX': false,
+            'scrollX': screen.width < 400 ? true : false,
             "destroy": true,
             data: response,
             "columns": my_columns,
