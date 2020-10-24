@@ -265,7 +265,7 @@ function Reload() {
                 var contC = 0;
                 var contI = 0;
                 var contE = 0;
-                AllRegister = response;
+                AllRegister = response.actividades;
 
                 for (var i = 0; i < response.actividades.length; i++) {
                     if (response[i].actividades.estado == 0) {
