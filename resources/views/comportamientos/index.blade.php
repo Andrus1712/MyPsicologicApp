@@ -28,7 +28,9 @@
         </div>
     </div>
 
+    @if (Auth()->user()->havePermission('make.reportes'))
     <a class="btn btn-primary" href="{{ URL::to('/comportamientosPdf') }}" target="_blank">Export to PDF</a>
+    @endif
     {{-- <div class="text-center">
             <h2>Lorem</h2>
             <p>

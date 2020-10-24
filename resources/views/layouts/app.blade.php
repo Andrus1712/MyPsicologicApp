@@ -75,7 +75,7 @@
             <!-- Logo -->
             <a href="{{ route('home') }}" class="logo">
                 <span class="logo-mini"><img src="../img/logo-sm.png" /></span>
-                <span class="logo-lg"><img src="../img/logo-lg.png" ></span>
+                <span class="logo-lg"><img style="width: 140px" src="../img/logoorilloblanco.png" ></span>
 
             </a>
 

@@ -50,20 +50,20 @@ function ReloadCalendario() {
     })
 
         .done(function (response) {
-            if (response.length != 0) {
+            if (response.actividades.length != 0) {
 
-                for (var i = 0; i < response.length; i++) {
+                for (var i = 0; i < response.actividades.length; i++) {
                     calendar.addEvent({
-                        id: response[i].id,
-                        groupId: JSON.stringify(response[i]),
-                        title: response[i].titulo,
-                        start: response[i].fecha,
-                        backgroundColor: response[i].estado == 0 ? '#F4A460' : response[i].estado == 1 ? '#3CB371' : '#FF6347',
+                        id: response.actividades[i].id,
+                        groupId: JSON.stringify(response.actividades[i]),
+                        title: response.actividades[i].titulo,
+                        start: response.actividades[i].fecha,
+                        backgroundColor: response.actividades[i].estado == 0 ? '#F4A460' : response.actividades[i].estado == 1 ? '#3CB371' : '#FF6347',
                         borderColor: "gray",
                     })
                 }
             } else {
-                alert("Sin actividades")
+                console.log("Sin actividades")
             }
         })
         .fail(function () {
@@ -261,16 +261,16 @@ function Reload() {
     })
 
         .done(function (response) {
-            if (response.length != 0) {
+            if (response.actividades.length != 0) {
                 var contC = 0;
                 var contI = 0;
                 var contE = 0;
                 AllRegister = response.actividades;
 
                 for (var i = 0; i < response.actividades.length; i++) {
-                    if (response[i].actividades.estado == 0) {
+                    if (response.actividades[i].estado == 0) {
                         contE++;
-                    } else if (response[i].actividades.estado == 1) {
+                    } else if (response.actividades[i].estado == 1) {
                         contC++;
                     } else {
                         contI++;

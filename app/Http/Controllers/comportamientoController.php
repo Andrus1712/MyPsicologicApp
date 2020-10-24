@@ -34,32 +34,67 @@ class comportamientoController extends AppBaseController
 
     public function createPDF()
     {
-        // $data = tipoComportamiento::all();
-        $data = DB::table(DB::raw('tipo_comportamientos tp'))->where(DB::raw('tp.deleted_at'), '=', NULL)
-        ->join(DB::raw('actividades ac'), 'ac.tipo_comportamiento_id', '=', 'tp.id')
-        ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
-        ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
-        ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
-        ->select(
-            DB::raw('tp.titulo'),
-            DB::raw('c.titulo  AS casos'),
-            DB::raw('g.grado AS nivel'),
-            DB::raw('ac.estado'),
-            DB::raw('ac.titulo AS estrategia')
-        )
-        ->groupBy(DB::raw('tp.titulo'), 
-                  DB::raw('ac.estado'),
-                  DB::raw('g.grado'),
-                  DB::raw('ac.titulo'),
-                  DB::raw('c.titulo'))
-        ->get();
-        
-        // dd($data);
-        view()->share('comportamientos', ['data' => $data, 'fecha'=> Carbon::now()->format('d-m-Y')]);
-        $pdf = PDF::loadView('pdf_view', $data)
+        $user = Auth()->user();
+        if ($user->havePermission('make.reportes')) {
+
+
+            set_time_limit(300);
+            // $data = tipoComportamiento::all();
+            $data = DB::table(DB::raw('tipo_comportamientos tp'))->where(DB::raw('tp.deleted_at'), '=', NULL)
+                ->join(DB::raw('actividades ac'), 'ac.tipo_comportamiento_id', '=', 'tp.id')
+                ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
+                ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+                ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
+                ->select(
+                    DB::raw('tp.titulo'),
+                    DB::raw('c.titulo  AS casos'),
+                    DB::raw('g.grado AS nivel'),
+                    DB::raw('ac.estado'),
+                    DB::raw('ac.titulo AS estrategia')
+                )
+                ->groupBy(
+                    DB::raw('tp.titulo'),
+                    DB::raw('ac.estado'),
+                    DB::raw('g.grado'),
+                    DB::raw('ac.titulo'),
+                    DB::raw('c.titulo')
+                )
+                ->get();
+
+            $count = DB::table(DB::raw('tipo_comportamientos tp'))->where(DB::raw('tp.deleted_at'), '=', NULL)
+                ->join(DB::raw('actividades ac'), 'ac.tipo_comportamiento_id', '=', 'tp.id')
+                ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
+                ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+                ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
+                ->select(
+                    DB::raw('tp.titulo'),
+                    DB::raw('COUNT(tp.id) as cantidad'),
+                )
+                ->groupBy(DB::raw('tp.titulo'))
+                ->get();
+
+            $psi = DB::table(DB::raw('users u'))
+                ->join(DB::raw('psicologos p'), 'p.correo', '=', 'u.email')
+                ->select(
+                    DB::raw("CONCAT(p.nombres,' ',p.apellidos) AS psicologo"),
+                    DB::raw('p.correo'),
+                    DB::raw('p.telefono'),
+                    DB::raw("CONCAT(p.tipoIdentificacion,'. ',p.identificacion) AS id"),
+                )
+                ->get();
+
+            // dd($data);
+            view()->share('comportamientos', [
+                'data' => $data, 'fecha' => Carbon::now()->format('d-m-Y'),
+                'count' => $count, 'psi' => $psi
+            ]);
+            $pdf = PDF::loadView('pdf_view', $data)
                 ->setPaper('a4', 'landscape');
 
-        return $pdf->stream('pdf_file.pdf');
+            return $pdf->stream('pdf_file.pdf');
+        } else {
+            return redirect('/home');
+        }
     }
 
     /**
@@ -224,7 +259,7 @@ class comportamientoController extends AppBaseController
         if ($user->havePermission('delete.comportamientos')) {
             array_push($permisos, "delete.comportamientos");
         }
-        
+
         if ($user->havePermission('create.comportamientos')) {
             array_push($permisos, "create.comportamientos");
         }
