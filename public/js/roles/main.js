@@ -3,6 +3,8 @@ var AllRegister = []
 
 var permisos = [];
 
+var rol;
+
 $(document).ready(function () {
     Reload()
 
@@ -569,6 +571,11 @@ function Modal() {
                             <input id="34" value="modulo.seguimiento" name="especial" type="checkbox">modulo seguimiento
                         </label>
                     </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="43" value="tipos.comportamientos" name="especial" type="checkbox">tipo de comportamientos
+                        </label>
+                    </div>
 
                 </div>
 
@@ -595,6 +602,7 @@ function Reload() {
             if (response.length != 0) {
                 AllRegister = response.roles;
                 permisos = response.permisos;
+                rol = response.rol;
                 DataTable(response.roles);
             } else {
                 $('#roles-table').dataTable().fnClearTable();

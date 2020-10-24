@@ -55,20 +55,31 @@
 </ul>
 </li> --}}
 
+@if (Auth()->user()->havePermission('show.cursos'))
+    
+
 <li class="header">Modulo Intitucional</li>
 <li class="{{ Request::is('grupos*') ? 'active' : '' }}">
     <a href="{{ route('grupos.index') }}"><i class="fa fa-school"></i><span>Cursos</span></a>
 </li>
+@endif
 
 
 <li class="header">General</li>
-    
+
+@if (Auth()->user()->havePermission('show.estudiantes'))
 <li class="{{ Request::is('estudiantes*') ? 'active' : '' }}">
     <a href="{{ route('estudiantes.index') }}"><i class="fa fa-user-graduate"></i><span>Estudiantes</span></a>
 </li>
+@endif
+
+@if (Auth()->user()->havePermission('show.docentes'))
 <li class="{{ Request::is('docentes*') ? 'active' : '' }}">
     <a href="{{ route('docentes.index') }}"><i class="fa fa-chalkboard-teacher"></i><span>Docentes</span></a>
 </li>
+@endif
+
+
 <li class="{{ Request::is('acudientes*') ? 'active' : '' }}">
     <a href="{{ route('acudientes.index') }}"><i class="fa fa-user-friends"></i><span>Acudientes</span></a>
 </li>

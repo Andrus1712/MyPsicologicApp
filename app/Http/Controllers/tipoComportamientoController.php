@@ -18,6 +18,7 @@ class tipoComportamientoController extends AppBaseController
 
     public function __construct(tipoComportamientoRepository $tipoComportamientoRepo)
     {
+        $this->middleware('auth');
         $this->tipoComportamientoRepository = $tipoComportamientoRepo;
     }
 
@@ -29,11 +30,16 @@ class tipoComportamientoController extends AppBaseController
      */
     public function index(Request $request)
     {
+        $user = Auth()->user();
+        if ($user->havePermission('tipos.comportamientos')) {
         $this->tipoComportamientoRepository->pushCriteria(new RequestCriteria($request));
         $tipoComportamientos = $this->tipoComportamientoRepository->all();
 
         return view('tipo_comportamientos.index')
             ->with('tipoComportamientos', $tipoComportamientos);
+        }else {
+            return redirect('/home');
+        }
     }
 
     /**

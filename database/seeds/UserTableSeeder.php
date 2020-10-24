@@ -18,12 +18,13 @@ class UserTableSeeder extends Seeder
 
         DB::table('users')->truncate();
 
-        DB::table('users')->insert([
+        $user = DB::table('users')->insert([
             'name' => 'andres',
             'email' => 'andres@app.com',
             'password' => Hash::make('andres123'),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
+
     }
 }

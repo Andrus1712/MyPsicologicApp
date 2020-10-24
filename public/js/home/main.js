@@ -267,17 +267,17 @@ function Reload() {
                 var contE = 0;
                 AllRegister = response;
 
-                for (var i = 0; i < response.length; i++) {
-                    if (response[i].estado == 0) {
+                for (var i = 0; i < response.actividades.length; i++) {
+                    if (response[i].actividades.estado == 0) {
                         contE++;
-                    } else if (response[i].estado == 1) {
+                    } else if (response[i].actividades.estado == 1) {
                         contC++;
                     } else {
                         contI++;
                     }
                 }
 
-                $('#act-total').html("" + response.length);
+                $('#act-total').html("" + response.actividades.length);
                 $('#act-cumplidas').html("" + contC);
                 $('#act-espera').html("" + contE);
                 $('#act-incumplidas').html("" + contI);

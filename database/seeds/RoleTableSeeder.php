@@ -45,5 +45,13 @@ class RoleTableSeeder extends Seeder
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
+
+        DB::table('roles')->insert([
+            'name' => 'Aministrador',
+            'slug' => 'admin-user',
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
+        
     }
 }
