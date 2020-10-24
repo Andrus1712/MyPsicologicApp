@@ -28,5 +28,11 @@ class AuthServiceProvider extends ServiceProvider
         Gate::before(function ($user, $role){
             return $user->tieneRol()->contains($role);
         });
+
+        Gate::define('haveaccess', function ($user, $perm){
+            //dd($perm);
+            return $user->havePermission($perm); 
+            //return $perm;
+        });
     }
 }

@@ -30,114 +30,177 @@ class estudianteController extends AppBaseController
      */
     public function index(Request $request)
     {
+        $user = Auth()->user();
+        if ($user->havePermission('show.estudiantes')) {
+            $this->estudianteRepository->pushCriteria(new RequestCriteria($request));
+            $estudiantes = $this->estudianteRepository->all();
 
-
-        $this->estudianteRepository->pushCriteria(new RequestCriteria($request));
-        $estudiantes = $this->estudianteRepository->all();
-
-        return view('estudiantes.index')
-            ->with('estudiantes', $estudiantes);
+            return view('estudiantes.index')->with('estudiantes', $estudiantes);
+        } else {
+            return redirect('/home');
+        }
     }
 
     public function getEstudiantes()
     {
-        $queryUsers = DB::table('role_user')
-            ->select('role_user.*')
-            ->where('role_user.user_id', '=', Auth()->user()->id)
-            ->limit(1)
-            ->get();
-        if (count($queryUsers) != 0) {
-            //ROl psicoorientador
-            if ($queryUsers[0]->role_id == 1) {
-                $estudiantes = DB::table(DB::raw('estudiantes e'))->where(DB::raw('e.deleted_at', '=', 'NULL'))
-                    ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
-                    ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
-                    ->select(
-                        'e.id',
-                        'e.tipoIdentificacion',
-                        'e.identificacion',
-                        'e.nombres',
-                        'e.apellidos',
-                        'e.edad',
-                        'e.telefono',
-                        'e.correo',
-                        'e.fechaNacimiento',
-                        DB::raw('a.nombres as nombre_acudiente'),
-                        DB::raw('a.apellidos as apellido_acudiente'),
-                        DB::raw('a.telefono as telefono_acudiente'),
-                        DB::raw('a.correo as correo_acudiente'),
-                        'g.grado',
-                        'g.curso',
-                        DB::raw('d.nombres as nombre_docente'),
-                        DB::raw('d.apellidos as apellidos_docente'),
-                        'e.created_at'
-                    )
-                    ->get();
+        $user = Auth()->user();
 
-                return response()->json($estudiantes);
-            } else if ($queryUsers[0]->role_id == 2) {
-                $estudiantes = null;
-                return response()->json($estudiantes);
-            } else if ($queryUsers[0]->role_id == 3) {
-                $estudiantes = DB::table(DB::raw('estudiantes e'))->where(DB::raw('e.deleted_at', '=', 'NULL'))
-                    ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
-                    ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
-                    ->select(
-                        'e.id',
-                        'e.tipoIdentificacion',
-                        'e.identificacion',
-                        'e.nombres',
-                        'e.apellidos',
-                        'e.edad',
-                        'e.telefono',
-                        'e.correo',
-                        'e.fechaNacimiento',
-                        DB::raw('a.nombres as nombre_acudiente'),
-                        DB::raw('a.apellidos as apellido_acudiente'),
-                        DB::raw('a.telefono as telefono_acudiente'),
-                        DB::raw('a.correo as correo_acudiente'),
-                        'g.grado',
-                        'g.curso',
-                        DB::raw('d.nombres as nombre_docente'),
-                        DB::raw('d.apellidos as apellidos_docente'),
-                        'e.created_at'
-                    )
-                    ->get();
+        $rol = $user->tieneRol();
 
-                return response()->json($estudiantes);
-            } else if ($queryUsers[0]->role_id == 4) {
-                $estudiantes = DB::table(DB::raw('estudiantes e'))->where(DB::raw('e.deleted_at', '=', 'NULL'))
-                    ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
-                    ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
-                    ->where(DB::raw('a.correo'), '=', Auth()->user()->email)
-                    ->select(
-                        'e.id',
-                        'e.tipoIdentificacion',
-                        'e.identificacion',
-                        'e.nombres',
-                        'e.apellidos',
-                        'e.edad',
-                        'e.telefono',
-                        'e.correo',
-                        'e.fechaNacimiento',
-                        DB::raw('a.nombres as nombre_acudiente'),
-                        DB::raw('a.apellidos as apellido_acudiente'),
-                        DB::raw('a.telefono as telefono_acudiente'),
-                        DB::raw('a.correo as correo_acudiente'),
-                        'g.grado',
-                        'g.curso',
-                        DB::raw('d.nombres as nombre_docente'),
-                        DB::raw('d.apellidos as apellidos_docente'),
-                        'e.created_at'
-                    )
-                    ->get();
-
-                return response()->json($estudiantes);
-            }
+        if ($rol == 'psi-user') {
+            $estudiantes = DB::table(DB::raw('estudiantes e'))->where(DB::raw('e.deleted_at', '=', 'NULL'))
+                ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
+                ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
+                ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                ->select(
+                    'e.id',
+                    'e.tipoIdentificacion',
+                    'e.identificacion',
+                    'e.nombres',
+                    'e.apellidos',
+                    'e.edad',
+                    'e.telefono',
+                    'e.correo',
+                    'e.fechaNacimiento',
+                    DB::raw('a.nombres as nombre_acudiente'),
+                    DB::raw('a.apellidos as apellido_acudiente'),
+                    DB::raw('a.telefono as telefono_acudiente'),
+                    DB::raw('a.correo as correo_acudiente'),
+                    'g.grado',
+                    'g.curso',
+                    DB::raw('d.nombres as nombre_docente'),
+                    DB::raw('d.apellidos as apellidos_docente'),
+                    'e.created_at'
+                )->get();
+        } else if ($rol == 'est-user') {
+            $estudiantes = DB::table(DB::raw('estudiantes e'))->where(DB::raw('e.deleted_at', '=', 'NULL'))
+                ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
+                ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
+                ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                ->where(DB::raw('e.correo'), '=', $user->email)
+                ->select(
+                    'e.id',
+                    'e.tipoIdentificacion',
+                    'e.identificacion',
+                    'e.nombres',
+                    'e.apellidos',
+                    'e.edad',
+                    'e.telefono',
+                    'e.correo',
+                    'e.fechaNacimiento',
+                    DB::raw('a.nombres as nombre_acudiente'),
+                    DB::raw('a.apellidos as apellido_acudiente'),
+                    DB::raw('a.telefono as telefono_acudiente'),
+                    DB::raw('a.correo as correo_acudiente'),
+                    'g.grado',
+                    'g.curso',
+                    DB::raw('d.nombres as nombre_docente'),
+                    DB::raw('d.apellidos as apellidos_docente'),
+                    'e.created_at'
+                )->get();
+        } else if ($rol == 'acu-user') {
+            $estudiantes = DB::table(DB::raw('estudiantes e'))->where(DB::raw('e.deleted_at', '=', 'NULL'))
+                ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
+                ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
+                ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                ->where(DB::raw('a.correo'), '=', $user->email)
+                ->select(
+                    'e.id',
+                    'e.tipoIdentificacion',
+                    'e.identificacion',
+                    'e.nombres',
+                    'e.apellidos',
+                    'e.edad',
+                    'e.telefono',
+                    'e.correo',
+                    'e.fechaNacimiento',
+                    DB::raw('a.nombres as nombre_acudiente'),
+                    DB::raw('a.apellidos as apellido_acudiente'),
+                    DB::raw('a.telefono as telefono_acudiente'),
+                    DB::raw('a.correo as correo_acudiente'),
+                    'g.grado',
+                    'g.curso',
+                    DB::raw('d.nombres as nombre_docente'),
+                    DB::raw('d.apellidos as apellidos_docente'),
+                    'e.created_at'
+                )->get();
+        } else if ($rol == 'doc-user') {
+            $estudiantes = DB::table(DB::raw('estudiantes e'))->where(DB::raw('e.deleted_at', '=', 'NULL'))
+                ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
+                ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
+                ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                ->select(
+                    'e.id',
+                    'e.tipoIdentificacion',
+                    'e.identificacion',
+                    'e.nombres',
+                    'e.apellidos',
+                    'e.edad',
+                    'e.telefono',
+                    'e.correo',
+                    'e.fechaNacimiento',
+                    DB::raw('a.nombres as nombre_acudiente'),
+                    DB::raw('a.apellidos as apellido_acudiente'),
+                    DB::raw('a.telefono as telefono_acudiente'),
+                    DB::raw('a.correo as correo_acudiente'),
+                    'g.grado',
+                    'g.curso',
+                    DB::raw('d.nombres as nombre_docente'),
+                    DB::raw('d.apellidos as apellidos_docente'),
+                    'e.created_at'
+                )->get();
+        } else {
+            $estudiantes = DB::table(DB::raw('estudiantes e'))->where(DB::raw('e.deleted_at', '=', 'NULL'))
+                ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
+                ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
+                ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                ->select(
+                    'e.id',
+                    'e.tipoIdentificacion',
+                    'e.identificacion',
+                    'e.nombres',
+                    'e.apellidos',
+                    'e.edad',
+                    'e.telefono',
+                    'e.correo',
+                    'e.fechaNacimiento',
+                    DB::raw('a.nombres as nombre_acudiente'),
+                    DB::raw('a.apellidos as apellido_acudiente'),
+                    DB::raw('a.telefono as telefono_acudiente'),
+                    DB::raw('a.correo as correo_acudiente'),
+                    'g.grado',
+                    'g.curso',
+                    DB::raw('d.nombres as nombre_docente'),
+                    DB::raw('d.apellidos as apellidos_docente'),
+                    'e.created_at'
+                )->get();
         }
+
+        //Permisos que tiene el usuario
+        $permisos = [];
+
+        if ($user->havePermission('edit.estudiantes')) {
+            array_push($permisos, "edit.estudiantes");
+        }
+
+        if ($user->havePermission('delete.estudiantes')) {
+            array_push($permisos, "delete.estudiantes");
+        }
+        
+        if ($user->havePermission('create.estudiantes')) {
+            array_push($permisos, "create.estudiantes");
+        }
+        if ($user->havePermission('create.estudiantes')) {
+            array_push($permisos, "create.estudiantes");
+        }
+
+        $datos = [
+            'estudiantes' => $estudiantes,
+            'rol' => $rol,
+            'permisos' => $permisos
+        ];
+
+        return response()->json($datos);
     }
 
     /**

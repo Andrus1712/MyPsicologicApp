@@ -6,6 +6,7 @@ use App\Http\Requests\CreaterolesRequest;
 use App\Http\Requests\UpdaterolesRequest;
 use App\Repositories\rolesRepository;
 use App\Http\Controllers\AppBaseController;
+use App\Role;
 use Illuminate\Http\Request;
 use Flash;
 use Prettus\Repository\Criteria\RequestCriteria;
@@ -29,11 +30,51 @@ class rolesController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $this->rolesRepository->pushCriteria(new RequestCriteria($request));
-        $roles = $this->rolesRepository->all();
+        $user = Auth()->user();
+        if ($user->havePermission('show.roles')) {
+            $this->rolesRepository->pushCriteria(new RequestCriteria($request));
+            $roles = $this->rolesRepository->all();
 
-        return view('roles.index')
-            ->with('roles', $roles);
+            return view('roles.index')
+                ->with('roles', $roles);
+        } else {
+            return redirect('/home');
+        }
+    }
+
+    public function getRoles()
+    {
+        $user = Auth()->user();
+
+        $rol = $user->tieneRol();
+        
+        $roles = Role::all();
+
+        foreach ($roles as $role) {
+            $role->permissions;
+        }
+
+        //Permisos que tiene el usuario
+        $permisos = [];
+
+        if ($user->havePermission('edit.roles')) {
+            array_push($permisos, "edit.roles");
+        }
+
+        if ($user->havePermission('delete.roles')) {
+            array_push($permisos, "delete.roles");
+        }
+
+        if ($user->havePermission('create.roles')) {
+            array_push($permisos, "create.roles");
+        }
+
+        $datos = [
+            'roles' => $roles,
+            'rol' => $rol,
+            'permisos' => $permisos
+        ];
+        return response()->json($datos);
     }
 
 
@@ -154,5 +195,4 @@ class rolesController extends AppBaseController
 
         return redirect(route('roles.index'));
     }
-
 }

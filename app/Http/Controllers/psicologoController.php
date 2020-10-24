@@ -8,6 +8,7 @@ use App\Repositories\psicologoRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
 use Flash;
+use Illuminate\Support\Facades\DB;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 
@@ -18,6 +19,7 @@ class psicologoController extends AppBaseController
 
     public function __construct(psicologoRepository $psicologoRepo)
     {
+        $this->middleware('auth');
         $this->psicologoRepository = $psicologoRepo;
     }
 
@@ -29,11 +31,16 @@ class psicologoController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $this->psicologoRepository->pushCriteria(new RequestCriteria($request));
-        $psicologos = $this->psicologoRepository->all();
+        $user = Auth()->user();
+        if ($user->havePermission('show.psicologos')) {
+            $this->psicologoRepository->pushCriteria(new RequestCriteria($request));
+            $psicologos = $this->psicologoRepository->all();
 
-        return view('psicologos.index')
-            ->with('psicologos', $psicologos);
+            return view('psicologos.index')
+                ->with('psicologos', $psicologos);
+        } else {
+            return redirect('/home');
+        }
     }
 
     /**
@@ -44,6 +51,64 @@ class psicologoController extends AppBaseController
     public function create()
     {
         return view('psicologos.create');
+    }
+
+    public function getPsicologos()
+    {
+        $user = Auth()->user();
+
+        $rol = $user->tieneRol();
+        if ($rol == 'psi-user') {
+            $psicologos = DB::table(DB::raw('psicologos p'))
+                ->where(DB::raw('p.deleted_at', '=', 'NULL'))
+                ->select('p.*')
+                ->get();
+        } else if ($rol == 'est-user') {
+            $psicologos = DB::table(DB::raw('psicologos p'))
+                ->where(DB::raw('p.deleted_at', '=', 'NULL'))
+                ->select('p.*')
+                ->get();
+        } else if ($rol == 'doc-user') {
+            $psicologos = DB::table(DB::raw('psicologos p'))
+                ->where(DB::raw('p.deleted_at', '=', 'NULL'))
+                ->select('p.*')
+                ->get();
+        } else if ($rol == 'acu-user') {
+            $psicologos = DB::table(DB::raw('psicologos p'))
+                ->where(DB::raw('p.deleted_at', '=', 'NULL'))
+                ->select('p.*')
+                ->get();
+        } else {
+            $psicologos = DB::table(DB::raw('psicologos p'))
+                ->where(DB::raw('p.deleted_at', '=', 'NULL'))
+                ->select('p.*')
+                ->get();
+        }
+
+        //Permisos que tiene el usuario
+        $permisos = [];
+
+        if ($user->havePermission('edit.psicologos')) {
+            array_push($permisos, "edit.psicologos");
+        }
+
+        if ($user->havePermission('delete.psicologos')) {
+            array_push($permisos, "delete.psicologos");
+        }
+
+        if ($user->havePermission('create.psicologos')) {
+            array_push($permisos, "create.psicologos");
+        }
+        if ($user->havePermission('create.psicologos')) {
+            array_push($permisos, "create.psicologos");
+        }
+
+        $datos = [
+            'psicologos' => $psicologos,
+            'rol' => $rol,
+            'permisos' => $permisos
+        ];
+        return response()->json($datos);
     }
 
     /**

@@ -3,6 +3,8 @@ var AllRegister = [];
 
 var CountComp;
 
+var permisos = [];
+
 
 $(document).ready(function () {
     Reload()
@@ -60,8 +62,8 @@ $(document).ready(function () {
     // $('#comportamientos-table').on('click', '[id^=Btn_search_]', function () {
     //     alert("info acudiente")
     // })
-    
-    
+
+
     $('#comportamientos-table').on('click', '[id^=Btn_Edit_]', function () {
         var id = $(this).attr('data-id');
 
@@ -106,8 +108,8 @@ $(document).ready(function () {
                     var archivos = 0;
                     form.append('tempMultimedia', filtro[0].multimedia)
 
-                    jQuery.each(jQuery('#multimedia')[0].files, function(i, file) {
-                        form.append('file'+i, file);
+                    jQuery.each(jQuery('#multimedia')[0].files, function (i, file) {
+                        form.append('file' + i, file);
                         archivos++;
                     });
                     form.append('archivos', archivos);
@@ -208,8 +210,8 @@ $(document).ready(function () {
             else {
                 var form = new FormData();
                 var archivos = 0;
-                jQuery.each(jQuery('#multimedia')[0].files, function(i, file) {
-                    form.append('file'+i, file);
+                jQuery.each(jQuery('#multimedia')[0].files, function (i, file) {
+                    form.append('file' + i, file);
                     archivos++;
                 });
                 form.append('archivos', archivos);
@@ -254,23 +256,19 @@ $(document).ready(function () {
         var id = $(this).attr('data-id');
 
         const filtro = AllRegister.filter(f => f.id == id);
-        
-        if(filtro.length != 0)
-        {
+
+        if (filtro.length != 0) {
             var json = filtro[0].multimedia.split('PSIAPP');
             var html = ''
-            var a=0;
-            for(var i=0; i<json.length; i++)
-            {
-                if( json[i] != '')
-                {
+            var a = 0;
+            for (var i = 0; i < json.length; i++) {
+                if (json[i] != '') {
                     var icon = 'fa fa-file';
 
                     var extension = json[i].split('.')[2];
                     console.log(extension)
 
-                    switch(extension)
-                    {
+                    switch (extension) {
                         case 'doc':
                             icon = 'fa-file-word-o';
                             break;
@@ -307,7 +305,7 @@ $(document).ready(function () {
                         <div class="box box-default">
                             <div class="box-header with-border">
                                 <i class="fa fa-book"></i>
-                                <h3 class="box-title">Archivo ${a+1}</h3>
+                                <h3 class="box-title">Archivo ${a + 1}</h3>
                             </div>
                             <div class="box-body">
                                 <div class="form-group" align="center">
@@ -319,15 +317,15 @@ $(document).ready(function () {
                         </div>
                         
                     </div>`
-                    
+
                     a++;
                 }
-                
+
             }
 
 
-            
-            
+
+
 
             modal.find('.modal-content').empty().append(`
                 <div class="modal-header">
@@ -342,7 +340,7 @@ $(document).ready(function () {
                 </div>
             `)
         }
-        
+
     });
 });
 
@@ -365,12 +363,12 @@ function LoadEstudiantes() {
                 for (var i = 0; i < response.length; i++) {
                     $("#estudiante_id").append(`<option value='${response[i].id}'>${response[i].nombres} ${response[i].apellidos} </option>`)
                 }
-            }else {
+            } else {
 
             }
 
 
-            })
+        })
         .fail(function () {
             console.log("error");
         })
@@ -457,20 +455,22 @@ function Reload() {
         dataType: "JSON",
     })
 
-    .done(function (response) {
-        if (response.length != 0) {
-            AllRegister = response;
-            DataTable(response);
-        } else {
-            $('#comportamientos-table').dataTable().fnClearTable();
-            $('#comportamientos-table').dataTable().fnDestroy();
-            $('#comportamientos-table thead').empty()
-        }
-    })
+        .done(function (response) {
+            if (response.length != 0) {
+                AllRegister = response.comportamientos;
+                permisos = response.permisos;
+                // console.table(permisos.permisos);
+                DataTable(response.comportamientos);
+            } else {
+                $('#comportamientos-table').dataTable().fnClearTable();
+                $('#comportamientos-table').dataTable().fnDestroy();
+                $('#comportamientos-table thead').empty()
+            }
+        })
 
-    .fail(function () {
-        console.log("error");
-    });
+        .fail(function () {
+            console.log("error");
+        });
 }
 
 // function ReloadAct() {
@@ -663,7 +663,7 @@ function ModalActividades() {
 
 function DataTable(response) {
 
-    console.table(response)
+
     if ($.fn.DataTable.isDataTable('#comportamientos-table')) {
         $('#comportamientos-table').dataTable().fnClearTable();
         $('#comportamientos-table').dataTable().fnDestroy();
@@ -680,31 +680,42 @@ function DataTable(response) {
             var my_item = {};
             // my_item.class = "filter_C";
             my_item.data = key;
-            if (key == 'created_at') {
 
+            if (key == 'created_at') {
                 my_item.title = 'Acción';
 
                 my_item.render = function (data, type, row) {
-                    return `<div align="center">
-
-                                <div class="btn-group btn-group-circle btn-group-solid" align="center">
-
-                                    <a data-id=${row.id} id="Btn_act_${row.id}" class='btn btn-circle btn-sm btn-success'>
-                                        <i class="fa fa-calendar-plus-o" aria-hidden="true"></i>
-                                    </a>
-
+                    var html = '';
+                    for (let i = 0; i < permisos.length; i++) {
+                        if (permisos[i] == "delete.comportamientos") {
+                            html += `
+                                    <a data-id=${row.id} id="Btn_delete_${row.id}" class='btn btn-circle btn-sm btn-danger'>
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </a> `
+                        } else if (permisos[i] == "edit.comportamientos") {
+                            html += `
                                     <a data-id=${row.id} id="Btn_Edit_${row.id}" class='btn btn-circle btn-sm btn-primary'>
                                         <i class="fa fa-edit" aria-hidden="true"></i>
                                     </a>
-
-                                    <a data-id=${row.id} id="Btn_delete_${row.id}" class='btn btn-circle btn-sm btn-danger'>
-                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    `
+                        } else if (permisos[i] == "create.actividades") {
+                            html += `
+                                    <a data-id=${row.id} id="Btn_act_${row.id}" class='btn btn-circle btn-sm btn-success'>
+                                        <i class="fa fa-calendar-plus-o" aria-hidden="true"></i>
                                     </a> 
+                                    `
+                        }
+                    }
+                    return `<div align="center">
+                                <div class="btn-group btn-group-circle btn-group-solid" align="center">
+                                    ${html}
                                 </div>
                             </div>`
 
                 }
-                my_columns.push(my_item);
+                if (permisos.length != 0) {
+                    my_columns.push(my_item);
+                }
 
             }
 

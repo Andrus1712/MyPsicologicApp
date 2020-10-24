@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <title>Toolpisco</title>
@@ -12,7 +13,9 @@
   <link href="template/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700"
+    rel="stylesheet">
 
   <!-- Bootstrap CSS File -->
   <link href="template/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -37,12 +40,12 @@
 </head>
 
 <body id="body">
-    
+
   <header id="header">
     <div class="container">
 
       <div id="logo" class="pull-left">
-       <img src="template/logo.png" >
+        <img src="template/logo.png">
         <!-- Uncommesnt below if you prefer to use an image logo -->
         <!-- <a href="#body"><img src="template/img/logo.png" alt="" title="" /></a>-->
       </div>
@@ -56,12 +59,11 @@
           <li><a href="#contact"> Contactanos</a></li>
           <li><a href="#team">Team</a></li>
           <li><a href="/login">Ingresar</a></li>
-      
-       
-  
         </ul>
       </nav><!-- #nav-menu-container -->
+
     </div>
+
   </header><!-- #header -->
 
   <!--==========================
@@ -72,14 +74,14 @@
     <div class="intro-content">
       <h2>Monitoreo de comportamiento <br> estudiantil <br>¡Un apoyo al psicoorientador!</h2>
       <div>
-        <a href="#portfolio" class="btn-get-started scrollto">Ingresar</a>
+        <a href="{{url('/login')}}" class="btn-get-started scrollto">Ingresar</a>
       </div>
     </div>
 
-    <div id="intro-carousel" class="owl-carousel" >
+    <div id="intro-carousel" class="owl-carousel">
       <div class="item" style="background-image: url('template/img/intro-carousel/1.jpg');"></div>
       <div class="item" style="background-image: url('template/img/intro-carousel/2.jpg');"></div>
-    <!--   <div class="item" style="background-image: url('template/img/intro-carousel/3.jpg');"></div>
+      <!--   <div class="item" style="background-image: url('template/img/intro-carousel/3.jpg');"></div>
       <div class="item" style="background-image: url('template/img/intro-carousel/4.jpg');"></div>
       <div class="item" style="background-image: url('template/img/intro-carousel/5.jpg');"></div> -->
     </div>
@@ -100,7 +102,9 @@
 
           <div class="col-lg-6 content">
             <h2>ToolPsico</h2>
-            <h3>Es una herramienta diseñada para dar apoyo a los pscoorientadores, a los padres de familia y a los estudiantes de instituciones educativas públicas en el monitoreo del comportamiento. ToolPsico cuenta con las siguientes funcionalidades: </h3>
+            <h3>Es una herramienta diseñada para dar apoyo a los pscoorientadores, a los padres de familia y a los
+              estudiantes de instituciones educativas públicas en el monitoreo del comportamiento. ToolPsico cuenta con
+              las siguientes funcionalidades: </h3>
 
             <ul>
               <li><i class="ion-android-checkmark-circle"></i> Gestión de comportamientos.</li>
@@ -123,7 +127,8 @@
       <div class="container">
         <div class="section-header">
           <h2>Beneficios y Utilidades</h2>
-          <p>El apoyo de las TIC ha falicitado los procesos en muchos ámbitos, y este no es una excepción. Esta herramienta nos permitirá llevar un control de los estudiantes de una manera más ágil</p>
+          <p>El apoyo de las TIC ha falicitado los procesos en muchos ámbitos, y este no es una excepción. Esta
+            herramienta nos permitirá llevar un control de los estudiantes de una manera más ágil</p>
         </div>
 
         <div class="row">
@@ -132,7 +137,8 @@
             <div class="box wow fadeInLeft">
               <div class="icon"><i class="fa fa-bar-chart"></i></div>
               <h4 class="title"><a href="">Estadisticas a un Clic </a></h4>
-              <p class="description">Podrás visualizar o exportar toda la información de los compartidos registrados mediante un reportes.</p>
+              <p class="description">Podrás visualizar o exportar toda la información de los compartidos registrados
+                mediante un reportes.</p>
             </div>
           </div>
 
@@ -140,7 +146,8 @@
             <div class="box wow fadeInRight">
               <div class="icon"><i class="fa fa-bell-o"></i></div>
               <h4 class="title"><a href="">Notificaciones SMS</a></h4>
-              <p class="description">Podrás recibir notificaciones mediante mensajes de textos de las novedades de los comportamientos de los usuarios o de las actividades registradas</p>
+              <p class="description">Podrás recibir notificaciones mediante mensajes de textos de las novedades de los
+                comportamientos de los usuarios o de las actividades registradas</p>
             </div>
           </div>
 
@@ -148,7 +155,8 @@
             <div class="box wow fadeInLeft" data-wow-delay="0.2s">
               <div class="icon"><i class="fa fa-calendar"></i></div>
               <h4 class="title"><a href="">Agendamiento de Actividades</a></h4>
-              <p class="description"> Podrás agregar citas o tareas como actividades que se podrán visualizar en un calendario diario, mensual o semanal.</p>
+              <p class="description"> Podrás agregar citas o tareas como actividades que se podrán visualizar en un
+                calendario diario, mensual o semanal.</p>
             </div>
           </div>
 
@@ -156,7 +164,8 @@
             <div class="box wow fadeInRight" data-wow-delay="0.2s">
               <div class="icon"><i class="fa fa-mobile"></i></div>
               <h4 class="title"><a href="">Plataforma responsive</a></h4>
-              <p class="description">Podrás usar ToolPsico desde cualquier dispositivo con acceso a un navegador web sin problemas, pues su interfaz se adaptara al dispositivob</p>
+              <p class="description">Podrás usar ToolPsico desde cualquier dispositivo con acceso a un navegador web sin
+                problemas, pues su interfaz se adaptara al dispositivob</p>
             </div>
           </div>
 
@@ -167,169 +176,172 @@
 
     </section><!-- #services -->
 
-     <section id="portfolio" class="wow fadeInUp">
+    <section id="portfolio" class="wow fadeInUp">
       <div class="container">
         <div class="section-header">
           <h2>¿Quiénes somos?</h2>
-          <p>Somos estudiantes de ingeniería de sistemas de la Universidad de Córdoba, que junto con el apoyo de todos los profesores del departamento de Ingeniería decidimos darle una herramienta de apoyo a todos las instituciones públicas.</p>
+          <p>Somos estudiantes de ingeniería de sistemas de la Universidad de Córdoba, que junto con el apoyo de todos
+            los profesores del departamento de Ingeniería decidimos darle una herramienta de apoyo a todos las
+            instituciones públicas.</p>
         </div>
-       <div align="center"> <a href="https://www.unicordoba.edu.co/"><img src="template/img/acreditada.jpg"></a> </div>
+        <div align="center"> <a href="https://www.unicordoba.edu.co/"><img src="template/img/acreditada.jpg"></a> </div>
       </div>
       <br>
       <br>
       <br>
 
-  <section id="contact" class="wow fadeInUp">
-      <div class="container">
-        <div class="section-header">
-          <h2>Contactanos</h2>
-        <!--   <p>Sed tamen tempor magna labore dolore dolor sint tempor duis magna elit veniam aliqua esse amet veniam enim export quid quid veniam aliqua eram noster malis nulla duis fugiat culpa esse aute nulla ipsum velit export irure minim illum fore</p>
+      <section id="contact" class="wow fadeInUp">
+        <div class="container">
+          <div class="section-header">
+            <h2>Contactanos</h2>
+            <!--   <p>Sed tamen tempor magna labore dolore dolor sint tempor duis magna elit veniam aliqua esse amet veniam enim export quid quid veniam aliqua eram noster malis nulla duis fugiat culpa esse aute nulla ipsum velit export irure minim illum fore</p>
         </div> -->
 
-        <div class="row contact-info">
+            <div class="row contact-info">
 
-          <div class="col-md-4">
-            <div class="contact-address">
-              <i class="ion-ios-location-outline"></i>
-              <h3>Direccion</h3>
-              <address>Calle 33 #4-27 - centro, montería - Córdoba, Colombia</address>
+              <div class="col-md-4">
+                <div class="contact-address">
+                  <i class="ion-ios-location-outline"></i>
+                  <h3>Direccion</h3>
+                  <address>Calle 33 #4-27 - centro, montería - Córdoba, Colombia</address>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="contact-phone">
+                  <i class="ion-ios-telephone-outline"></i>
+                  <h3>Numeros de celular</h3>
+                  <p><a href="tel:+573177765722">+57 3177765722</a></p>
+                  <p><a href="tel:+573012546886">+57 3012546886</a></p>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="contact-email">
+                  <i class="ion-ios-email-outline"></i>
+                  <h3>Correo Electronico</h3>
+                  <p><a href="mailto:info@example.com">info@toolpsico.com</a></p>
+                </div>
+              </div>
+
             </div>
           </div>
-
-          <div class="col-md-4">
-            <div class="contact-phone">
-              <i class="ion-ios-telephone-outline"></i>
-              <h3>Numeros de celular</h3>
-              <p><a href="tel:+573177765722">+57 3177765722</a></p>
-              <p><a href="tel:+573012546886">+57 3012546886</a></p>
-            </div>
+      </section>
+      <!-- secion del equipo o team -->
+      <section id="team" class="wow fadeInUp">
+        <div class="container">
+          <div class="section-header">
+            <h2>Team</h2>
           </div>
+          <div class="row">
+            <div class="col-lg-3 col-md-6">
+              <div class="member">
+                <div class="pic"><img src="template/img/team-1.jpg" alt=""></div>
+                <div class="details">
+                  <h4>Camilo Parra</h4>
+                  <span>Estudiante de ingenieria de sistemas</span>
+                  <div class="social">
+                    <a href=""><i class="fa fa-twitter"></i></a>
+                    <a href=""><i class="fa fa-facebook"></i></a>
+                    <a href=""><i class="fa fa-google-plus"></i></a>
+                    <a href=""><i class="fa fa-linkedin"></i></a>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-          <div class="col-md-4">
-            <div class="contact-email">
-              <i class="ion-ios-email-outline"></i>
-              <h3>Correo Electronico</h3>
-              <p><a href="mailto:info@example.com">info@toolpsico.com</a></p>
+            <div class="col-lg-3 col-md-6">
+              <div class="member">
+                <div class="pic"><img src="template/img/team-2.jpg" alt=""></div>
+                <div class="details">
+                  <h4>Andres Calderon</h4>
+                  <span>Estudiante de ingenieria de sistemas</span>
+                  <div class="social">
+                    <a href=""><i class="fa fa-twitter"></i></a>
+                    <a href=""><i class="fa fa-facebook"></i></a>
+                    <a href=""><i class="fa fa-google-plus"></i></a>
+                    <a href=""><i class="fa fa-linkedin"></i></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+              <div class="member">
+                <div class="pic"><img src="template/img/team-3.jpg" alt=""></div>
+                <div class="details">
+                  <h4>Santiago Enoc</h4>
+                  <span>Estudiante asesor universitario</span>
+                  <div class="social">
+                    <a href=""><i class="fa fa-twitter"></i></a>
+                    <a href=""><i class="fa fa-facebook"></i></a>
+                    <a href=""><i class="fa fa-google-plus"></i></a>
+                    <a href=""><i class="fa fa-linkedin"></i></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+              <div class="member">
+                <div class="pic"><img src="template/img/team-4.jpg" alt=""></div>
+                <div class="details">
+                  <h4>Daniel Salas</h4>
+                  <span>Tutor universitario</span>
+                  <div class="social">
+                    <a href=""><i class="fa fa-twitter"></i></a>
+                    <a href=""><i class="fa fa-facebook"></i></a>
+                    <a href=""><i class="fa fa-google-plus"></i></a>
+                    <a href=""><i class="fa fa-linkedin"></i></a>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
         </div>
-      </div>
-    </section>
-<!-- secion del equipo o team -->
-    <section id="team" class="wow fadeInUp">
-      <div class="container">
-        <div class="section-header">
-          <h2>Team</h2>
-        </div>
-        <div class="row">
-          <div class="col-lg-3 col-md-6">
-            <div class="member">
-              <div class="pic"><img src="template/img/team-1.jpg" alt=""></div>
-              <div class="details">
-                <h4>Camilo Parra</h4>
-                <span>Estudiante de ingenieria de sistemas</span>
-                <div class="social">         
-                <a href=""><i class="fa fa-twitter"></i></a>
-                  <a href=""><i class="fa fa-facebook"></i></a>
-                  <a href=""><i class="fa fa-google-plus"></i></a>
-                  <a href=""><i class="fa fa-linkedin"></i></a>    
-                </div>
-              </div>
-            </div>
-          </div>
+      </section>
 
-          <div class="col-lg-3 col-md-6">
-            <div class="member">
-              <div class="pic"><img src="template/img/team-2.jpg" alt=""></div>
-              <div class="details">
-                <h4>Andres Calderon</h4>
-                <span>Estudiante de ingenieria de sistemas</span>
-                <div class="social">
-                  <a href=""><i class="fa fa-twitter"></i></a>
-                  <a href=""><i class="fa fa-facebook"></i></a>
-                  <a href=""><i class="fa fa-google-plus"></i></a>
-                  <a href=""><i class="fa fa-linkedin"></i></a>                
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-3 col-md-6">
-            <div class="member">
-              <div class="pic"><img src="template/img/team-3.jpg" alt=""></div>
-              <div class="details">
-                <h4>Santiago Enoc</h4>
-                <span>Estudiante asesor universitario</span>
-                <div class="social">      
-                  <a href=""><i class="fa fa-twitter"></i></a>
-                  <a href=""><i class="fa fa-facebook"></i></a>
-                  <a href=""><i class="fa fa-google-plus"></i></a>
-                  <a href=""><i class="fa fa-linkedin"></i></a>                 
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-3 col-md-6">
-            <div class="member">
-              <div class="pic"><img src="template/img/team-4.jpg" alt=""></div>
-              <div class="details">
-                <h4>Daniel Salas</h4>
-                <span>Tutor universitario</span>
-                <div class="social">
-                  <a href=""><i class="fa fa-twitter"></i></a>
-                  <a href=""><i class="fa fa-facebook"></i></a>
-                  <a href=""><i class="fa fa-google-plus"></i></a>
-                  <a href=""><i class="fa fa-linkedin"></i></a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
- <!--==========================
+      <!--==========================
     Footer
   ============================-->
 
 
-  <footer id="footer">
-    <div class="container">
-      <div class="copyright">
-        &copy; Copyright <strong>Toolpsico</strong>. Todos los derechos reservados
-      </div>
-      <div class="credits">
-        
-      </div>
-    </div>
-  </footer><!-- #footer -->
+      <footer id="footer">
+        <div class="container">
+          <div class="copyright">
+            &copy; Copyright <strong>Toolpsico</strong>. Todos los derechos reservados
+          </div>
+          <div class="credits">
 
-  <!-- Footer -->
+          </div>
+        </div>
+      </footer><!-- #footer -->
 
-<!-- Footer -->
+      <!-- Footer -->
 
-  <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+      <!-- Footer -->
 
-  <!-- JavaScript Libraries -->
-  <script src="template/lib/jquery/jquery.min.js"></script>
-  <script src="template/lib/jquery/jquery-migrate.min.js"></script>
-  <script src="template/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="template/lib/easing/easing.min.js"></script>
-  <script src="template/lib/superfish/hoverIntent.js"></script>
-  <script src="template/lib/superfish/superfish.min.js"></script>
-  <script src="template/lib/wow/wow.min.js"></script>
-  <script src="template/lib/owlcarousel/owl.carousel.min.js"></script>
-  <script src="template/lib/magnific-popup/magnific-popup.min.js"></script>
-  <script src="template/lib/sticky/sticky.js"></script>
+      <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
 
-  <!-- Contact Form JavaScript File -->
-  <script src="template/contactform/contactform.js"></script>
+      <!-- JavaScript Libraries -->
+      <script src="template/lib/jquery/jquery.min.js"></script>
+      <script src="template/lib/jquery/jquery-migrate.min.js"></script>
+      <script src="template/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+      <script src="template/lib/easing/easing.min.js"></script>
+      <script src="template/lib/superfish/hoverIntent.js"></script>
+      <script src="template/lib/superfish/superfish.min.js"></script>
+      <script src="template/lib/wow/wow.min.js"></script>
+      <script src="template/lib/owlcarousel/owl.carousel.min.js"></script>
+      <script src="template/lib/magnific-popup/magnific-popup.min.js"></script>
+      <script src="template/lib/sticky/sticky.js"></script>
 
-  <!-- Template Main Javascript File -->
-  <script src="template/js/main.js"></script>
+      <!-- Contact Form JavaScript File -->
+      <script src="template/contactform/contactform.js"></script>
+
+      <!-- Template Main Javascript File -->
+      <script src="template/js/main.js"></script>
 
 </body>
+
 </html>

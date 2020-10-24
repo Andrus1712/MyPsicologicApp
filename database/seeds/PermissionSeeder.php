@@ -297,7 +297,7 @@ class PermissionSeeder extends Seeder
         ]);
         DB::table('permissions')->insert([
             'name' => 'crear roles',
-            'slug' => 'crete.roles',
+            'slug' => 'create.roles',
             // 'code' => 37,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),

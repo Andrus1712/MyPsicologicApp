@@ -3,10 +3,13 @@
 @section('content')
 <section class="content-header">
     <h1 class="pull-left">Usuarios</h1>
+    
+    @if (Auth()->user()->havePermission('create.user'))
     <h1 class="pull-right">
         <a class="btn btn-success pull-right" style="margin-top: -10px;margin-bottom: 5px" id="add-user"><i
                 class="fa fa-plus"></i> Agregar</a>
     </h1>
+    @endif
     @include('usuarios.create')
 </section>
 <div class="content">

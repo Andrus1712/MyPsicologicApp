@@ -1,7 +1,7 @@
 var modal = $("#modal-modelo-seguimiento")
 var AllRegister = []
 
-
+var permisos = []
 
 $(document).ready(function () {
     Reload()
@@ -787,7 +787,7 @@ function Modal() {
 
 function Reload() {
     $.ajax({
-        url: "/api/modelo_seguimientos",
+        url: "/getModeloSeguimiento",
         type: "GET",
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         dataType: "JSON",
@@ -795,9 +795,9 @@ function Reload() {
 
         .done(function (response) {
             if (response.length != 0) {
-                AllRegister = response.data;
-
-                DataTable(response.data);
+                AllRegister = response.modeloSeguimiento;
+                permisos = response.permisos;
+                DataTable(response.modeloSeguimiento);
             } else {
                 $('#modelo-table').dataTable().fnClearTable();
                 $('#modelo-table').dataTable().fnDestroy();
@@ -1000,7 +1000,7 @@ function DataTable(response) {
                     titleAttr: 'Exportar a Excel',
                     className: 'btn btn-success',
                     exportOptions: {
-                        columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
                     }
                 },
                 {
@@ -1011,7 +1011,7 @@ function DataTable(response) {
                     orientation: 'landscape',
                     pageSize: 'LEGAL',
                     exportOptions: {
-                        columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
                     }
                 },
                 {
@@ -1020,7 +1020,7 @@ function DataTable(response) {
                     titleAttr: 'Imprimir',
                     className: 'btn btn-info',
                     exportOptions: {
-                        columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
                     }
                 },
             ],

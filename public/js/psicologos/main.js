@@ -1,6 +1,10 @@
 var modal = $("#modal-psicologos")
 
-$(document).ready(function(){
+var AllRegister = []
+
+var permisos = []
+
+$(document).ready(function () {
     Reload()
 
     $("#psicologos-table").on('click', '[id^=Btn_Edit_]', function () {
@@ -75,81 +79,79 @@ $(document).ready(function(){
         }
     })
 
-    $('#psicologos-table').on('click','[id^=Btn_delete_]', function()
-    {
+    $('#psicologos-table').on('click', '[id^=Btn_delete_]', function () {
         var id = $(this).attr('data-id')
-        
+
         swal({
-        title: "¿Realmente deseas eliminar el acudiente?",
-        text: "Ten en cuenta que eliminaras toda su información del sistema",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonClass: "btn-danger",
-        confirmButtonText: "Si, eliminar",
-        closeOnConfirm: false
+            title: "¿Realmente deseas eliminar el acudiente?",
+            text: "Ten en cuenta que eliminaras toda su información del sistema",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Si, eliminar",
+            closeOnConfirm: false
         },
-        function(){
-            $.ajax({
-                url: "/api/psicologos/" + id,
-                type: "DELETE",
-                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            })
-                .done(function () {
-                    swal("Eliminado!", "Se ha eliminado el acudiente", "success");
-                    Reload();
+            function () {
+                $.ajax({
+                    url: "/api/psicologos/" + id,
+                    type: "DELETE",
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                 })
-                .fail(function () {
-                    swal("Error!", "Ha ocurrido un error", "error");
-                });        
-        
-        });
-        
-        
+                    .done(function () {
+                        swal("Eliminado!", "Se ha eliminado el acudiente", "success");
+                        Reload();
+                    })
+                    .fail(function () {
+                        swal("Error!", "Ha ocurrido un error", "error");
+                    });
+
+            });
+
+
     })
 
-    $('#add-psicologos').on('click', function(){
+    $('#add-psicologos').on('click', function () {
         modal.modal('show');
         Modal();
 
-        $("#save").on('click', function(){
+        $("#save").on('click', function () {
             var tipoIdentificacion = $("#tipoIdentificacion").val(),
-                identificacion     = $("#identificacion").val(),
-                nombres            = $("#nombres").val(),
-                apellidos          = $("#apellidos").val(),
-                correo             = $("#correo").val(),
-                fechaNacimiento    = $("#fechaNacimiento").val(),
-                telefono           = $("#telefono").val(),
-                direccion          = $("#direccion").val();
+                identificacion = $("#identificacion").val(),
+                nombres = $("#nombres").val(),
+                apellidos = $("#apellidos").val(),
+                correo = $("#correo").val(),
+                fechaNacimiento = $("#fechaNacimiento").val(),
+                telefono = $("#telefono").val(),
+                direccion = $("#direccion").val();
 
-            if(tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '' || fechaNacimiento == '' || telefono == '' || direccion == '')
-            {
+            if (tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '' || fechaNacimiento == '' || telefono == '' || direccion == '') {
                 toastr.warning("Complete todos los campos")
-            }else{
+            } else {
                 $.ajax({
                     url: '/api/psicologos',
-                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                     type: 'POST',
                     data: {
-                        tipoIdentificacion : tipoIdentificacion,
-                        identificacion     : identificacion,
-                        nombres            : nombres,
-                        apellidos          : apellidos,
-                        correo             : correo,
-                        fechaNacimiento    : fechaNacimiento,
-                        telefono           : telefono,
-                        direccion          : direccion,
+                        tipoIdentificacion: tipoIdentificacion,
+                        identificacion: identificacion,
+                        nombres: nombres,
+                        apellidos: apellidos,
+                        correo: correo,
+                        fechaNacimiento: fechaNacimiento,
+                        telefono: telefono,
+                        direccion: direccion,
                     },
-                  })
-                  .done(function() {
-                    setTimeout(function(){ modal.modal("hide")}, 600);
-                    Reload()
-                  })
-                  .fail(function() {
-                    toastr.error("Ha ocurrido un error");
-                  })
-                  .always(function() {
-                    $("#save").addClass("disabled");
-                  });
+                })
+                    .done(function () {
+                        setTimeout(function () { modal.modal("hide") }, 600);
+                        Reload()
+                    })
+                    .fail(function () {
+                        toastr.error("Ha ocurrido un error");
+                    })
+                    .always(function () {
+                        $("#save").addClass("disabled");
+                    });
             }
 
         });
@@ -254,140 +256,130 @@ function Modal() {
     });
 }
 
-function Reload()
-{
+function Reload() {
     $.ajax({
-        url: "/api/psicologos",
+        url: "/getPsicologos",
         type: "GET",
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         dataType: "JSON",
     })
 
-    .done(function (response) 
-    {
-        if (response.length != 0) {
-            AllRegister = response.data;
+        .done(function (response) {
+            if (response.length != 0) {
+                AllRegister = response.psicologos;
+                permisos = response.permisos;
+                DataTable(response.psicologos);
+            } else {
+                $('#psicologos-table').dataTable().fnClearTable();
+                $('#psicologos-table').dataTable().fnDestroy();
+                $('#psicologos-table thead').empty()
+            }
+        })
 
-            DataTable(response.data);
-        }else
-        {
-            $('#psicologos-table').dataTable().fnClearTable();
-            $('#psicologos-table').dataTable().fnDestroy();
-            $('#psicologos-table thead').empty()
-        }
-    })
-
-    .fail(function () {
-        console.log("error");
-    });
+        .fail(function () {
+            console.log("error");
+        });
 }
 
-function DataTable(response)
-{ 
+function DataTable(response) {
 
     console.log(response)
-    if ($.fn.DataTable.isDataTable('#psicologos-table'))
-    {
+    if ($.fn.DataTable.isDataTable('#psicologos-table')) {
         $('#psicologos-table').dataTable().fnClearTable();
         $('#psicologos-table').dataTable().fnDestroy();
         $('#psicologos-table thead').empty()
     }
-    else
-    {
+    else {
         $('#psicologos-table thead').empty()
     }
 
-    
-    if(response.length != 0)
-    {
-        let my_columns=[]
-        $.each(response[0], function(key, value) 
-        {
+
+    if (response.length != 0) {
+        let my_columns = []
+        $.each(response[0], function (key, value) {
             var my_item = {};
             // my_item.class = "filter_C";
             my_item.data = key;
-            if(key =='created_at')
-            {
-            
+            if (key == 'created_at') {
+
                 my_item.title = 'Acción';
 
-                my_item.render = function(data, type, row)
-                {
-                    return `<div align="center">
-
-                                <div class="btn-group btn-group-circle btn-group-solid" align="center">
-
-                                    <a data-id=${row.id} id="Btn_Edit_${row.id}" class='btn btn-circle btn-sm btn-primary'>
-                                        <i class="fa fa-edit" aria-hidden="true"></i>
-                                    </a>
-
+                my_item.render = function (data, type, row) {
+                    var html = '';
+                    for (let i = 0; i < permisos.length; i++) {
+                        if (permisos[i] == "delete.psicologos") {
+                            html += `
                                     <a data-id=${row.id} id="Btn_delete_${row.id}" class='btn btn-circle btn-sm btn-danger'>
                                         <i class="fa fa-trash" aria-hidden="true"></i>
-                                    </a> 
+                                    </a> `
+                        } else if (permisos[i] == "edit.psicologos") {
+                            html += `
+                                    <a data-id=${row.id} id="Btn_Edit_${row.id}" class='btn btn-circle btn-sm btn-primary'>
+                                        <i class="fa fa-edit" aria-hidden="true"></i>
+                                    </a>`
+                        }
+                    }
+                    return `<div align="center">
+                                <div class="btn-group btn-group-circle btn-group-solid" align="center">
+                                    ${html}
                                 </div>
+                                
                             </div>`
 
                 }
-                my_columns.push(my_item);  
-
+                if (permisos.length != 0) {
+                    my_columns.push(my_item);
+                }
             }
-            
-            else if(key =='id')
-            {
-            
+
+            else if (key == 'id') {
+
                 my_item.title = '#';
 
-                my_item.render = function(data, type, row)
-                {
-                  return `  <div'> 
+                my_item.render = function (data, type, row) {
+                    return `  <div'> 
                                 ${row.id}
                             </div>`
                 }
-                my_columns.push(my_item);            
-    
+                my_columns.push(my_item);
+
 
             }
-            
-            else if(key =='tipoIdentificacion')
-            {
-            
+
+            else if (key == 'tipoIdentificacion') {
+
                 my_item.title = 'Tipo ID';
 
-                my_item.render = function(data, type, row)
-                {
-                  return `  <div'> 
+                my_item.render = function (data, type, row) {
+                    return `  <div'> 
                                 ${row.tipoIdentificacion}
                             </div>`
                 }
-                my_columns.push(my_item);            
+                my_columns.push(my_item);
             }
 
-            else if(key =='identificacion')
-            {
-            
+            else if (key == 'identificacion') {
+
                 my_item.title = 'Identidicacion';
 
-                my_item.render = function(data, type, row)
-                {
-                  return `  <div'> 
+                my_item.render = function (data, type, row) {
+                    return `  <div'> 
                                 ${row.identificacion}
                             </div>`
                 }
-                my_columns.push(my_item);            
+                my_columns.push(my_item);
             }
 
-            else if(key =='nombres')
-            {
-            
+            else if (key == 'nombres') {
+
                 my_item.title = 'Psicoorientador';
 
-                my_item.render = function(data, type, row)
-                {
+                my_item.render = function (data, type, row) {
                     return `<div>
                                 ${row.nombres + " " + row.apellidos}
-                            </div>`    
+                            </div>`
                 }
-                my_columns.push(my_item);            
+                my_columns.push(my_item);
             }
 
             else if (key == 'correo') {
@@ -401,7 +393,7 @@ function DataTable(response)
                 }
                 my_columns.push(my_item);
             }
-            
+
             else if (key == 'telefono') {
 
                 my_item.title = 'Télefono';
@@ -461,7 +453,7 @@ function DataTable(response)
 
             "lengthMenu": [
                 [10, 15, 20, -1],
-                [10, 15, 20, "Todos"] 
+                [10, 15, 20, "Todos"]
             ]
         });
     }

@@ -60,7 +60,7 @@
     <a href="{{ route('grupos.index') }}"><i class="fa fa-school"></i><span>Cursos</span></a>
 </li>
 
-@can('Psicoorientador')
+
 <li class="header">General</li>
     
 <li class="{{ Request::is('estudiantes*') ? 'active' : '' }}">
@@ -84,7 +84,6 @@
     <a href="{{ route('roles.index') }}"><i class="fa fa-users-cog"></i><span>Configuracion</span></a>
 </li>
 
-@endcan
 
 
 <li class="header">Modulo de Seguimiento</li>
@@ -99,12 +98,11 @@
     </a>
 </li>
 
-@can('Psicoorientador')
 <li class="{{ Request::is('tipoComportamientos*') ? 'active' : '' }}">
     <a href="{{ route('tipoComportamientos.index') }}"><i class="fa fa-book-open"></i><span>Tipo
             Comportamientos</span></a>
 </li>
-@endcan
+
 
 <li class="{{ Request::is('actividades*') ? 'active' : '' }}">
     <a href="{{ route('actividades.index') }}"><i class="fa fa-calendar-check"></i>
@@ -115,17 +113,17 @@
     </a>
 </li>
 
-@can('Psicoorientador')
+
 <li class="{{ Request::is('avances*') ? 'active' : '' }}">
     <a href="{{ route('avances.index') }}"><i class="fa fa-list-ol"></i><span>Seguimientos</span></a>
 </li>
-@endcan
 
-@can('Psicoorientador')
+
+
 <li class="{{ Request::is('modeloSeguimientos*') ? 'active' : '' }}">
     <a href="{{ route('modeloSeguimientos.index') }}"><i class="fa fa-chart-pie"></i><span>Modelo Registro</span></a>
 </li>
-@endcan
+
 
 
 {{-- <li class="header">Reportes</li>

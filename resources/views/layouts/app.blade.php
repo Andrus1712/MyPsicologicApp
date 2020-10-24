@@ -3,8 +3,13 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>PSI App</title>
+    <title>Toolpisco</title>
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+
+    <!-- Favicons -->
+    <link href="../template/img/favicon.png" rel="icon">
+    <link href="../template/img/apple-touch-icon.png" rel="apple-touch-icon">
+
     <!-- Bootstrap 3.3.7 -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
@@ -70,7 +75,7 @@
             <!-- Logo -->
             <a href="{{ route('home') }}" class="logo">
                 <span class="logo-mini"><img src="../img/logo-sm.png" /></span>
-                <span class="logo-lg"><img src="../img/logo-lg.png" /></span>
+                <span class="logo-lg"><img src="../img/logo-lg.png" ></span>
 
             </a>
 
@@ -142,6 +147,20 @@
                                         </li>
                                     </ul>
                                     @endif
+                                    @if ($notification->type == 'App\Notifications\NuevoAvances')
+                                    <ul class="menu">
+                                        <li>
+                                            <a id="readNotification" data-id="{{$notification->id}}"
+                                                href="/comportamientos/{{ $notification->data['id'] }}">
+                                                <i class="mr-3 pull-left fa fa-file-text text-red"></i>
+                                                Nuevo Avances | {{ $notification->data['titulo']}}
+
+                                                <small
+                                                    class="ml-3 pull-right">{{ $notification->created_at->diffForHumans() }}</small>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    @endif
                                     <!-- ------------------------------------ -->
                                     @endforeach
                                 </li>
@@ -193,7 +212,7 @@
                         <!-- Menu Toggle Button -->
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             <!-- The user image in the navbar-->
-                            <img src="http://infyom.com/images/logo/blue_logo_150x150.jpg" class="user-image"
+                            <img src="../img/perfil.png" style="background-color: #fff;" class="user-image"
                                 alt="User Image" />
                             <!-- hidden-xs hides the username on small devices so only the image appears. -->
                             <span class="hidden-xs">{!! Auth::user()->name !!}</span>
@@ -201,7 +220,7 @@
                         <ul class="dropdown-menu">
                             <!-- The user image in the menu -->
                             <li class="user-header">
-                                <img src="http://infyom.com/images/logo/blue_logo_150x150.jpg" class="img-circle"
+                                <img src="../img/perfil.png" style="background-color: #fff;" class="img-circle"
                                     alt="User Image" />
                                 <p>
                                     {!! Auth::user()->name !!}
@@ -294,7 +313,7 @@
 
 
     @yield('scripts')
-    
+
 
 </body>
 

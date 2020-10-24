@@ -8,6 +8,7 @@ use App\Repositories\acudienteRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
 use Flash;
+use Illuminate\Support\Facades\DB;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 
@@ -18,6 +19,7 @@ class acudienteController extends AppBaseController
 
     public function __construct(acudienteRepository $acudienteRepo)
     {
+        $this->middleware('auth');
         $this->acudienteRepository = $acudienteRepo;
     }
 
@@ -29,11 +31,73 @@ class acudienteController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $this->acudienteRepository->pushCriteria(new RequestCriteria($request));
-        $acudientes = $this->acudienteRepository->all();
+        $user = Auth()->user();
+        if ($user->havePermission('show.acudientes')) {
+            $this->acudienteRepository->pushCriteria(new RequestCriteria($request));
+            $acudientes = $this->acudienteRepository->all();
 
-        return view('acudientes.index')
-            ->with('acudientes', $acudientes);
+            return view('acudientes.index')
+                ->with('acudientes', $acudientes);
+        } else {
+            return redirect('/home');
+        }
+    }
+
+    public function getAcudientes()
+    {
+
+        $user = Auth()->user();
+
+        $rol = $user->tieneRol();
+        if ($rol == 'psi-user') {
+            $acudientes = DB::table(DB::raw('acudientes a'))
+                ->where(DB::raw('a.deleted_at'), '=', NULL)
+                ->select('a.*')
+                ->get();
+        } else if ($rol == 'est-user') {
+            $acudientes = DB::table(DB::raw('acudientes a'))
+                ->where(DB::raw('a.deleted_at'), '=', NULL)
+                ->join(DB::raw('estudiante e'), 'e.acudiente_id', '=', 'a.id')
+                ->select('a.*')
+                ->get();
+        } else if ($rol == 'doc-user') {
+            $acudientes = DB::table(DB::raw('acudientes a'))
+                ->where(DB::raw('a.deleted_at'), '=', NULL)
+                ->select('a.*')
+                ->get();
+        } else if ($rol == 'acu-user') {
+            $acudientes = DB::table(DB::raw('acudientes a'))
+                ->where(DB::raw('a.deleted_at'), '=', NULL)
+                ->select('a.*')
+                ->get();
+        } else {
+            $acudientes = DB::table(DB::raw('acudientes a'))
+                ->where(DB::raw('a.deleted_at'), '=', NULL)
+                ->select('a.*')
+                ->get();
+        }
+
+        //Permisos que tiene el usuario
+        $permisos = [];
+
+        if ($user->havePermission('edit.acudientes')) {
+            array_push($permisos, "edit.acudientes");
+        }
+
+        if ($user->havePermission('delete.acudientes')) {
+            array_push($permisos, "delete.acudientes");
+        }
+
+        if ($user->havePermission('create.acudientes')) {
+            array_push($permisos, "create.acudientes");
+        }
+
+        $datos = [
+            'acudientes' => $acudientes,
+            'rol' => $rol,
+            'permisos' => $permisos
+        ];
+        return response()->json($datos);
     }
 
     /**

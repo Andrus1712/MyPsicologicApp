@@ -8,6 +8,7 @@ use App\Repositories\modelo_seguimientoRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
 use Flash;
+use Illuminate\Support\Facades\DB;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 
@@ -18,6 +19,7 @@ class modelo_seguimientoController extends AppBaseController
 
     public function __construct(modelo_seguimientoRepository $modeloSeguimientoRepo)
     {
+        $this->middleware('auth');
         $this->modeloSeguimientoRepository = $modeloSeguimientoRepo;
     }
 
@@ -29,11 +31,66 @@ class modelo_seguimientoController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $this->modeloSeguimientoRepository->pushCriteria(new RequestCriteria($request));
-        $modeloSeguimientos = $this->modeloSeguimientoRepository->all();
+        $user = Auth()->user();
+        if ($user->havePermission('modulo.seguimiento')) {
+            $this->modeloSeguimientoRepository->pushCriteria(new RequestCriteria($request));
+            $modeloSeguimientos = $this->modeloSeguimientoRepository->all();
 
-        return view('modelo_seguimientos.index')
-            ->with('modeloSeguimientos', $modeloSeguimientos);
+            return view('modelo_seguimientos.index')
+                ->with('modeloSeguimientos', $modeloSeguimientos);
+        } else {
+            return redirect('/home');
+        }
+    }
+
+    public function getModeloSeguimiento()
+    {
+        $user = Auth()->user();
+
+        $rol = $user->tieneRol();
+        if ($rol == 'psi-user') {
+            $modeloSeguimiento = DB::table(DB::raw('modelo_seguimientos modelo'))
+                ->where(DB::raw('modelo.deleted_at', '=', 'NULL'))
+                ->select(DB::raw('modelo.*'))
+                ->get();
+        }
+        if ($rol == 'doc-user') {
+            $modeloSeguimiento = DB::table(DB::raw('modelo_seguimientos modelo'))
+                ->where(DB::raw('modelo.deleted_at', '=', 'NULL'))
+                ->select(DB::raw('modelo.*'))
+                ->get();
+        }
+        if ($rol == 'est-user') {
+            $modeloSeguimiento = DB::table(DB::raw('modelo_seguimientos modelo'))
+                ->where(DB::raw('modelo.deleted_at', '=', 'NULL'))
+                ->select(DB::raw('modelo.*'))
+                ->get();
+        }
+        if ($rol == 'acu-user') {
+            $modeloSeguimiento = DB::table(DB::raw('modelo_seguimientos modelo'))
+                ->where(DB::raw('modelo.deleted_at', '=', 'NULL'))
+                ->select(DB::raw('modelo.*'))
+                ->get();
+        } else {
+            $modeloSeguimiento = DB::table(DB::raw('modelo_seguimientos modelo'))
+                ->where(DB::raw('modelo.deleted_at', '=', 'NULL'))
+                ->select(DB::raw('modelo.*'))
+                ->get();
+        }
+
+        //Permisos que tiene el usuario
+        $permisos = [];
+
+        if ($user->havePermission('modulo.seguimiento')) {
+            array_push($permisos, "modulo.seguimiento");
+        }
+
+        $datos = [
+            'modeloSeguimiento' => $modeloSeguimiento,
+            'rol' => $rol,
+            'permisos' => $permisos
+        ];
+        return response()->json($datos);
     }
 
     /**

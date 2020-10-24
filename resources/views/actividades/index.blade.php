@@ -4,16 +4,16 @@
 
 <section class="content-header">
     <h1 class="pull-left">Actividades</h1>
-    <h1 class="pull-right">
 
-        @can('Psicoorientador')
+    @if (Auth()->user()->havePermission('create.actividades'))
+
+    <h1 class="pull-right">
         <div class="row">
             <div class="col-md-6">
                 <div class="btn-group" style="margin-bottom: 10px;">
                     <a class="btn bg-olive margin" style="margin-top: -10px;margin-bottom: 5px" id="add-actividades"><i
                             class="fa fa-plus"></i> Agregar Actividad</a>
                 </div>
-
             </div>
             <div class="col-md-6">
                 <div class="btn-group">
@@ -23,9 +23,8 @@
 
             </div>
         </div>
-        @endcan
-
     </h1>
+    @endif
     @include('actividades.create')
 </section>
 

@@ -41,7 +41,7 @@ class User extends Authenticatable
 
     public function tieneRol()
     {
-        return $this->roles->flatten()->pluck('name')->unique();
+        return $this->roles->flatten()->pluck('slug')->unique();
     }
 
     public function hasRole($role)
@@ -50,5 +50,21 @@ class User extends Authenticatable
             return true;
         }
         return false;
+    }
+
+    public function havePermission($permission)
+    {
+        foreach ($this->roles as $role) {
+
+            foreach ($role->permissions as $perm) {
+
+                if ($perm->slug == $permission) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+        //return $this->roles;
     }
 }

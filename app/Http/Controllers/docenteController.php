@@ -8,6 +8,7 @@ use App\Repositories\docenteRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
 use Flash;
+use Illuminate\Support\Facades\DB;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 
@@ -18,6 +19,7 @@ class docenteController extends AppBaseController
 
     public function __construct(docenteRepository $docenteRepo)
     {
+        $this->middleware('auth');
         $this->docenteRepository = $docenteRepo;
     }
 
@@ -29,11 +31,75 @@ class docenteController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $this->docenteRepository->pushCriteria(new RequestCriteria($request));
-        $docentes = $this->docenteRepository->all();
+        $user = Auth()->user();
+        if ($user->havePermission('show.docentes')) {
+            $this->docenteRepository->pushCriteria(new RequestCriteria($request));
+            $docentes = $this->docenteRepository->all();
 
-        return view('docentes.index')
-            ->with('docentes', $docentes);
+            return view('docentes.index')
+                ->with('docentes', $docentes);
+        } else {
+            return redirect('/home');
+        }
+    }
+
+
+    public function getDocentes()
+    {
+        $user = Auth()->user();
+
+        $rol = $user->tieneRol();
+        if ($rol == 'psi-user') {
+            $docentes = DB::table(DB::raw('docentes d'))
+                ->where(DB::raw('d.deleted_at', '=', NULL))
+                ->select('d.*')
+                ->get();
+        } else if ($rol == 'est-user') {
+            $docentes = DB::table(DB::raw('docentes d'))
+                ->where(DB::raw('d.deleted_at', '=', NULL))
+                ->select('d.*')
+                ->get();
+        } else if ($rol == 'doc-user') {
+            $docentes = DB::table(DB::raw('docentes d'))
+                ->where(DB::raw('d.deleted_at', '=', NULL))
+                ->select('d.*')
+                ->get();
+        } else if ($rol == 'acu-user') {
+            $docentes = DB::table(DB::raw('docentes d'))
+                ->where(DB::raw('d.deleted_at', '=', NULL))
+                ->select('d.*')
+                ->get();
+        } else {
+            $docentes = DB::table(DB::raw('docentes d'))
+                ->where(DB::raw('d.deleted_at', '=', NULL))
+                ->select('d.*')
+                ->get();
+        }
+
+        //Permisos que tiene el usuario
+        $permisos = [];
+
+        if ($user->havePermission('edit.docentes')) {
+            array_push($permisos, "edit.docentes");
+        }
+
+        if ($user->havePermission('delete.docentes')) {
+            array_push($permisos, "delete.docentes");
+        }
+
+        if ($user->havePermission('create.docentes')) {
+            array_push($permisos, "create.docentes");
+        }
+        if ($user->havePermission('create.actividades')) {
+            array_push($permisos, "create.actividades");
+        }
+
+        $datos = [
+            'docentes' => $docentes,
+            'rol' => $rol,
+            'permisos' => $permisos
+        ];
+        return response()->json($datos);
     }
 
     /**

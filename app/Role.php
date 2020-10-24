@@ -25,4 +25,6 @@ class Role extends Model
     {
         $this->permissions()->sync($permission, false);
     }
+
+
 }

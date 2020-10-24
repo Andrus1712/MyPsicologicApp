@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 // use Request; 
 
 use App\Http\Controllers\AppBaseController;
+use App\Models\psicologo;
+use App\Role;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
@@ -29,6 +31,7 @@ class avancesAPIController extends AppBaseController
 
     public function __construct(avancesRepository $avancesRepo)
     {
+        $this->middleware('auth');
         $this->avancesRepository = $avancesRepo;
     }
 
@@ -46,18 +49,25 @@ class avancesAPIController extends AppBaseController
             ->join(DB::raw('comportamientos cp'), 'ac.comportamiento_id', '=', 'cp.id')
             ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
             ->join(DB::raw('estudiantes e'), 'cp.estudiante_id', '=', 'e.id')
-            ->select('av.id', DB::raw('av.descripcion as avance'), 'av.fecha_avance',
-                DB::raw('ac.id as id_actividad'),DB::raw('ac.estado as estado_actividad'),
-                DB::raw('ac.titulo as titulo_actividad'),DB::raw('ac.descripcion as descripcion_actividad'),
+            ->select(
+                'av.id',
+                DB::raw('av.descripcion as avance'),
+                'av.fecha_avance',
+                DB::raw('ac.id as id_actividad'),
+                DB::raw('ac.estado as estado_actividad'),
+                DB::raw('ac.titulo as titulo_actividad'),
+                DB::raw('ac.descripcion as descripcion_actividad'),
                 DB::raw('ac.fecha as fecha_actividad'),
                 DB::raw('cp.titulo as comportamiento_registrado'),
                 DB::raw('tc.titulo as titulo_tipo_comportamiento'),
                 DB::raw('e.nombres as nombre_estudiante'),
                 DB::raw('e.apellidos as apellido_estudiante'),
-                'av.evidencias', 'av.created_at')
-        ->get();
+                'av.evidencias',
+                'av.created_at'
+            )
+            ->get();
 
-        return $this->sendResponse($avances->toArray(), 'Avances retrieved successfully');
+        return response()->json($avances);
     }
 
     /**
@@ -68,47 +78,69 @@ class avancesAPIController extends AppBaseController
      *
      * @return Response
      */
-    public function store(CreateavancesAPIRequest $request)
+    public function store(Request $request)
     {
-        if(isset($request->id) && $request->method == 'update')
-        {
-            if($request->file('evidencias')){
-                $path = Storage::disk('public')->put('documentosPSI',$request->file('evidencias'));
+        if (isset($request->id) && $request->method == 'update') {
+            $url_evidencia = $request->archivos != 0 ? '' : $request->tempMultimedia;
 
-                $url_evidencia = './'.$path;
-            }else{
-                $url_evidencia = $request->evidencias;
+            for ($i = 0; $i < $request->archivos; $i++) {
+                if (is_numeric($i)) {
+                    if ($request->file("file$i")) {
+                        $path = Storage::disk('public')->put('documentosPSI', $request->file("file$i"));
+                        $url_evidencia .= 'PSIAPP./' . $path;
+                    }
+                }
             }
 
-
             avances::where('id', $request->id)->update([
-                'actividad_id'=> $request->actividad_id,
+                'actividad_id' => $request->actividad_id,
                 'descripcion' => $request->descripcion,
-                'fecha_avance'=> $request->fecha_avance,
+                'fecha_avance' => $request->fecha_avance,
                 'evidencias'  => $url_evidencia,
             ]);
             return response()->json(['status' => 'Avances updated successfully.']);
-        }else{
-            
-            if($request->file('evidencias')){
-                $path = Storage::disk('public')->put('documentosPSI',$request->file('evidencias'));
-                $url_evidencia = './'.$path;
-            }else {
-                $url_evidencia = null;
+        } else {
+
+            $url_evidencia = $request->archivos != 0 ? '' : null;
+
+            for ($i = 0; $i < $request->archivos; $i++) {
+
+                if (is_numeric($i)) {
+
+                    if ($request->file("file$i")) {
+                        $path = Storage::disk('public')->put('documentosPSI', $request->file("file$i"));
+                        $url_evidencia .= 'PSIAPP./' . $path;
+                    }
+                }
             }
-    
+
             // $input = $request->all();
-    
-            $this->avancesRepository->create([
+
+            $avances = avances::create([
                 'actividad_id' => $request->actividad_id,
                 'descripcion'  => $request->descripcion,
                 'fecha_avance' => $request->fecha_avance,
                 'evidencias'   => $url_evidencia,
             ]);
-        
+
+            $rol_users = Role::with('users')->where('name', 'Psicoorientador')
+                ->each(function (Role $role_user) use ($avances) {
+                    foreach ($role_user->users as $u) {
+
+                        // $u->notify(new NuevoAvance($avances));
+                        $psi = psicologo::where('correo', $u->email)->first();
+                        //Notificacion via sms
+                        // $nexmo = app('Nexmo\Client');
+                        // $nexmo->message()->send([
+                        //     'to'   => '57'.$psi->telefono,
+                        //     'from' => '573177765722',
+                        //     'text' => 'Hola '. $psi->nombres . ', Hay un nuevo comportamiento registrado: ' . $comportamiento->titulo .' Descripcion:'. $comportamiento->descripcion
+                        // ]);
+                    }
+                });
+
             return response()->json(['status' => 'Avances saved successfully.']);
         }
-        
     }
 
     /**
@@ -142,9 +174,9 @@ class avancesAPIController extends AppBaseController
      */
     public function update(avances $avances, UpdateavancesAPIRequest $request)
     {
-        if($request->ajax()){
-            avances::find($request->id)->update(['descripcion'=>'dasdas']);
-            return response()->json(['mensaje'=>'estado actualizado con exito']);
+        if ($request->ajax()) {
+            avances::find($request->id)->update(['descripcion' => 'dasdas']);
+            return response()->json(['mensaje' => 'estado actualizado con exito']);
         }
         // dd($request->all());
 
@@ -178,10 +210,10 @@ class avancesAPIController extends AppBaseController
     public function destroy($id)
     {
         /** @var avances $avances */
-        $avances =avances::find($id);
+        $avances = avances::find($id);
 
         $avances->delete();
 
-        return response()->json(['status' =>'Actividades deleted successfully']);
+        return response()->json(['status' => 'Actividades deleted successfully']);
     }
 }

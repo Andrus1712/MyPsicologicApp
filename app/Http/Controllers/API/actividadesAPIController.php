@@ -137,7 +137,8 @@ class actividadesAPIController extends AppBaseController
 
             HistorialActividades::create([
                 'actividad_id' => $actividades->id,
-                'fecha_historial' => $actividades->fecha
+                'fecha_historial' => $actividades->fecha,
+                'estado_actividad' => $actividades->estado,
             ]);
 
             $actividades = $this->actividadesRepository->update($input, $id);

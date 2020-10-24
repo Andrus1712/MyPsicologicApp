@@ -8,6 +8,7 @@ use App\Repositories\avancesRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
 use Flash;
+use Illuminate\Support\Facades\DB;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 
@@ -18,6 +19,7 @@ class avancesController extends AppBaseController
 
     public function __construct(avancesRepository $avancesRepo)
     {
+        $this->middleware('auth');
         $this->avancesRepository = $avancesRepo;
     }
 
@@ -29,12 +31,164 @@ class avancesController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $this->avancesRepository->pushCriteria(new RequestCriteria($request));
-        $avances = $this->avancesRepository->all();
+        $user = Auth()->user();
+        if ($user->havePermission('show.avances')) {
+            $this->avancesRepository->pushCriteria(new RequestCriteria($request));
+            $avances = $this->avancesRepository->all();
 
-        return view('avances.index')
-            ->with('avances', $avances);
+            return view('avances.index')
+                ->with('avances', $avances);
+        } else {
+            return redirect('/home');
+        }
     }
+
+    public function getAvances()
+    {
+        $user = Auth()->user();
+
+        $rol = $user->tieneRol();
+        if ($rol == 'psi-user') {
+            $avances = DB::table(DB::raw('avances av'))->where(DB::raw('av.deleted_at', '=', 'NULL'))
+                ->join(DB::raw('actividades ac'), 'av.actividad_id', '=', 'ac.id')
+                ->join(DB::raw('comportamientos cp'), 'ac.comportamiento_id', '=', 'cp.id')
+                ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                ->join(DB::raw('estudiantes e'), 'cp.estudiante_id', '=', 'e.id')
+                ->select(
+                    'av.id',
+                    DB::raw('av.descripcion as avance'),
+                    'av.fecha_avance',
+                    DB::raw('ac.id as id_actividad'),
+                    DB::raw('ac.estado as estado_actividad'),
+                    DB::raw('ac.titulo as titulo_actividad'),
+                    DB::raw('ac.descripcion as descripcion_actividad'),
+                    DB::raw('ac.fecha as fecha_actividad'),
+                    DB::raw('cp.titulo as comportamiento_registrado'),
+                    DB::raw('tc.titulo as titulo_tipo_comportamiento'),
+                    DB::raw('e.nombres as nombre_estudiante'),
+                    DB::raw('e.apellidos as apellido_estudiante'),
+                    'av.evidencias',
+                    'av.created_at'
+                )
+                ->get();
+        } else if ($rol == 'doc-user') {
+            $avances = DB::table(DB::raw('avances av'))->where(DB::raw('av.deleted_at', '=', 'NULL'))
+                ->join(DB::raw('actividades ac'), 'av.actividad_id', '=', 'ac.id')
+                ->join(DB::raw('comportamientos cp'), 'ac.comportamiento_id', '=', 'cp.id')
+                ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                ->join(DB::raw('estudiantes e'), 'cp.estudiante_id', '=', 'e.id')
+                ->select(
+                    'av.id',
+                    DB::raw('av.descripcion as avance'),
+                    'av.fecha_avance',
+                    DB::raw('ac.id as id_actividad'),
+                    DB::raw('ac.estado as estado_actividad'),
+                    DB::raw('ac.titulo as titulo_actividad'),
+                    DB::raw('ac.descripcion as descripcion_actividad'),
+                    DB::raw('ac.fecha as fecha_actividad'),
+                    DB::raw('cp.titulo as comportamiento_registrado'),
+                    DB::raw('tc.titulo as titulo_tipo_comportamiento'),
+                    DB::raw('e.nombres as nombre_estudiante'),
+                    DB::raw('e.apellidos as apellido_estudiante'),
+                    'av.evidencias',
+                    'av.created_at'
+                )
+                ->get();
+        } else if ($rol == 'est-user') {
+            $avances = DB::table(DB::raw('avances av'))->where(DB::raw('av.deleted_at', '=', 'NULL'))
+                ->join(DB::raw('actividades ac'), 'av.actividad_id', '=', 'ac.id')
+                ->join(DB::raw('comportamientos cp'), 'ac.comportamiento_id', '=', 'cp.id')
+                ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                ->join(DB::raw('estudiantes e'), 'cp.estudiante_id', '=', 'e.id')
+                ->where(DB::raw('e.id'), '=', DB::raw('cp.estudiante_id'))
+                ->select(
+                    'av.id',
+                    DB::raw('av.descripcion as avance'),
+                    'av.fecha_avance',
+                    DB::raw('ac.id as id_actividad'),
+                    DB::raw('ac.estado as estado_actividad'),
+                    DB::raw('ac.titulo as titulo_actividad'),
+                    DB::raw('ac.descripcion as descripcion_actividad'),
+                    DB::raw('ac.fecha as fecha_actividad'),
+                    DB::raw('cp.titulo as comportamiento_registrado'),
+                    DB::raw('tc.titulo as titulo_tipo_comportamiento'),
+                    DB::raw('e.nombres as nombre_estudiante'),
+                    DB::raw('e.apellidos as apellido_estudiante'),
+                    'av.evidencias',
+                    'av.created_at'
+                )
+                ->get();
+        } else if ($rol == 'acu-user') {
+            $avances = DB::table(DB::raw('avances av'))->where(DB::raw('av.deleted_at', '=', 'NULL'))
+                ->join(DB::raw('actividades ac'), 'av.actividad_id', '=', 'ac.id')
+                ->join(DB::raw('comportamientos cp'), 'ac.comportamiento_id', '=', 'cp.id')
+                ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                ->join(DB::raw('estudiantes e'), 'cp.estudiante_id', '=', 'e.id')
+                ->where(DB::raw('a.id'), '=', DB::raw('e.acudiente_id'))
+                ->select(
+                    'av.id',
+                    DB::raw('av.descripcion as avance'),
+                    'av.fecha_avance',
+                    DB::raw('ac.id as id_actividad'),
+                    DB::raw('ac.estado as estado_actividad'),
+                    DB::raw('ac.titulo as titulo_actividad'),
+                    DB::raw('ac.descripcion as descripcion_actividad'),
+                    DB::raw('ac.fecha as fecha_actividad'),
+                    DB::raw('cp.titulo as comportamiento_registrado'),
+                    DB::raw('tc.titulo as titulo_tipo_comportamiento'),
+                    DB::raw('e.nombres as nombre_estudiante'),
+                    DB::raw('e.apellidos as apellido_estudiante'),
+                    'av.evidencias',
+                    'av.created_at'
+                )
+                ->get();
+        } else {
+            $avances = DB::table(DB::raw('avances av'))->where(DB::raw('av.deleted_at', '=', 'NULL'))
+                ->join(DB::raw('actividades ac'), 'av.actividad_id', '=', 'ac.id')
+                ->join(DB::raw('comportamientos cp'), 'ac.comportamiento_id', '=', 'cp.id')
+                ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                ->join(DB::raw('estudiantes e'), 'cp.estudiante_id', '=', 'e.id')
+                ->select(
+                    'av.id',
+                    DB::raw('av.descripcion as avance'),
+                    'av.fecha_avance',
+                    DB::raw('ac.id as id_actividad'),
+                    DB::raw('ac.estado as estado_actividad'),
+                    DB::raw('ac.titulo as titulo_actividad'),
+                    DB::raw('ac.descripcion as descripcion_actividad'),
+                    DB::raw('ac.fecha as fecha_actividad'),
+                    DB::raw('cp.titulo as comportamiento_registrado'),
+                    DB::raw('tc.titulo as titulo_tipo_comportamiento'),
+                    DB::raw('e.nombres as nombre_estudiante'),
+                    DB::raw('e.apellidos as apellido_estudiante'),
+                    'av.evidencias',
+                    'av.created_at'
+                )
+                ->get();
+        }
+        //Permisos que tiene el usuario
+        $permisos = [];
+
+        if ($user->havePermission('edit.avances')) {
+            array_push($permisos, "edit.avances");
+        }
+
+        if ($user->havePermission('delete.avances')) {
+            array_push($permisos, "delete.avances");
+        }
+
+        if ($user->havePermission('create.avances')) {
+            array_push($permisos, "create.avances");
+        }
+
+        $datos = [
+            'avances' => $avances,
+            'rol' => $rol,
+            'permisos' => $permisos
+        ];
+        return response()->json($datos);
+    }
+
 
     /**
      * Show the form for creating a new avances.

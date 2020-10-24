@@ -1,6 +1,8 @@
 var modal = $("#modal-grupos")
 var AllRegister = []
 
+var permisos = []
+
 
 $(document).ready(function () {
     Reload()
@@ -202,7 +204,7 @@ function LoadDocente() {
 
 function Reload() {
     $.ajax({
-        url: "/api/grupos",
+        url: "/getGrupos",
         type: "GET",
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         dataType: "JSON",
@@ -210,9 +212,11 @@ function Reload() {
 
         .done(function (response) {
             if (response.length != 0) {
-                AllRegister = response.data;
+                AllRegister = response.cursos;
 
-                DataTable(response.data);
+                permisos = response.permisos;
+
+                DataTable(response.cursos);
             } else {
                 $('#grupos-table').dataTable().fnClearTable();
                 $('#grupos-table').dataTable().fnDestroy();
@@ -249,22 +253,31 @@ function DataTable(response) {
                 my_item.title = 'Acción';
 
                 my_item.render = function (data, type, row) {
-                    return `<div align="center">
-
-                                <div class="btn-group btn-group-circle btn-group-solid" align="center">
-
-                                    <a data-id=${row.id} id="Btn_Edit_${row.id}" class='btn btn-circle btn-sm btn-primary'>
-                                        <i class="fa fa-edit" aria-hidden="true"></i>
-                                    </a>
-
+                    var html = '';
+                    for (let i = 0; i < permisos.length; i++) {
+                        if (permisos[i] == "delete.cursos") {
+                            html += `
                                     <a data-id=${row.id} id="Btn_delete_${row.id}" class='btn btn-circle btn-sm btn-danger'>
                                         <i class="fa fa-trash" aria-hidden="true"></i>
-                                    </a> 
+                                    </a> `
+                        } else if (permisos[i] == "edit.cursos") {
+                            html += `
+                                    <a data-id=${row.id} id="Btn_Edit_${row.id}" class='btn btn-circle btn-sm btn-primary'>
+                                        <i class="fa fa-edit" aria-hidden="true"></i>
+                                    </a>`
+                        }
+                    }
+                    return `<div align="center">
+                                <div class="btn-group btn-group-circle btn-group-solid" align="center">
+                                    ${html}
                                 </div>
+                                
                             </div>`
 
                 }
-                my_columns.push(my_item);
+                if (permisos.length != 0) {
+                    my_columns.push(my_item);
+                }
 
             }
 

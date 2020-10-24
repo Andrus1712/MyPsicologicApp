@@ -21,6 +21,7 @@ class UsuariosController extends AppBaseController
 
     public function __construct(UsuariosRepository $usuariosRepo)
     {
+        $this->middleware('auth');
         $this->usuariosRepository = $usuariosRepo;
     }
 
@@ -32,11 +33,50 @@ class UsuariosController extends AppBaseController
      */
     public function index(Request $request)
     {
+        $user = Auth()->user();
+        if ($user->havePermission('show.user')) {
+            $this->usuariosRepository->pushCriteria(new RequestCriteria($request));
+            $usuarios = User::all();
 
-        $this->usuariosRepository->pushCriteria(new RequestCriteria($request));
+            return view('usuarios.index')->with('usuarios', $usuarios);
+        } else {
+            return redirect('/home');
+        }
+    }
+
+    public function getUsuarios()
+    {
+        $user = Auth()->user();
+        $rol = $user->tieneRol();
+
+        
         $usuarios = User::all();
 
-        return view('usuarios.index')->with('usuarios', $usuarios);
+        foreach ($usuarios as $usuario) {
+            $usuario->roles;
+        }
+
+        //Permisos que tiene el usuario
+        $permisos = [];
+
+        if ($user->havePermission('edit.user')) {
+            array_push($permisos, "edit.user");
+        }
+
+        if ($user->havePermission('delete.user')) {
+            array_push($permisos, "delete.user");
+        }
+
+        if ($user->havePermission('create.user')) {
+            array_push($permisos, "create.user");
+        }
+
+        $datos = [
+            'usuarios' => $usuarios,
+            'rol' => $rol,
+            'permisos' => $permisos
+        ];
+        return response()->json($datos);
     }
 
     /**

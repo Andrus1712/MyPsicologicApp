@@ -1,6 +1,8 @@
 var modal = $('#modal-roles');
 var AllRegister = []
 
+var permisos = [];
+
 $(document).ready(function () {
     Reload()
 
@@ -345,7 +347,7 @@ function Modal() {
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input id="3" value="show.acudiestes" name="ver"type="checkbox">ver acudientes
+                            <input id="3" value="show.acudientes" name="ver"type="checkbox">ver acudientes
                         </label>
                     </div>
                     <div class="checkbox">
@@ -525,7 +527,7 @@ function Modal() {
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input id="19" value="delete.acudiente" name="eliminar" type="checkbox">eliminar acudientes
+                            <input id="19" value="delete.acudientes" name="eliminar" type="checkbox">eliminar acudientes
                         </label>
                     </div>
                     <div class="checkbox">
@@ -583,7 +585,7 @@ function Modal() {
 
 function Reload() {
     $.ajax({
-        url: "/api/roles",
+        url: "/getRoles",
         type: "GET",
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         dataType: "JSON",
@@ -591,9 +593,9 @@ function Reload() {
 
         .done(function (response) {
             if (response.length != 0) {
-                AllRegister = response.data;
-                console.log(AllRegister);
-                DataTable(response.data);
+                AllRegister = response.roles;
+                permisos = response.permisos;
+                DataTable(response.roles);
             } else {
                 $('#roles-table').dataTable().fnClearTable();
                 $('#roles-table').dataTable().fnDestroy();
@@ -635,21 +637,29 @@ function DataTable(response) {
                 my_item.title = 'Acción';
 
                 my_item.render = function (data, type, row) {
-                    return `<div align="center">
-
-                                <div class="btn-group btn-group-circle btn-group-solid" align="center">
-
-                                    <a data-id=${row.id} id="Btn_Edit_${row.id}" class='btn btn-circle btn-sm btn-primary'>
-                                        <i class="fa fa-edit" aria-hidden="true"></i>
-                                    </a>
-
+                    var html = '';
+                    for (let i = 0; i < permisos.length; i++) {
+                        if (permisos[i] == "delete.roles") {
+                            html += `
                                     <a data-id=${row.id} id="Btn_delete_${row.id}" class='btn btn-circle btn-sm btn-danger'>
                                         <i class="fa fa-trash" aria-hidden="true"></i>
-                                    </a> 
+                                    </a> `;
+                        } else if (permisos[i] == "edit.roles") {
+                            html += `
+                                    <a data-id=${row.id} id="Btn_Edit_${row.id}" class='btn btn-circle btn-sm btn-primary'>
+                                        <i class="fa fa-edit" aria-hidden="true"></i>
+                                    </a>`;
+                        }
+                    }
+                    return `<div align="center">
+                                <div class="btn-group btn-group-circle btn-group-solid" align="center">
+                                    ${html}
                                 </div>
                             </div>`
                 }
-                my_columns.push(my_item);
+                if (permisos.length != 0) {
+                    my_columns.push(my_item);
+                }
 
             }
             else if (key == 'id') {
@@ -706,8 +716,6 @@ function DataTable(response) {
                             if (i > 2 && multiple(i, 4)) {
                                 html += `<br>`
                             }
-
-
                         }
                         return `<div class="pull-right-container">
                                     ${html}

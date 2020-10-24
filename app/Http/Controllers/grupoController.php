@@ -8,6 +8,7 @@ use App\Repositories\grupoRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
 use Flash;
+use Illuminate\Support\Facades\DB;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
 
@@ -18,6 +19,7 @@ class grupoController extends AppBaseController
 
     public function __construct(grupoRepository $grupoRepo)
     {
+        $this->middleware('auth');
         $this->grupoRepository = $grupoRepo;
     }
 
@@ -29,11 +31,16 @@ class grupoController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $this->grupoRepository->pushCriteria(new RequestCriteria($request));
-        $grupos = $this->grupoRepository->all();
+        $user = Auth()->user();
+        if ($user->havePermission('show.cursos')) {
+            $this->grupoRepository->pushCriteria(new RequestCriteria($request));
+            $grupos = $this->grupoRepository->all();
 
-        return view('grupos.index')
-            ->with('grupos', $grupos);
+            return view('grupos.index')
+                ->with('grupos', $grupos);
+        } else {
+            return redirect('/home');
+        }
     }
 
     /**
@@ -44,6 +51,98 @@ class grupoController extends AppBaseController
     public function create()
     {
         return view('grupos.create');
+    }
+
+    public function getGrupos()
+    {
+        $user = Auth()->user();
+
+        $rol = $user->tieneRol();
+        if ($rol == 'psi-user') {
+            $grupos = DB::table(DB::raw('grupos g'))->where(DB::raw('g.deleted_at', '=', 'NULL'))
+                ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                ->select(
+                    'g.id',
+                    'g.grado',
+                    'g.curso',
+                    'g.docente_id',
+                    DB::raw('CONCAT(TRIM(d.nombres), " ", TRIM(d.apellidos) ) AS docente'),
+                    'g.created_at'
+                )
+                ->get();
+        } else if ($rol == 'doc-user') {
+            $grupos = DB::table(DB::raw('grupos g'))->where(DB::raw('g.deleted_at', '=', 'NULL'))
+                ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                ->select(
+                    'g.id',
+                    'g.grado',
+                    'g.curso',
+                    'g.docente_id',
+                    DB::raw('CONCAT(TRIM(d.nombres), " ", TRIM(d.apellidos) ) AS docente'),
+                    'g.created_at'
+                )
+                ->get();
+        } else if ($rol == 'est-user') {
+            $grupos = DB::table(DB::raw('grupos g'))->where(DB::raw('g.deleted_at', '=', 'NULL'))
+                ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                ->select(
+                    'g.id',
+                    'g.grado',
+                    'g.curso',
+                    'g.docente_id',
+                    DB::raw('CONCAT(TRIM(d.nombres), " ", TRIM(d.apellidos) ) AS docente'),
+                    'g.created_at'
+                )
+                ->get();
+        } else if ($rol == 'acu-user') {
+            $grupos = DB::table(DB::raw('grupos g'))->where(DB::raw('g.deleted_at', '=', 'NULL'))
+                ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                ->select(
+                    'g.id',
+                    'g.grado',
+                    'g.curso',
+                    'g.docente_id',
+                    DB::raw('CONCAT(TRIM(d.nombres), " ", TRIM(d.apellidos) ) AS docente'),
+                    'g.created_at'
+                )
+                ->get();
+        } else {
+            $grupos = DB::table(DB::raw('grupos g'))->where(DB::raw('g.deleted_at', '=', 'NULL'))
+                ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                ->select(
+                    'g.id',
+                    'g.grado',
+                    'g.curso',
+                    'g.docente_id',
+                    DB::raw('CONCAT(TRIM(d.nombres), " ", TRIM(d.apellidos) ) AS docente'),
+                    'g.created_at'
+                )
+                ->get();
+        }
+        //Permisos que tiene el usuario
+        $permisos = [];
+
+        if ($user->havePermission('edit.cursos')) {
+            array_push($permisos, "edit.cursos");
+        }
+
+        if ($user->havePermission('delete.cursos')) {
+            array_push($permisos, "delete.cursos");
+        }
+
+        if ($user->havePermission('create.cursos')) {
+            array_push($permisos, "create.cursos");
+        }
+        if ($user->havePermission('create.cursos')) {
+            array_push($permisos, "create.cursos");
+        }
+
+        $datos = [
+            'cursos' => $grupos,
+            'rol' => $rol,
+            'permisos' => $permisos
+        ];
+        return response()->json($datos);
     }
 
     /**

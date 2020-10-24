@@ -1,6 +1,8 @@
 var modal = $('#modal-avances')
 var AllRegister = []
 
+var permisos = []
+
 $(document).ready(function () {
     Reload()
 
@@ -14,17 +16,24 @@ $(document).ready(function () {
             var actividad_id = $('#actividad_id').val(),
                 descripcion = $('#descripcion').val(),
                 fecha = $('#fecha').val(),
-                evidencias = $('#evidencias')[0].files[0];
+                evidencias = $('#evidencias')[0].files;
 
             if (actividad_id == '' || descripcion == '' || fecha == '') {
                 toastr.warning("Complete todos los campos")
             }
             else {
-                var form =new FormData();
+                var form = new FormData();
+                var archivos = 0;
+                jQuery.each(jQuery('#evidencias')[0].files, function (i, file) {
+                    form.append('file' + i, file);
+                    archivos++;
+                });
+                form.append('archivos', archivos);
+
                 form.append('actividad_id', actividad_id)
                 form.append('descripcion', descripcion)
                 form.append('fecha_avance', fecha)
-                form.append('evidencias', evidencias)               
+                // form.append('evidencias', evidencias)               
 
                 $.ajax({
                     url: '/api/avances',
@@ -61,40 +70,50 @@ $(document).ready(function () {
 
             $("#save").text("Actualizar")
             $("#save").attr("id", 'update')
+
             $("#actividad_id").val(filtro[0].actividad_id)
             $("#descripcion").val(filtro[0].avance)
             $("#fecha").val(filtro[0].fecha_avance)
 
-            $('#rutaFile').removeClass('hide')
-            $("#rutaFile").attr('href',filtro[0].evidencias)
-            $('#rutaFile').attr('target', '_blank')
-            $("#rutaFile").text('Ver documento')
+            // $('#rutaFile').removeClass('hide')
+            // $("#rutaFile").attr('href', filtro[0].evidencias)
+            // $('#rutaFile').attr('target', '_blank')
+            // $("#rutaFile").text('Ver documento')
 
             $("#update").on('click', function () {
                 var actividad_id = $("#actividad_id").val(),
                     descripcion = $("#descripcion").val(),
-                    fecha_avance = $("#fecha").val(),
-                    evidencias = $("#evidencias")[0].files[0] == undefined ? $("#rutaFile").attr('href') : $("#evidencias")[0].files[0];
+                    fecha_avance = $("#fecha").val();
+                // evidencias = $("#evidencias")[0].files[0] == undefined ? $("#rutaFile").attr('href') : $("#evidencias")[0].files[0];
 
-                if (actividad_id == '' || evidencias == '' || descripcion == '' || fecha_avance == '') {
+                if (actividad_id == '' || descripcion == '' || fecha_avance == '') {
                     toastr.warning("Complete todos los campos")
                 }
                 else {
 
                     var form = new FormData();
 
+                    var archivos = 0;
+                    form.append('tempMultimedia', filtro[0].evidencias)
+
+                    jQuery.each(jQuery('#evidencias')[0].files, function (i, file) {
+                        form.append('file' + i, file);
+                        archivos++;
+                    });
+                    form.append('archivos', archivos);
+
                     form.append('actividad_id', actividad_id)
                     form.append('descripcion', descripcion)
                     form.append('fecha_avance', fecha_avance)
-                    form.append('evidencias', evidencias) 
+                    // form.append('evidencias', evidencias)
                     form.append('id', id)
                     form.append('method', 'update')
-                    
-                    
-                    
+
+
+
                     $.ajax({
                         url: '/api/avances',
-                        headers: { 
+                        headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                             'X-Requested-With': 'XMLHttpRequest',
                         },
@@ -102,19 +121,19 @@ $(document).ready(function () {
                         processData: false,
                         contentType: false,
                         data: form,
-                        
+
                     })
-                    .done(function () {
-                        setTimeout(function () { modal.modal("hide") }, 600);
-                        toastr.info("información actualizada");
-                        Reload()
-                    })
-                    .fail(function (errorM) {
-                        toastr.error(errorM.responseJSON.message == undefined ? 'Ha ocurrido un error' : errorM.responseJSON.message);
-                    })
-                    .always(function () {
-                        $("#update").addClass("disabled");
-                    });
+                        .done(function () {
+                            setTimeout(function () { modal.modal("hide") }, 600);
+                            toastr.info("información actualizada");
+                            Reload()
+                        })
+                        .fail(function (errorM) {
+                            toastr.error(errorM.responseJSON.message == undefined ? 'Ha ocurrido un error' : errorM.responseJSON.message);
+                        })
+                        .always(function () {
+                            $("#update").addClass("disabled");
+                        });
                 }
             })
         }
@@ -150,6 +169,95 @@ $(document).ready(function () {
 
 
     })
+
+
+    $('#avances-table').on('click', '[id^=Btn_file_]', function () {
+        modal.modal('show')
+        var id = $(this).attr('data-id');
+
+        const filtro = AllRegister.filter(f => f.id == id);
+
+        if (filtro.length != 0) {
+            var json = filtro[0].evidencias.split('PSIAPP');
+            var html = ''
+            var a = 0;
+            for (var i = 0; i < json.length; i++) {
+                if (json[i] != '') {
+                    var icon = 'fa fa-file';
+
+                    var extension = json[i].split('.')[2];
+                    console.log(extension)
+
+                    switch (extension) {
+                        case 'doc':
+                            icon = 'fa-file-word-o';
+                            break;
+                        case 'docx':
+                            icon = 'fa-file-word-o';
+                            break;
+                        case 'xlsx':
+                            icon = 'fa-file-excel-o bg-success bg-green';
+                            break;
+                        case 'pdf':
+                            icon = 'fa-file-pdf bg-danger bg-red';
+                            break;
+                        case 'txt':
+                            icon = 'fa-file-text';
+                            break;
+                        case 'jpeg':
+                            icon = 'fa-file-image-o';
+                            break;
+                        case 'png':
+                            icon = 'fa-file-image-o';
+                            break;
+                        case 'jpg':
+                            icon = 'fa-file-image-o';
+                            break;
+                        case 'mp3':
+                            icon = 'fa-file-audio-o bg-secondary';
+                            break;
+                        case 'mp4':
+                            icon = 'fa-file-movie-o bg-secondary';
+                            break;
+                    }
+                    html += `
+                    <div class="col-md-3">
+                        <div class="box box-default">
+                            <div class="box-header with-border">
+                                <i class="fa fa-book"></i>
+                                <h3 class="box-title">Archivo ${a + 1}</h3>
+                            </div>
+                            <div class="box-body">
+                                <div class="form-group" align="center">
+                                    <a target="_blank" href="${json[i]}" type="button" style="font-size: 2em;" class="btn-link">
+                                        <i class="fa ${icon}"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>`
+
+                    a++;
+                }
+
+            }
+
+            modal.find('.modal-content').empty().append(`
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Archivos cargados</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        ${html}
+                    </div>
+                    
+                </div>
+            `)
+        }
+    });
+
 
 });
 
@@ -221,7 +329,7 @@ function Modal() {
                         <a class="btn btn-secondary hide" id="rutaFile"></a>
                         <br>
                         <label>Evidencias: </label>
-                        <input type="file" id="evidencias">
+                        <input type="file" name="files[]" id="evidencias" multiple>
                         
                         <p class="help-block">Suba archivo que evdencie el avance.</p>
                     </div>
@@ -241,7 +349,7 @@ function Modal() {
 
 function Reload() {
     $.ajax({
-        url: "/api/avances",
+        url: "/getAvances",
         type: "GET",
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         dataType: "JSON",
@@ -249,9 +357,9 @@ function Reload() {
 
         .done(function (response) {
             if (response.length != 0) {
-                AllRegister = response.data;
-
-                DataTable(response.data);
+                AllRegister = response.avances;
+                permisos = response.permisos;
+                DataTable(response);
             } else {
                 $('#avances-table').dataTable().fnClearTable();
                 $('#avances-table').dataTable().fnDestroy();
@@ -288,22 +396,32 @@ function DataTable(response) {
                 my_item.title = 'Acción';
 
                 my_item.render = function (data, type, row) {
-                    return `<div align="center">
+                    var html = '';
+                    for (let i = 0; i < permisos.length; i++) {
 
-                                <div class="btn-group btn-group-circle btn-group-solid" align="center">
-
-                                    <a data-id=${row.id} id="Btn_Edit_${row.id}" class='btn btn-circle btn-sm btn-primary'>
-                                        <i class="fa fa-edit" aria-hidden="true"></i>
-                                    </a>
-
+                        if (permisos[i] == "delete.avances") {
+                            html += `
                                     <a data-id=${row.id} id="Btn_delete_${row.id}" class='btn btn-circle btn-sm btn-danger'>
                                         <i class="fa fa-trash" aria-hidden="true"></i>
-                                    </a> 
+                                    </a> `
+                        } else if (permisos[i] == "edit.avances") {
+                            html += `
+                                    <a data-id=${row.id} id="Btn_Edit_${row.id}" class='btn btn-circle btn-sm btn-primary'>
+                                        <i class="fa fa-edit" aria-hidden="true"></i>
+                                    </a>`
+                        }
+                    }
+                    return `<div align="center">
+                                <div class="btn-group btn-group-circle btn-group-solid" align="center">
+                                    ${html}
                                 </div>
+                                
                             </div>`
 
                 }
-                my_columns.push(my_item);
+                if (permisos.length != 0) {
+                    my_columns.push(my_item);
+                }
 
             }
 
@@ -395,7 +513,7 @@ function DataTable(response) {
 
                 my_item.render = function (data, type, row) {
                     return `<div align="center">
-                                <a href=" ${row.evidencias} " class="btn btn-default" target="_blank">
+                                <a class="btn btn-default ${row.evidencias == 'undefined' || row.evidencias == null ? 'disabled' : ''}" id="Btn_file_${row.id}" data-id=${row.id} >
                                     <i class="fa fa-file"></i>
                                 </a>
                             </div>`
@@ -426,7 +544,6 @@ function DataTable(response) {
             buttons: [
                 'copy', 'excel', 'pdf'
             ],
-
 
             "order": [
                 [0, 'asc']

@@ -1,10 +1,12 @@
 var modal = $("#modal-docentes")
 var AllRegister = []
 
+var permisos = []
+
 $(document).ready(function () {
     Reload()
 
-    $("#docentes-table").on('click', '[id^=Btn_Edit_]', function () {
+    $('#docentes-table').on('click', '[id^=Btn_Edit_]', function () {
         var id = $(this).attr('data-id');
 
         const filtro = AllRegister.filter(f => f.id == id);
@@ -125,15 +127,15 @@ $(document).ready(function () {
                 toastr.warning("Complete todos los campos")
             } else {
                 var data = {
-                            tipoIdentificacion: tipoIdentificacion,
-                            identificacion: identificacion,
-                            nombres: nombres,
-                            apellidos: apellidos,
-                            correo: correo,
-                            fechaNacimiento: fechaNacimiento,
-                            telefono: telefono,
-                            direccion: direccion,
-                        };
+                    tipoIdentificacion: tipoIdentificacion,
+                    identificacion: identificacion,
+                    nombres: nombres,
+                    apellidos: apellidos,
+                    correo: correo,
+                    fechaNacimiento: fechaNacimiento,
+                    telefono: telefono,
+                    direccion: direccion,
+                };
                 console.log(data)
                 $.ajax({
                     url: '/api/docentes',
@@ -265,7 +267,7 @@ function Modal() {
 
 function Reload() {
     $.ajax({
-        url: "/api/docentes",
+        url: "/getDocentes",
         type: "GET",
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         dataType: "JSON",
@@ -273,9 +275,9 @@ function Reload() {
 
         .done(function (response) {
             if (response.length != 0) {
-                AllRegister = response.data;
-
-                DataTable(response.data);
+                AllRegister = response.docentes;
+                permisos = response.permisos;
+                DataTable(response.docentes);
             } else {
                 $('#docentes-table').dataTable().fnClearTable();
                 $('#docentes-table').dataTable().fnDestroy();
@@ -312,21 +314,31 @@ function DataTable(response) {
                 my_item.title = 'Acción';
 
                 my_item.render = function (data, type, row) {
-                    return `<div align="center">
+                    var html = '';
+                    for (let i = 0; i < permisos.length; i++) {
 
-                                <div class="btn-group btn-group-circle btn-group-solid" align="center">
-
-                                    <a data-id=${row.id} id="Btn_Edit_${row.id}" class='btn btn-circle btn-sm btn-primary'>
-                                        <i class="fa fa-edit" aria-hidden="true"></i>
-                                    </a>
-
+                        if (permisos[i] == "delete.docentes") {
+                            html += `
                                     <a data-id=${row.id} id="Btn_delete_${row.id}" class='btn btn-circle btn-sm btn-danger'>
                                         <i class="fa fa-trash" aria-hidden="true"></i>
-                                    </a> 
+                                    </a> `
+                        } else if (permisos[i] == "edit.docentes") {
+                            html += `
+                                    <a data-id=${row.id} id="Btn_Edit_${row.id}" class='btn btn-circle btn-sm btn-primary'>
+                                        <i class="fa fa-edit" aria-hidden="true"></i>
+                                    </a>`
+                        }
+                    }
+                    return `<div align="center">
+                                <div class="btn-group btn-group-circle btn-group-solid" align="center">
+                                    ${html}
                                 </div>
+                                
                             </div>`
                 }
-                my_columns.push(my_item);
+                if (permisos.length != 0) {
+                    my_columns.push(my_item);
+                }
 
             }
 
@@ -446,7 +458,7 @@ function DataTable(response) {
             ],
 
             "columnDefs": [
-                { "width": "15%", "targets": 7 }
+                { "width": "15%", "targets": 3 }
             ],
 
             "lengthMenu": [

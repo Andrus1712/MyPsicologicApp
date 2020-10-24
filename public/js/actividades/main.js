@@ -263,7 +263,28 @@ $(document).ready(function () {
         }
     });
 
-
+    $('#act-table').on('click', '[id^=Btn_historial_]', function () {
+        var id = $(this).attr('data-id');
+        console.log(id);
+        $.ajax({
+            url: "/get_historial/" + id,
+            type: "GET",
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            dataType: "JSON",
+        })
+            .done(function (response) {
+                if (response != 0) {
+                    historial = response;
+                    modal.modal('show');
+                    ModalHistorial(historial);
+                }else{
+                    toastr.warning('No existe historial actualmente')
+                }
+            })
+            .fail(function () {
+                console.log("error");
+            });
+    });
 });
 
 function LoadActividades() {
@@ -358,6 +379,48 @@ function ModalInfo() {
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
             `)
+}
+
+function ModalHistorial(historial) {
+
+    var html = '';
+    for (let i = 0; i < historial.length; i++) {
+        html += `<tr>
+                    <th scope="row">${historial[i]}</th>
+                    <td>${historial[i].fecha}</td>
+                    <td>${historial[i].fecha_historial}</td>
+                    <td>${historial[i].estado_actividad == 1 ? `<i class="fa fa-check-circle" style="color: green;"></i> Cumplida`:
+                    historial[i].estado_actividad == 2 ? `<i class="fa fa-exclamation-circle" style="color: red;"></i> Incumplida` :
+                    `<i class="fa  fa-exclamation-triangle" style="color: orange;" ></i> En espera`}</td>
+                </tr>`;
+
+    }
+
+    modal.find('.modal-content').empty().append(`
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Historial de Actividades</h4>
+    </div>
+    <div class="modal-body">
+        <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Fecha de la actividad</th>
+            <th scope="col">Reprogramada para</th>
+            <th scope="col">Estado</th>
+        </tr>
+        </thead>
+        <tbody>
+            ${html}
+        </tbody>
+    </table>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    </div>
+    
+    `);
 }
 
 function Modal() {
@@ -981,8 +1044,11 @@ function DataTable(response) {
                 my_item.title = 'Titulo Actividad';
 
                 my_item.render = function (data, type, row) {
+                    console.log(row)
                     return `  <div'> 
-                                ${row.titulo}
+                                ${row.titulo} <a data-id=${row.id} id="Btn_historial_${row.id}" class='btn btn-circle btn-xs btn-default'>
+                                        <i class="fa fa-clock" aria-hidden="true"></i>
+                                    </a>
                             </div>`
                 }
                 my_columns.push(my_item);
@@ -1125,13 +1191,13 @@ function DataTable(response) {
             ]
         });
         $('thead > tr> th:nth-child(1)').css({ 'min-width': '30px', 'max-width': '30px' });
-        $('thead > tr> th:nth-child(2)').css({ 'min-width': '90px', 'max-width': '90px' });
+        $('thead > tr> th:nth-child(2)').css({ 'min-width': '110px', 'max-width': '110px' });
         $('thead > tr> th:nth-child(3)').css({ 'min-width': '90px', 'max-width': '90px' });
         $('thead > tr> th:nth-child(4)').css({ 'min-width': '140px', 'max-width': '140px' });
         $('thead > tr> th:nth-child(7)').css({ 'min-width': '140px', 'max-width': '140px' });
         $('thead > tr> th:nth-child(8)').css({ 'min-width': '140px', 'max-width': '140px' });
-        $('thead > tr> th:nth-child(9)').css({ 'min-width': '160px', 'max-width': '160px' });
-        $('thead > tr> th:nth-child(11)').css({ 'min-width': '130px', 'max-width': '130px' });
+        $('thead > tr> th:nth-child(9)').css({ 'min-width': '110px', 'max-width': '110px' });
+        $('thead > tr> th:nth-child(11)').css({ 'min-width': '110px', 'max-width': '110px' });
         // $('thead > tr> th:nth-child(2)').css({ 'min-width': '160px', 'max-width': '140px' });
         // $('thead > tr> th:nth-child(3)').css({ 'min-width': '80px', 'max-width': '80px' });
         // $('thead > tr> th:nth-child(4)').css({ 'min-width': '140px', 'max-width': '140px' });
