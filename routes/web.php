@@ -71,6 +71,7 @@ Route::get('/getModeloSeguimiento', 'modelo_seguimientoController@getModeloSegui
 
 Route::resource('usuarios', 'UsuariosController');
 Route::get('/getUsuarios', 'UsuariosController@getUsuarios');
+Route::get('/profile', 'UsuariosController@getProfile');
 
 
 

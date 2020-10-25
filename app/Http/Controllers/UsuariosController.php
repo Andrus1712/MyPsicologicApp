@@ -6,6 +6,10 @@ use App\Http\Requests\CreateUsuariosRequest;
 use App\Http\Requests\UpdateUsuariosRequest;
 use App\Repositories\UsuariosRepository;
 use App\Http\Controllers\AppBaseController;
+use App\Models\acudiente;
+use App\Models\docente;
+use App\Models\estudiante;
+use App\Models\psicologo;
 use Illuminate\Http\Request;
 use Flash;
 use Prettus\Repository\Criteria\RequestCriteria;
@@ -49,7 +53,7 @@ class UsuariosController extends AppBaseController
         $user = Auth()->user();
         $rol = $user->tieneRol();
 
-        
+
         $usuarios = User::all();
 
         foreach ($usuarios as $usuario) {
@@ -79,6 +83,36 @@ class UsuariosController extends AppBaseController
         return response()->json($datos);
     }
 
+    public function getProfile()
+    {
+        $user = Auth()->user();
+
+        $p = psicologo::where('correo', $user->email)->get();
+        $e = estudiante::where('correo', $user->email)->get();
+        $d = docente::where('correo', $user->email)->get();
+        $a = acudiente::where('correo', $user->email)->get();
+
+        $datos = [];
+
+        if ($p != null) {
+            array_push($datos, $p->direccion);
+        } else if ($e != null) {
+            array_push($datos, $e->direccion);
+        } else if ($p != null) {
+            array_push($datos, $p->direccion);
+        } else if ($a != null) {
+            array_push($datos, $a->direccion);
+        } else {
+            array_push($datos, "sin direccion");
+        }
+
+        $datos = [
+            "nombre" => $user->name,
+            "rol" => $user->nombreRol(),
+            "descripcion" => $user->descripcionRol()
+        ];
+        return view('profile')->with('datos', $datos);
+    }
     /**
      * Show the form for creating a new Usuarios.
      *
