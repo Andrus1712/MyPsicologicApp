@@ -1,21 +1,24 @@
 var modal = $('#modal-comportamientos')
 var AllRegister = [];
 
-var CountComp;
+var getAct;
 
 var permisos = [];
 
+var element = [];
+
 
 $(document).ready(function () {
+    getActividades();
     Reload()
 
 
-
     $('#comportamientos-table').on('click', '[id^=Btn_act_]', function () {
+        var id = $(this).attr('data-id');
         modal.modal('show');
         ModalActividades()
         $('#input_actividad').hide()
-        LoadComportamientos()
+        LoadComportamientos(id)
         LoadTiposComportamientos()
 
         $('#save').on('click', function () {
@@ -342,6 +345,79 @@ $(document).ready(function () {
         }
 
     });
+
+    $('#make-reporte').on('click', function () {
+        modal.modal("show");
+        ModalReporte();
+
+        LoadTiposComportamientos();
+        var start = moment().subtract(29, 'days');
+        var end = moment();
+
+        var fi;
+        var ff;
+        function cb(start, end) {
+            $('#report-range span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+            fi = start.format('YYYY-MM-DD');
+            ff = end.format('YYYY-MM-DD');
+        }
+        $('#report-range').daterangepicker({
+            startDate: start,
+            endDate: end,
+            ranges: {
+                'Today': [moment(), moment()],
+                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            }
+        }, cb);
+
+        cb(start, end);
+
+        $('#tc_all').on('click', function () {
+            var checked = this.checked;
+            $('input[name="tc"]').each(function () {
+                this.checked = checked;
+            });
+        });
+
+        $('#visualizar').on('click', function () {
+            // alert("inicio: " + fi + " fin: " + ff)
+            var form = new FormData();
+            form.append("fecha_i", fi);
+            form.append("fecha_f", ff);
+
+            $.ajax({
+                url: '/generarReporte',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                type: 'POST',
+                data: form,
+                processData: false,
+                contentType: false,
+            })
+                .done(function (response) {
+                    console.log("info response "+response);
+                    // if (response.length != 0) {
+                    //     // DataTableReport(response);
+                        
+                    // } else {
+                    //     $('#reportes-table').dataTable().fnClearTable();
+                    //     $('#reportes-table').dataTable().fnDestroy();
+                    //     $('#reportes-table thead').empty();
+                    //     console.log("sin datos");
+                    // }
+                })
+                .fail(function () {
+                    toastr.error("Ha ocurrido un error");
+                })
+
+        });
+        // window.open("/comportamientosPdf", "_blank");
+    });
 });
 
 function LoadEstudiantes() {
@@ -382,19 +458,33 @@ function establecer_fecha() {
 }
 
 function LoadTiposComportamientos() {
-    $("#tipo_comportamiento_id").select2({
-        placeholder: 'Seleccione el tipo comportamiento',
-        allowClear: true,
-        dropdownParent: modal,
-        width: 'resolve'
-    });
+    // $("#tipo_comportamiento_id").select2({
+    //     placeholder: 'Seleccione el tipo comportamiento',
+    //     allowClear: true,
+    //     dropdownParent: modal,
+    //     width: 'resolve',
+    //     // theme: 'bootstrap4',
+    // });
 
     $.ajax({
         url: '/api/tipo_comportamientos',
     })
         .done(function (response) {
+            $("#tipos_comportamientos").append(`
+                <div class="checkbox">
+                    <label style="font-weight: bold;">
+                        <input id="tc_all" type="checkbox">Select all</input>
+                    </label>
+                </div>
+            `);
             for (var i in response.data) {
-                $("#tipo_comportamiento_id").append(`<option value='${response.data[i].id}'>${response.data[i].titulo}</option>`)
+                $("#tipos_comportamientos").append(`
+                    <div class="checkbox">
+                        <label>
+                            <input id="tc_${i}" value="${response.data[i].id}" name="tc" type="checkbox">${response.data[i].titulo}
+                        </label>
+                    </div>
+                `)
             }
 
         })
@@ -403,7 +493,7 @@ function LoadTiposComportamientos() {
         })
 }
 
-function LoadComportamientos() {
+function LoadComportamientos(id) {
     $("#comportamiento_id").select2({
         placeholder: 'Seleccione el comportamiento',
         allowClear: true,
@@ -416,7 +506,9 @@ function LoadComportamientos() {
     })
         .done(function (response) {
             for (var i in response.data) {
-                $("#comportamiento_id").append(`<option value='${response.data[i].id}'>${response.data[i].titulo} | ${response.data[i].nombres}  ${response.data[i].apellidos} | CMP${response.data[i].id} </option>`)
+                if (response.data[i].id == id) {
+                    $("#comportamiento_id").append(`<option value='${response.data[i].id}'>${response.data[i].titulo} | ${response.data[i].nombres}  ${response.data[i].apellidos} | CMP${response.data[i].id} </option>`)
+                }
             }
 
         })
@@ -425,9 +517,9 @@ function LoadComportamientos() {
         })
 }
 
-function ReloadCountComp() {
+function getActividades() {
     $.ajax({
-        url: "/getCountComp",
+        url: "/getActividades",
         type: "GET",
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         dataType: "JSON",
@@ -435,8 +527,14 @@ function ReloadCountComp() {
 
         .done(function (response) {
             if (response.length != 0) {
-                CountComp = []
-                CountComp = response;
+                getAct = []
+
+                getAct = response['actividades'];
+                for (let index = 0; index < getAct.length; index++) {
+                    element.push(getAct[index].id_comportamiento);
+
+                }
+                // console.log(element);
             } else {
                 console.log('sin datos');
             }
@@ -459,7 +557,7 @@ function Reload() {
             if (response.length != 0) {
                 AllRegister = response.comportamientos;
                 permisos = response.permisos;
-                // console.table(permisos.permisos);
+                // console.log(response.comportamientos);
                 DataTable(response.comportamientos);
             } else {
                 $('#comportamientos-table').dataTable().fnClearTable();
@@ -497,6 +595,98 @@ function Reload() {
 //             console.log("error");
 //         });
 // }
+
+function ModalReporte() {
+    modal.find('.modal-content').empty().append(`
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Reporte</h4>
+        </div>
+        <div class="modal-body">
+
+            <div class="row">
+                
+                <div class="col-md-6">
+                    
+                    <div class="form-group">
+                        <label>Fecha del registro: </label>
+                        <div id="report-range"
+                            style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+                            <i class="fa fa-calendar"></i>&nbsp;
+                            <span></span> <i class="fa fa-caret-down"></i>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <label>Tipo de comportamiento: </label>
+                            <div id="tipos_comportamientos">
+                                
+                            </div>
+                            
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <label>Variables: </label>
+                            <div id="variables">
+                            <div class="checkbox">
+                                <label>
+                                    <input id="1" value="show.comportamientos" name="ver" type="checkbox">Actividades
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input id="2" value="show.comportamientos" name="ver" type="checkbox">Estudiantes
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input id="3" value="show.comportamientos" name="ver" type="checkbox">Estado actividades
+                                </label>
+                            </div>
+                            </div>
+                            
+                        </div>
+
+                    </div>
+                </div>
+                
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary" id="visualizar">Pre-visualizar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table">
+                        <table class="table table-bordered table-hover" id="reportes-table">
+                            
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="save">Enviar</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    `);
+
+}
 
 function Modal() {
     modal.find('.modal-content').empty().append(`
@@ -660,6 +850,62 @@ function ModalActividades() {
     });
 }
 
+function DataTableReport(response) {
+
+    if ($.fn.DataTable.isDataTable('#reportes-table')) {
+        $('#reportes-table').dataTable().fnClearTable();
+        $('#reportes-table').dataTable().fnDestroy();
+        $('#reportes-table thead').empty()
+    }
+    else {
+        $('#reportes-table thead').empty()
+    }
+
+    // console.log("info tabla " + response);
+
+    if (response.length != 0) {
+        let my_columns = []
+        $.each(response[0], function (key, value) {
+            var my_item = {};
+            // my_item.class = "filter_C";
+            my_item.data = key;
+            if (key == "fecha_f") {
+
+                my_item.title = 'Fecha';
+
+                my_item.render = function (data, type, row) {
+                    return `  <div> 
+                                ${row.fecha_f}
+                            </div>`
+                }
+                my_columns.push(my_item);
+
+            }
+            else if (key == "fecha_i") {
+
+                my_item.title = 'Fecha';
+
+                my_item.render = function (data, type, row) {
+                    return `  <div> 
+                                ${row.fecha_i}
+                            </div>`
+                }
+                my_columns.push(my_item);
+
+            }
+        });
+        $('#reportes-table').DataTable({
+            // 'scrollX': my_columns.length >= 6 ? true : false,
+            "destroy": true,
+            data: response,
+            "columns": my_columns,
+            dom: 'Bfrtip',
+            responsive: true,
+            paging: true,
+        });
+    }
+
+}
 
 function DataTable(response) {
 
@@ -853,8 +1099,6 @@ function DataTable(response) {
             buttons: [
                 'copy', 'excel', 'pdf'
             ],
-
-
             "order": [
                 [2, 'asc']
             ],
@@ -862,6 +1106,11 @@ function DataTable(response) {
                 [10, 15, 20, -1],
                 [10, 15, 20, "Todos"]
             ],
+            "createdRow": function (row, data, dataIndex) {
+                if (!element.includes(data.id, 0)) {
+                    $(row).css('background-color', '#ffedd9');
+                }
+            }
         });
 
         $('thead > tr> th:nth-child(1)').css({ 'min-width': '30px', 'max-width': '30px' });

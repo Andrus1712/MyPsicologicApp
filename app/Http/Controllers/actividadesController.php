@@ -78,6 +78,7 @@ class actividadesController extends AppBaseController
                         'ac.fecha',
                         'ac.descripcion',
                         'ac.estado',
+                        DB::raw('c.id as id_comportamiento'),
                         DB::raw('c.titulo as titulo_comportamiento'),
                         DB::raw('c.descripcion as descripcion_comportamiento'),
                         DB::raw('e.nombres as nombre_estudiante'),
@@ -107,6 +108,7 @@ class actividadesController extends AppBaseController
                         'ac.fecha',
                         'ac.descripcion',
                         'ac.estado',
+                        DB::raw('c.id as id_comportamiento'),
                         DB::raw('c.titulo as titulo_comportamiento'),
                         DB::raw('c.descripcion as descripcion_comportamiento'),
                         'ac.created_at',
@@ -125,6 +127,7 @@ class actividadesController extends AppBaseController
                         'ac.fecha',
                         'ac.descripcion',
                         'ac.estado',
+                        DB::raw('c.id as id_comportamiento'),
                         DB::raw('c.titulo as titulo_comportamiento'),
                         DB::raw('c.descripcion as descripcion_comportamiento'),
                         DB::raw('e.nombres as nombre_estudiante'),
@@ -153,6 +156,7 @@ class actividadesController extends AppBaseController
                         'ac.fecha',
                         'ac.descripcion',
                         'ac.estado',
+                        DB::raw('c.id as id_comportamiento'),
                         DB::raw('c.titulo as titulo_comportamiento'),
                         DB::raw('c.descripcion as descripcion_comportamiento'),
                         DB::raw('e.nombres as nombre_estudiante'),
@@ -182,6 +186,7 @@ class actividadesController extends AppBaseController
                         'ac.fecha',
                         'ac.descripcion',
                         'ac.estado',
+                        DB::raw('c.id as id_comportamiento'),
                         DB::raw('c.titulo as titulo_comportamiento'),
                         DB::raw('c.descripcion as descripcion_comportamiento'),
                         DB::raw('e.nombres as nombre_estudiante'),
@@ -378,6 +383,23 @@ class actividadesController extends AppBaseController
                         'ac.estado',
                     )
                     ->where(DB::raw('a.correo'), '=', Auth()->user()->email)
+                    ->where(DB::raw('ac.estado'), '=', 0)
+                    ->get();
+
+                return response()->json($actividades);
+            } else {
+                $actividades = DB::table(DB::raw('actividades ac'))->where(DB::raw('ac.deleted_at', '=', NULL))
+                    ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
+                    ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+                    ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    ->select(
+                        'ac.id',
+                        'ac.titulo',
+                        'ac.fecha',
+                        'ac.descripcion',
+                        'ac.estado',
+                    )
                     ->where(DB::raw('ac.estado'), '=', 0)
                     ->get();
 

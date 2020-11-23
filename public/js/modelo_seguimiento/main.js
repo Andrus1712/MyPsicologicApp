@@ -73,7 +73,7 @@ $(document).ready(function () {
                     solucion = $('#solucion').val(),
                     estado = $('#estado').val();
 
-                if (fecha == '' || nombre == '' || estamento == '' || descripcion == '' || remitido == '' || medio_comunicacion == '' || clasificacion_caso_presentado == '' || solucion == '' || estado == '') {
+                if (fecha == '' || nombre == '' || estamento == '' || descripcion == '' || medio_comunicacion == '' || clasificacion_caso_presentado == '' || solucion == '' || estado == '') {
                     toastr.warning("Complete todos los campos")
                 }
                 else {
@@ -128,7 +128,7 @@ $(document).ready(function () {
                 solucion = $('#solucion').val(),
                 estado = $('#estado').val();
 
-            if (fecha == '' || nombre == '', estamento == '', descripcion == '', remitido == '', medio == '', clasificacion == '', solucion == '', estado == '') {
+            if (fecha == '' || nombre == '' || estamento == '' || descripcion == '' || medio == '' || clasificacion == '' || solucion == '' || estado == '') {
                 toastr.warning("Complete todos los campos")
             } else {
                 $.ajax({
@@ -419,11 +419,11 @@ function LoadChartEstado(params) {
                     for (var j = 0; j < response.length; j++) {
                         if (arreglo[i] == response[j].fecha) {
 
-                            if (response[j].estado == "Remitido") {
+                            if (response[j].estado == "Incumplido") {
                                 contR++;
-                            } else if (response[j].estado == "En curso") {
+                            } else if (response[j].estado == "En espera") {
                                 contE++;
-                            } else if (response[j].estado == "Resuelto") {
+                            } else if (response[j].estado == "Solucionado") {
                                 contS++;
                             }
                         }
@@ -499,15 +499,15 @@ function LoadChartEstado(params) {
                         }
                     },
                     series: [{
-                        name: "Remitido",
+                        name: "Incumplidp",
                         data: vR
                     },
                     {
-                        name: "En curso",
+                        name: "En espera",
                         data: vE
                     },
                     {
-                        name: "Resuelto",
+                        name: "Solucionado",
                         data: vS
                     }]
                 });
@@ -706,8 +706,7 @@ function Modal() {
                         </div>
 
                         <div class="form-group">
-                        <spam class="fa fa-info"></span>
-                            <label>Remitido a: </label>
+                            <label>Remitido a: </label><span>Nota: si no es remitido puede dejar este campo vacio</span>
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-user"></i></span>
                                 <input type="text" class="form-control" placeholder="Escriba el nombre de la persona a quien es remitido" id="remitido">
@@ -763,9 +762,9 @@ function Modal() {
                             <label>Estado de la gestion: </label>
                             <select class="form-control" id="estado" name="state">
                                 <option value="">Seleccione</option>
-                                <option value="Remitido">Remitido</option>
-                                <option value="Resuelto">Resuelto</option>
-                                <option value="En curso">En curso</option>
+                                <option value="Solucionado">Solucionado</option>
+                                <option value="Incumplido">Incumplido</option>
+                                <option value="En espera">En espera</option>
                             </select>
                         </div>
     
@@ -952,7 +951,7 @@ function DataTable(response) {
 
                 my_item.render = function (data, type, row) {
                     return `<div>
-                                ${row.remitido} 
+                                ${row.remitido == null? `Sin remitir` : row.remitido}
                             </div>`
                 }
                 my_columns.push(my_item);

@@ -17,6 +17,7 @@ use Response;
 use App\User;
 use App\Role;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class UsuariosController extends AppBaseController
 {
@@ -87,30 +88,37 @@ class UsuariosController extends AppBaseController
     {
         $user = Auth()->user();
 
-        $p = psicologo::where('correo', $user->email)->get();
-        $e = estudiante::where('correo', $user->email)->get();
-        $d = docente::where('correo', $user->email)->get();
-        $a = acudiente::where('correo', $user->email)->get();
+        $p = DB::table('psicologos')->where('correo', $user->email)->select('direccion')->get();
+        $e = DB::table('estudiantes')->where('estudiantes.correo', $user->email)
+        ->join('acudientes', 'acudientes.id', '=', 'estudiantes.acudiente_id')
+        ->select('acudientes.direccion')->get();
+        $d = DB::table('docentes')->where('correo', $user->email)->select('direccion')->get();
+        $a = DB::table('acudientes')->where('correo', $user->email)->select('direccion')->get();
 
-        $datos = [];
 
-        if ($p != null) {
-            array_push($datos, $p->direccion);
-        } else if ($e != null) {
-            array_push($datos, $e->direccion);
-        } else if ($p != null) {
-            array_push($datos, $p->direccion);
-        } else if ($a != null) {
-            array_push($datos, $a->direccion);
+
+        $dir = [];
+
+        if (count($p) != 0) {
+            array_push($dir, $p);
+        } else if (count($e) != 0) {
+            array_push($dir, $e);
+        } else if (count($d) != 0) {
+            array_push($dir, $d);
+        } else if (count($a) != 0) {
+            array_push($dir, $a);
         } else {
-            array_push($datos, "sin direccion");
+            array_push($dir, "sin direccion");
         }
 
         $datos = [
             "nombre" => $user->name,
             "rol" => $user->nombreRol(),
-            "descripcion" => $user->descripcionRol()
+            "descripcion" => $user->descripcionRol(),
+            "direccion" => $dir
         ];
+
+
         return view('profile')->with('datos', $datos);
     }
     /**

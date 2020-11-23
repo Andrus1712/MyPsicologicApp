@@ -123,10 +123,17 @@ $(document).ready(function () {
                 fechaNacimiento = $("#fechaNacimiento").val(),
                 telefono = $("#telefono").val(),
                 direccion = $("#direccion").val();
+                
+                var filtro = AllRegister.filter(f => f.identificacion == identificacion);
 
             if (tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '' || fechaNacimiento == '' || telefono == '' || direccion == '') {
                 toastr.warning("Complete todos los campos")
-            } else {
+            } 
+            if (filtro != null){
+                toastr.warning("La identificacion ya se encuentra registrada")
+            }
+            
+            else {
                 $.ajax({
                     url: '/api/psicologos',
                     headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
@@ -163,7 +170,7 @@ function Modal() {
     modal.find('.modal-content').empty().append(`
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Formulario de Psicologos</h4>
+            <h4 class="modal-title">Formulario de Registro</h4>
         </div>
         <div class="modal-body">
             <div class="row">
@@ -421,7 +428,7 @@ function DataTable(response) {
         })
 
         $('#psicologos-table').DataTable({
-            // responsive: true,
+            "scrollX": screen.width < 400 ? true : false,
             "destroy": true,
             data: response,
             "columns": my_columns,

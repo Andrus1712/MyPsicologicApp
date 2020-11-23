@@ -71,5 +71,6 @@ class ViewServiceProvider extends ServiceProvider
             $view->with('acudienteItems', $acudienteItems);
         });
         //
+        
     }
 }

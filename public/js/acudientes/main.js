@@ -122,10 +122,17 @@ $(document).ready(function () {
                 fechaNacimiento = $("#fechaNacimiento").val(),
                 telefono = $("#telefono").val(),
                 direccion = $("#direccion").val();
+                
+                var filtro = AllRegister.filter(f => f.identificacion == identificacion)
 
             if (tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '' || fechaNacimiento == '' || telefono == '' || direccion == '') {
                 toastr.warning("Complete todos los campos")
-            } else {
+            }
+            
+            if (filtro != null){
+                toastr.warning("La identificacion ya se encuentra registrada")
+            }
+            else {
                 $.ajax({
                     url: '/api/acudientes',
                     headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
@@ -419,7 +426,7 @@ function DataTable(response) {
         })
 
         $('#acudientes-table').DataTable({
-            // responsive: true,
+            "scrollX": screen.width < 400 ? true : false,
             "destroy": true,
             data: response,
             "columns": my_columns,

@@ -8,9 +8,11 @@ use App\Repositories\modelo_seguimientoRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
 use Flash;
+use PDF;
 use Illuminate\Support\Facades\DB;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
+use Carbon\Carbon;
 
 class modelo_seguimientoController extends AppBaseController
 {
@@ -38,6 +40,55 @@ class modelo_seguimientoController extends AppBaseController
 
             return view('modelo_seguimientos.index')
                 ->with('modeloSeguimientos', $modeloSeguimientos);
+        } else {
+            return redirect('/home');
+        }
+    }
+    public function generarReporte(Request $request)
+    {
+        $datos = $request;
+        return response()->json($datos);
+    }
+    
+    public function createPDF()
+    {
+        $user = Auth()->user();
+        if ($user->havePermission('modulo.seguimiento')) {
+
+            set_time_limit(300);
+
+            $data = DB::table(DB::raw('modelo_seguimientos ms'))->where(DB::raw('ms.deleted_at'), '=', NULL)
+                ->select(
+                    DB::raw('ms.id'),
+                    DB::raw('ms.fecha'),
+                    DB::raw('ms.clasificacion_caso_presentado as caso'),
+                    DB::raw('ms.descripcion'),
+                    DB::raw('ms.solucion'),
+                    DB::raw('ms.remitido'),
+                    DB::raw('ms.estado')
+                )->get();
+                
+                $psi = DB::table(DB::raw('users u'))
+                ->join(DB::raw('psicologos p'), 'p.correo', '=', 'u.email')
+                ->select(
+                    DB::raw("CONCAT(p.nombres,' ',p.apellidos) AS psicologo"),
+                    DB::raw('p.correo'),
+                    DB::raw('p.telefono'),
+                    DB::raw("CONCAT(p.tipoIdentificacion,'. ',p.identificacion) AS id"),
+                )
+                ->get();
+
+                // dd($data);
+                view()->share('modelo', [
+                    'data' => $data, 
+                    'fecha' => Carbon::now()->format('d-m-Y'),
+                    'fechaFormat' => Carbon::now()->toFormattedDateString(),
+                    'psi' => $psi
+                ]);
+                $pdf = PDF::loadView('pdf2_view', $data)
+                    ->setPaper('a4', 'landscape');
+    
+                return $pdf->stream('pdf_file.pdf');
         } else {
             return redirect('/home');
         }

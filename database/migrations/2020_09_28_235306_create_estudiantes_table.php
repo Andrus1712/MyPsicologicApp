@@ -23,6 +23,7 @@ class CreateEstudiantesTable extends Migration
             $table->integer('edad');
             $table->string('telefono');
             $table->string('correo');
+            $table->string('sexo');
             $table->integer('grupo_id')->unsigned();
             $table->integer('acudiente_id')->unsigned();
             $table->timestamps();

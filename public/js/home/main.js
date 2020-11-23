@@ -56,7 +56,7 @@ function ReloadCalendario() {
                     calendar.addEvent({
                         id: response.actividades[i].id,
                         groupId: JSON.stringify(response.actividades[i]),
-                        title: response.actividades[i].titulo,
+                        title: response.actividades[i].titulo+' | '+'CMP'+response.actividades[i].id_comportamiento,
                         start: response.actividades[i].fecha,
                         backgroundColor: response.actividades[i].estado == 0 ? '#F4A460' : response.actividades[i].estado == 1 ? '#3CB371' : '#FF6347',
                         borderColor: "gray",
@@ -183,7 +183,7 @@ function ModalPsico(actividadFilter, event, options) {
                             <div class="box-body">
                                 <div class="form-group">
                                     <label>Titulo de comportamiento</label>
-                                    <p>${actividadFilter.titulo_comportamiento}</p>
+                                    <p>CMP${actividadFilter.id_comportamiento} | ${actividadFilter.titulo_comportamiento}</p>
                                 </div>
                                 <div class="form-group">
                                     <label>Titulo de comportamiento</label>

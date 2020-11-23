@@ -524,7 +524,7 @@ function DataTable(response) {
         })
 
         $('#avances-table').DataTable({
-            // responsive: true,
+            "scrollX": screen.width < 400 ? true : false,
             "destroy": true,
             data: response,
             "columns": my_columns,

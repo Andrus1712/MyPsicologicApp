@@ -46,16 +46,22 @@ class comportamientoController extends AppBaseController
                 ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                 ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
                 ->select(
+                    DB::raw('c.id'),
+                    DB::raw('c.fecha'),
                     DB::raw('tp.titulo'),
                     DB::raw('c.titulo  AS casos'),
+                    DB::raw('c.descripcion  AS caracteristicas'),
                     DB::raw('g.grado AS nivel'),
                     DB::raw('ac.estado'),
                     DB::raw('ac.titulo AS estrategia')
                 )
                 ->groupBy(
+                    DB::raw('c.id'),
+                    DB::raw('c.fecha'),
                     DB::raw('tp.titulo'),
                     DB::raw('ac.estado'),
                     DB::raw('g.grado'),
+                    DB::raw('c.descripcion'),
                     DB::raw('ac.titulo'),
                     DB::raw('c.titulo')
                 )
@@ -84,9 +90,14 @@ class comportamientoController extends AppBaseController
                 ->get();
 
             // dd($data);
+
+            strftime("%A %d de %B del %Y");
             view()->share('comportamientos', [
-                'data' => $data, 'fecha' => Carbon::now()->format('d-m-Y'),
-                'count' => $count, 'psi' => $psi
+                'data' => $data, 
+                'fecha' => Carbon::now()->format('d-m-Y'),
+                'count' => $count, 
+                'psi' => $psi, 
+                'fechaFormat' => Carbon::now()->toFormattedDateString(),
             ]);
             $pdf = PDF::loadView('pdf_view', $data)
                 ->setPaper('a4', 'landscape');
@@ -159,8 +170,7 @@ class comportamientoController extends AppBaseController
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
                     ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
                     ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
-                    ->where(DB::raw('c.deleted_at', '!=', 'date()'))
-                    ->where(DB::raw('c.estudiante_id'), '=', 'e.id')
+                    ->where(DB::raw('e.correo'), '=', Auth()->user()->email)
                     ->select(
                         'c.id',
                         'c.cod_comportamiento',
@@ -170,12 +180,12 @@ class comportamientoController extends AppBaseController
                         // 'c.emisor',
                         // 'e.nombres',
                         // 'e.apellidos',
-                        DB::raw('a.nombres as nombre_acudiente'),
-                        DB::raw('a.apellidos as apellido_acudiente'),
+                        // DB::raw('a.nombres as nombre_acudiente'),
+                        // DB::raw('a.apellidos as apellido_acudiente'),
                         'g.grado',
                         'g.curso',
                         // 'c.multimedia',
-                        'c.emisor',
+                        // 'c.emisor',
                         'e.created_at'
                     )->get();
             } else if ($queryUsers[0]->role_id == 3) {
@@ -265,6 +275,10 @@ class comportamientoController extends AppBaseController
 
         if ($user->havePermission('delete.comportamientos')) {
             array_push($permisos, "delete.comportamientos");
+        }
+        
+        if ($user->havePermission('create.actividades')) {
+            array_push($permisos, "create.actividades");
         }
 
         $datos = [
@@ -505,6 +519,29 @@ class comportamientoController extends AppBaseController
                     ->whereNotIn(DB::raw('c.id'), $data)
                     ->get();
                 return response()->json($contador);
+            } else {
+                $array = DB::table(DB::raw('comportamientos co'))
+                    ->where(DB::raw('co.deleted_at'), '=', NULL)
+                    ->select(DB::raw('co.id'))
+                    ->join(DB::raw('actividades a'), 'co.id', '=', 'a.comportamiento_id')
+                    ->where(DB::raw('a.deleted_at'), '=', NULL)
+                    ->groupBy(DB::raw('co.id'))
+                    ->get();
+                if (count($array) != 0) {
+                    foreach ($array as $a) {
+                        $data[] = $a->id;
+                    }
+
+                    $contador = DB::table(DB::raw('comportamientos c'))
+                        ->select(DB::raw('c.id'))
+                        ->where(DB::raw('c.deleted_at'), '=', NULL)
+                        ->whereNotIn(DB::raw('c.id'), $data)
+                        ->get();
+                    return response()->json($contador);
+                } else {
+                    $contador = [];
+                    return response()->json($contador);
+                }
             }
         }
     }
@@ -601,6 +638,7 @@ class comportamientoController extends AppBaseController
                 'cod_comportamiento'   => $request['cod_comportamiento'],
                 'emisor'   => $emisor,
             ]);
+            
             // $user_psi = DB::table(DB::raw('role_user role'))
             //     ->join(DB::raw('roles r'), 'role.role_id', '=', 'r.id')
             //     ->join(DB::raw('users u'), 'role.user_id', '=', 'u.id')
@@ -616,24 +654,29 @@ class comportamientoController extends AppBaseController
             //     'from' => '573177765722',
             //     'text' => 'Hola'. $est->nombres . ', Tienes una nueva actividad: ' . $request->titulo .' fecha:'. $request->fecha
             // ]);
-
             $rol_users = Role::with('users')->where('name', 'Psicoorientador')
                 ->each(function (Role $role_user) use ($comportamiento) {
                     foreach ($role_user->users as $u) {
-
-                        $u->notify(new NuevoComportamiento($comportamiento));
-                        $psi = psicologo::where('correo', $u->email)->first();
-                        //Notificacion via sms
-                        // $nexmo = app('Nexmo\Client');
-                        // $nexmo->message()->send([
-                        //     'to'   => '57'.$psi->telefono,
-                        //     'from' => '573177765722',
-                        //     'text' => 'Hola '. $psi->nombres . ', Hay un nuevo comportamiento registrado: ' . $comportamiento->titulo .' Descripcion:'. $comportamiento->descripcion
-                        // ]);
+                    $u->notify(new NuevoComportamiento($comportamiento));
+                    
+                        
                     }
                 });
-
-
+                
+                $psi = DB::table(DB::raw('psicologos psi'))->where(DB::raw('psi.deleted_at'), '=', null)
+                    ->select(DB::raw('psi.nombres'),DB::raw('psi.telefono'))
+                    ->get();
+                    
+                    // foreach($psi as $item){
+                    //     // Notificacion via sms
+                    //     $nexmo = app('Nexmo\Client');
+                    //     $nexmo->message()->send([
+                    //         'to'   => '57'.$item->telefono,
+                    //         'from' => '57'.$item->telefono,
+                    //         'text' => 'Hola '. $item->nombres . ', Hay un nuevo comportamiento registrado: ' . $comportamiento->titulo .' Descripcion:'. $comportamiento->descripcion
+                    //     ]);
+                    // }
+                
 
             return response()->json(['status' => 'Comportamiento saved successfully.']);
         }

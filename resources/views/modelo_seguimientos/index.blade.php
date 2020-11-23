@@ -3,10 +3,26 @@
 @section('content')
     <section class="content-header">
         <h1 class="pull-left">Modelo Seguimientos</h1>
+        
         <h1 class="pull-right">
-            <a class="btn btn-success pull-right" style="margin-top: -10px;margin-bottom: 5px" id="add-seguiento"><i
-                    class="fa fa-plus"></i> Agregar</a>
-        </h1>
+        <div class="row">
+            <div class="col-md-6">
+
+                <a class="btn btn-success pull-right" style="margin-top: -10px;margin-bottom: 20px" id="add-seguiento"><i
+                        class="fa fa-plus"></i> Agregar</a>
+
+            </div>
+            @if (Auth()->user()->havePermission('modulo.seguimiento'))
+            <div class="col-md-6">
+
+                <a class="btn bg-red pull-right" style="margin-top: -10px;margin-bottom: 5px"
+                    href="{{ URL::to('/modelo_seguimientoPdf') }}" target="_blank">
+                    Exportar a PDF <i class="fa fa-file-pdf"></i></a>
+
+            </div>
+            @endif
+        </div>
+    </h1>
         @include('modelo_seguimientos.create')
     </section>
     <div class="content">

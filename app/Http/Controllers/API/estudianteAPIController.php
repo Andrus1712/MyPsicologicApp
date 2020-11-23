@@ -50,6 +50,7 @@ class estudianteAPIController extends AppBaseController
                 'e.nombres',
                 'e.apellidos',
                 'e.edad',
+                'e.sexo',
                 'e.telefono',
                 'e.correo',
                 'e.fechaNacimiento',

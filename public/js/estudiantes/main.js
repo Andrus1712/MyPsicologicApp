@@ -27,8 +27,10 @@ $(document).ready(function () {
             $("#nombres").val(filtro[0].nombres)
             $("#apellidos").val(filtro[0].apellidos)
             $("#telefono").val(filtro[0].telefono)
+            $("#genero").val(filtro[0].sexo)
             $("#correo").val(filtro[0].correo)
             $("#direccion").val(filtro[0].direccion)
+            $('#acudiente_id').val(filtro[0].id_acudiente),
             $("#fechaNacimiento").val(filtro[0].fechaNacimiento)
             $("#tipoIdentificacion").empty()
             $("#tipoIdentificacion").append(`<option value="${filtro[0].tipoIdentificacion}">
@@ -41,6 +43,7 @@ $(document).ready(function () {
                     nombres = $("#nombres").val(),
                     apellidos = $("#apellidos").val(),
                     correo = $("#correo").val(),
+                    sexo = $("#genero").val(),
                     fechaNacimiento = $("#fechaNacimiento").val(),
                     edad = calcularEdad(fechaNacimiento),
                     telefono = $("#telefono").val(),
@@ -62,6 +65,7 @@ $(document).ready(function () {
                             apellidos: apellidos,
                             edad: edad,
                             telefono: telefono,
+                            sexo: sexo,
                             correo: correo,
                             fechaNacimiento: fechaNacimiento,
                             acudiente_id: acudiente_id,
@@ -131,10 +135,12 @@ $(document).ready(function () {
                 fechaNacimiento = $("#fechaNacimiento").val(),
                 edad = calcularEdad(fechaNacimiento),
                 telefono = $("#telefono").val(),
+                sexo = $("#genero").val(),
                 acudiente_id = $('#acudiente_id').val(),
                 grupo_id = $('#grupo_id').val();
 
-            if (tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '' || fechaNacimiento == '' || telefono == '' || acudiente_id == '' || grupo_id == '') {
+
+            if (tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '' || fechaNacimiento == '' || sexo == '' || telefono == '' || acudiente_id == '' || grupo_id == '') {
                 toastr.warning("Complete todos los campos")
             }
             else {
@@ -148,6 +154,7 @@ $(document).ready(function () {
                         nombres: nombres,
                         apellidos: apellidos,
                         edad: edad,
+                        sexo: sexo,
                         telefono: telefono,
                         correo: correo,
                         fechaNacimiento: fechaNacimiento,
@@ -243,6 +250,7 @@ function Reload() {
         .done(function (response) {
             if (response.length != 0) {
                 AllRegister = response.estudiantes;
+                console.log(AllRegister);
                 permisos = response.permisos;
                 // console.table(permisos.permisos);
                 DataTable(response.estudiantes);
@@ -332,6 +340,16 @@ function Modal() {
                             <input type="text" class="form-control pull-right" id="fechaNacimiento" >
                         </div>
                     </div>
+
+                    <div class="form-group">
+                            <label>Sexo: </label>
+                            <select class="form-control" id="genero" name="state">
+                                <option value="">Seleccione</option>
+                                <option value="M">Masculino</option>
+                                <option value="F">Femenino</option>
+                                <option value="SE">Sin especificar</option>
+                            </select>
+                        </div>
 
                     <div class="form-group">
                         <label>Telefono: </label>
@@ -481,6 +499,18 @@ function DataTable(response) {
                 my_columns.push(my_item);
             }
 
+            else if (key == 'sexo') {
+
+                my_item.title = 'Genero';
+
+                my_item.render = function (data, type, row) {
+                    return `<div>
+                                ${row.sexo}
+                            </div>`
+                }
+                my_columns.push(my_item);
+            }
+
             else if (key == 'telefono') {
 
                 my_item.title = 'Contacto';
@@ -533,7 +563,7 @@ function DataTable(response) {
         $('#estudiantes-table').DataTable({
             "responsive": true,
             "destroy": false,
-            "scrollX": true,
+            "scrollX": screen.width < 400 ? true : false,
             data: response,
             "columns": my_columns,
             "language": {

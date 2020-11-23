@@ -38,40 +38,57 @@
 
 <body>
 
-  <table style="width: 80%;">
+  <table style="width: 100%;">
     <tr>
-      <td align="left"><img src="{{ public_path('/img/log.png')}}" width="140"></td>
-      <td align="right"><img src="{{ public_path('/img/logoreporte.png')}}" width="140"></td>
+      {{-- <td align="left"><img src="{{ public_path('/img/log.png')}}" width="140"></td> --}}
+      <td align="left"><img src="http://toolpsico.codet-colombia.com/img/logoreporte.png" width="140"></td>
     </tr>
   </table>
 
   <br>
 
-  <h4 style="text-align: center">REPORTE GENERALIZADO DE CASOS QUE AFECTAN LA CONVIVENCIA ESCOLAR</h3>
+  <h4 style="text-align: center">REPORTE DE CASOS DE DEPRESION Y AGRESIVIDAD QUE AFECTAN LA CONVIVENCIA ESCOLAR</h3>
     <br>
     <table border="1">
       <tr>
-        <td align="center" colspan="5">
+        <td align="center" colspan="8">
           <strong>
             <span style="font-size: 0.8em;">REPORTE DE CASOS</span>
           </strong>
         </td>
       </tr>
       <tr>
-        <td colspan="3">
-          <strong>
-            INSTITUCIÓN EDUCATIVA: LA RIVERA
+        <td colspan="6" >
+          <strong style="margin-left: 10px;">
+            INSTITUCIÓN EDUCATIVA: LA RIBERA
           </strong>
         </td>
-        <td colspan="2">
-          <strong>
-            FECHA: {{$comportamientos['fecha']}}
+
+        <td colspan="2" >
+          <strong style="margin-left: 10px;">
+            FECHA DEL REPORTE: {{$comportamientos['fecha']}}
           </strong>
         </td>
       </tr>
 
       <tr>
-        <td rowspan="2" style="width: 25%;">
+        <td rowspan="2" align="center">
+          <strong>
+            <small>
+              ID
+            </small>
+          </strong>
+        </td>
+
+        <td rowspan="2" align="center" style="width: 10%;">
+          <strong>
+            <small>
+              FECHA
+            </small>
+          </strong>
+        </td>
+
+        <td rowspan="2" align="center">
           <strong>
             <small>
               SITUACIONES QUE AFECTAN LA CONVIVENCIA ESCOLAR
@@ -85,13 +102,19 @@
             </small>
           </strong>
         </td>
-
+        <td rowspan="2" align="center">
+          <strong>
+            <small>
+              CARACTERISTICA DEL CASO
+            </small>
+          </strong>
+        </td>
         <td align="center" rowspan="2">
           <strong>
             <small>GRADO(S)</small>
           </strong>
         </td>
-        <td rowspan="2" style="width: 20%;">
+        <td rowspan="2" style="width: 20%;" align="center">
           <strong>
             <small>
               ESTRATEGIA UTILIZADA PARA LA ATENCIÓN DEL CASO
@@ -109,7 +132,7 @@
       </tr>
       <tr>
         <td>
-          <table border="1" style="width: 100%;">
+          <table style="width: 100%;">
             <tr>
               <td align="center" style="width: 33%;">CM</td>
               <td align="center" style="width: 33%;">IC</td>
@@ -120,10 +143,13 @@
       </tr>
       @foreach ($comportamientos['data'] as $item)
       <tr>
-        <td>{{$item->titulo}}</td>
-        <td align="center"> {{$item->casos}} </td>
-        <td align="center"> {{$item->nivel}} </td>
-        <td align="center"> {{$item->estrategia}} </td>
+        <td align="center">CMP{{$item->id}}</td>
+        <td align="center">{{$item->fecha}}</td>
+        <td align="center">{{$item->titulo}}</td>
+        <td align="center"> {{$item->casos}}</td>
+        <td align="center"> {{$item->caracteristicas}}</td>
+        <td align="center"> {{$item->nivel}}</td>
+        <td align="center"> {{$item->estrategia}}</td>
         <td align="center">
           <table style="width: 100%;">
             <tr>
@@ -139,9 +165,13 @@
     <span>Nota: El estado de la actividad es de tres tipos, CM: cumplida; IC: incumplida; EE: en espera</span>
     <br>
     <br>
-    <table border="1" style="width: 80%;">
+<br>
+    <br>
+    
+
+    <table border="1" style="width: 70%;">
       <tr>
-        <td align="center" colspan="2">
+        <td colspan="2" align="center">
           <strong>
             <span style="font-size: 0.8em;">REPORTE DE NUMERO DE CASOS</span>
           </strong>
@@ -149,18 +179,18 @@
       </tr>
       <tr>
         <td colspan="1">
-          <strong>
-            INSTITUCIÓN EDUCATIVA: LA RIVERA
+          <strong style="margin-left: 10px;">
+            INSTITUCIÓN EDUCATIVA: LA RIBERA
           </strong>
         </td>
         <td colspan="1">
-          <strong>
-            FECHA: {{$comportamientos['fecha']}}
+          <strong style="margin-left: 10px;">
+            FECHA DEL REPORTE: {{$comportamientos['fecha']}}
           </strong>
         </td>
       </tr>
       <tr>
-        <td rowspan="1">
+        <td rowspan="1" align="center">
           <strong>
             <small>
               SITUACIONES QUE AFECTAN LA CONVIVENCIA ESCOLAR
@@ -188,8 +218,8 @@
 
     <table style="width: 100%;">
       <tr>
-        <td align="left"><img src="{{ public_path('/img/log.png')}}" width="140"></td>
-        <td align="right"><img src="{{ public_path('/img/logoreporte.png')}}" width="130"></td>
+        {{-- <td align="left"><img src="{{ public_path('/img/log.png')}}" width="140"></td> --}}
+        <td align="left"><img src="http://toolpsico.codet-colombia.com/img/logoreporte.png" width="130"></td>
       </tr>
     </table>
 
@@ -197,21 +227,24 @@
     <table>
       <tr>
         <td>
+            
+            <br>
+          <br>
+          <br>
           <p style="text-align: justify">
-            Nota: Este formato es generado por la plataforma ToolPsico a la fecha de {{$comportamientos['fecha']}}, con
-            el consentimiento de los directivos de la institucion educvativa la Ribera tomando como informacion datos
-            clasificados de los estudiantes que hacen parte del sistema de informacion, teniendo en cuenta el decreto
-            1377 del 2013, no usa información personal de los usuarios a excepción del psicoorientador que es quien
-            genera el reporte y es el responsable del trato de la información situada en el reporte.
+            Nota: Este formato es generado por la plataforma ToolPsico a la fecha de {{$comportamientos['fechaFormat'] }}, con
+            el consentimiento de los directivos de la institucion educvativa la Ribera tomando como datos la informacion
+            de los estudiantes registrados en el sistema. 
+            
+            <P>Esta informacion solo es manipulada por la psicoorientadora y algunos directivos de la institucion.</P>
           </p>
           <br>
-          <p>
-            Contamos con su valiosa colaboración.
-          </p>
+          <br>
           <br>
           <p>
-            Con aprecio,
+            Cordial saludo,
           </p>
+          <br>
           <br>
           <br>
           @foreach ($comportamientos['psi'] as $item)

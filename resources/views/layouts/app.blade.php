@@ -31,6 +31,8 @@
 
     {{-- Select2 --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css">
+    {{-- <link rel="stylesheet" href="/path/to/select2.css">
+    <link rel="stylesheet" href="/path/to/select2-bootstrap4.css"> --}}
 
     <!-- Ionicons -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
@@ -75,7 +77,7 @@
             <!-- Logo -->
             <a href="{{ route('home') }}" class="logo">
                 <span class="logo-mini"><img src="../img/logo-sm.png" /></span>
-                <span class="logo-lg"><img style="width: 140px" src="../img/logoorilloblanco.png" ></span>
+                <span class="logo-lg"><img style="width: 140px" src="../img/logoorilloblanco.png"></span>
 
             </a>
 

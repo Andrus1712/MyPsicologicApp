@@ -25,6 +25,7 @@ class estudianteRepository extends BaseRepository
         'nombres',
         'apellidos',
         'edad',
+        'sexo',
         'telefono',
         'correo',
         'fechaNacimiento',
