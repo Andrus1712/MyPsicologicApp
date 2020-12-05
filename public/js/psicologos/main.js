@@ -123,15 +123,10 @@ $(document).ready(function () {
                 fechaNacimiento = $("#fechaNacimiento").val(),
                 telefono = $("#telefono").val(),
                 direccion = $("#direccion").val();
-                
-                var filtro = AllRegister.filter(f => f.identificacion == identificacion);
 
             if (tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '' || fechaNacimiento == '' || telefono == '' || direccion == '') {
                 toastr.warning("Complete todos los campos")
             } 
-            if (filtro != null){
-                toastr.warning("La identificacion ya se encuentra registrada")
-            }
             
             else {
                 $.ajax({
