@@ -71,7 +71,7 @@ class actividadesController extends AppBaseController
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    // ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
                     ->select(
                         'ac.id',
                         'ac.titulo',
@@ -89,8 +89,8 @@ class actividadesController extends AppBaseController
                         DB::raw('a.apellidos as apellido_acudiente'),
                         DB::raw('a.telefono as telefono_acudiente'),
                         DB::raw('a.correo as correo_acudiente'),
-                        DB::raw('tc.titulo as titulo_tipo_comportamiento'),
-                        DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
+                        // DB::raw('tc.titulo as titulo_tipo_comportamiento'),
+                        // DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
                         'ac.created_at',
                         'ac.deleted_at'
                     )
@@ -100,7 +100,7 @@ class actividadesController extends AppBaseController
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    // ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
                     ->where(DB::raw('e.correo'), '=', Auth()->user()->email)
                     ->select(
                         'ac.id',
@@ -120,7 +120,7 @@ class actividadesController extends AppBaseController
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    // ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
                     ->select(
                         'ac.id',
                         'ac.titulo',
@@ -138,8 +138,8 @@ class actividadesController extends AppBaseController
                         DB::raw('a.apellidos as apellido_acudiente'),
                         DB::raw('a.telefono as telefono_acudiente'),
                         DB::raw('a.correo as correo_acudiente'),
-                        DB::raw('tc.titulo as titulo_tipo_comportamiento'),
-                        DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
+                        // DB::raw('tc.titulo as titulo_tipo_comportamiento'),
+                        // DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
                         'ac.created_at',
                         'ac.deleted_at'
                     )
@@ -149,7 +149,7 @@ class actividadesController extends AppBaseController
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    // ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
                     ->select(
                         'ac.id',
                         'ac.titulo',
@@ -167,8 +167,8 @@ class actividadesController extends AppBaseController
                         DB::raw('a.apellidos as apellido_acudiente'),
                         DB::raw('a.telefono as telefono_acudiente'),
                         DB::raw('a.correo as correo_acudiente'),
-                        DB::raw('tc.titulo as titulo_tipo_comportamiento'),
-                        DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
+                        // DB::raw('tc.titulo as titulo_tipo_comportamiento'),
+                        // DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
                         'ac.created_at',
                         'ac.deleted_at'
                     )
@@ -179,7 +179,7 @@ class actividadesController extends AppBaseController
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    // ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
                     ->select(
                         'ac.id',
                         'ac.titulo',
@@ -197,8 +197,8 @@ class actividadesController extends AppBaseController
                         DB::raw('a.apellidos as apellido_acudiente'),
                         DB::raw('a.telefono as telefono_acudiente'),
                         DB::raw('a.correo as correo_acudiente'),
-                        DB::raw('tc.titulo as titulo_tipo_comportamiento'),
-                        DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
+                        // DB::raw('tc.titulo as titulo_tipo_comportamiento'),
+                        // DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
                         'ac.created_at',
                         'ac.deleted_at'
                     )
@@ -337,7 +337,7 @@ class actividadesController extends AppBaseController
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    // ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
                     ->select(
                         'ac.id',
                         'ac.titulo',
@@ -354,7 +354,7 @@ class actividadesController extends AppBaseController
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    // ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
                     ->select(
                         'ac.id',
                         'ac.titulo',
@@ -374,7 +374,7 @@ class actividadesController extends AppBaseController
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    // ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
                     ->select(
                         'ac.id',
                         'ac.titulo',
@@ -392,7 +392,7 @@ class actividadesController extends AppBaseController
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    // ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
                     ->select(
                         'ac.id',
                         'ac.titulo',
@@ -435,7 +435,7 @@ class actividadesController extends AppBaseController
             'fecha' => $request['fecha'],
             'estado' => $request['estado'],
             'comportamiento_id' => $request['comportamiento_id'],
-            'tipo_comportamiento_id' => $request['tipo_comportamiento_id']
+            // 'tipo_comportamiento_id' => $request['tipo_comportamiento_id']
         ]);
 
         $estudiante_id = comportamiento::where('id', $request->comportamiento_id)->value('estudiante_id');
@@ -487,7 +487,7 @@ class actividadesController extends AppBaseController
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    // ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
                     ->select(
                         'ac.id',
                         'ac.titulo',
@@ -504,8 +504,8 @@ class actividadesController extends AppBaseController
                         DB::raw('a.apellidos as apellido_acudiente'),
                         DB::raw('a.telefono as telefono_acudiente'),
                         DB::raw('a.correo as correo_acudiente'),
-                        DB::raw('tc.titulo as titulo_tipo_comportamiento'),
-                        DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
+                        // DB::raw('tc.titulo as titulo_tipo_comportamiento'),
+                        // DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
                         'ac.created_at',
                         'ac.deleted_at'
                     )
@@ -527,7 +527,7 @@ class actividadesController extends AppBaseController
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    // ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
                     ->select(
                         'ac.id',
                         'ac.titulo',
@@ -558,7 +558,7 @@ class actividadesController extends AppBaseController
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    // ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
                     ->select(
                         'ac.id',
                         'ac.titulo',
@@ -575,8 +575,8 @@ class actividadesController extends AppBaseController
                         DB::raw('a.apellidos as apellido_acudiente'),
                         DB::raw('a.telefono as telefono_acudiente'),
                         DB::raw('a.correo as correo_acudiente'),
-                        DB::raw('tc.titulo as titulo_tipo_comportamiento'),
-                        DB::raw('tc.descripcion as descripcion_tipo_comportamiento')
+                        // DB::raw('tc.titulo as titulo_tipo_comportamiento'),
+                        // DB::raw('tc.descripcion as descripcion_tipo_comportamiento')
                     )
                     ->where(DB::raw('a.correo'), '=', Auth()->user()->email)
                     ->get();
@@ -669,7 +669,14 @@ class actividadesController extends AppBaseController
         $historial = DB::table(DB::raw('historial_actividades ha'))
             ->where(DB::raw('ha.deleted_at', '=', null))
             ->join(DB::raw('actividades a'), 'ha.actividad_id', '=', 'a.id')
-            ->select(DB::raw('a.id'), DB::raw('a.titulo'), DB::raw('a.fecha'), DB::raw('ha.fecha_historial'), DB::raw('ha.estado_actividad'))
+            ->select(
+                DB::raw('a.id'),
+                DB::raw('a.titulo'),
+                DB::raw('a.fecha'),
+                DB::raw('ha.fecha_historial'),
+                DB::raw('ha.estado_actividad'),
+                DB::raw('ha.descripcion_historial')
+            )
             ->where(DB::raw('a.id'), '=', $id)
             ->get();
 

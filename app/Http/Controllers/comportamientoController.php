@@ -38,7 +38,7 @@ class comportamientoController extends AppBaseController
         if ($user->havePermission('make.reportes')) {
 
 
-            set_time_limit(300);
+            set_time_limit(300);///FFFFFFFF
             // $data = tipoComportamiento::all();
             $data = DB::table(DB::raw('tipo_comportamientos tp'))->where(DB::raw('tp.deleted_at'), '=', NULL)
                 ->join(DB::raw('actividades ac'), 'ac.tipo_comportamiento_id', '=', 'tp.id')
@@ -132,7 +132,6 @@ class comportamientoController extends AppBaseController
     public function getComportamientos()
     {
         $user = Auth()->user();
-
         $rol = $user->tieneRol();
         $queryUsers = DB::table('role_user')
             ->select('role_user.*')
@@ -141,15 +140,17 @@ class comportamientoController extends AppBaseController
             ->get();
         if (count($queryUsers) != 0) {
             if ($queryUsers[0]->role_id == 1) {
+
                 $comportamientos = DB::table(DB::raw('comportamientos c'))->where(DB::raw('c.deleted_at'), '=', NULL)
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
                     ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
                     ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->where(DB::raw('c.deleted_at', '!=', 'date()'))
                     ->select(
                         'c.id',
-                        'c.cod_comportamiento',
+                        DB::raw('tc.id as cod_comportamiento'),
                         'c.titulo',
                         'c.descripcion',
                         'c.fecha',
@@ -170,10 +171,11 @@ class comportamientoController extends AppBaseController
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
                     ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
                     ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->where(DB::raw('e.correo'), '=', Auth()->user()->email)
                     ->select(
                         'c.id',
-                        'c.cod_comportamiento',
+                        DB::raw('tc.id as cod_comportamiento'),
                         'c.titulo',
                         'c.descripcion',
                         'c.fecha',
@@ -194,11 +196,12 @@ class comportamientoController extends AppBaseController
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
                     ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
                     ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->where(DB::raw('c.deleted_at', '!=', 'date()'))
                     ->where(DB::raw('c.emisor'), '=', auth()->user())
                     ->select(
                         'c.id',
-                        'c.cod_comportamiento',
+                        DB::raw('tc.id as cod_comportamiento'),
                         'c.titulo',
                         'c.descripcion',
                         'c.fecha',
@@ -220,11 +223,12 @@ class comportamientoController extends AppBaseController
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
                     ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
                     ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->where(DB::raw('c.deleted_at', '!=', 'date()'))
                     ->where(DB::raw('a.correo'), '=', $user->email)
                     ->select(
                         'c.id',
-                        'c.cod_comportamiento',
+                        DB::raw('tc.id as cod_comportamiento'),
                         'c.titulo',
                         'c.descripcion',
                         'c.fecha',
@@ -245,10 +249,11 @@ class comportamientoController extends AppBaseController
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
                     ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
                     ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->where(DB::raw('c.deleted_at', '!=', 'date()'))
                     ->select(
                         'c.id',
-                        'c.cod_comportamiento',
+                        DB::raw('tc.id as cod_comportamiento'),
                         'c.titulo',
                         'c.descripcion',
                         'c.fecha',
@@ -593,8 +598,8 @@ class comportamientoController extends AppBaseController
             }
 
             comportamiento::where('id', $request->id)->update([
-                'cod_comportamiento' => $request->cod_comportamiento,
                 'estudiante_id' => $request->estudiante_id,
+                'tipo_comportamiento_id' => $request->tipo_comportamiento_id,
                 'titulo' => $request->titulo,
                 'descripcion' => $request->descripcion,
                 'fecha' => $request->fecha,
@@ -631,11 +636,11 @@ class comportamientoController extends AppBaseController
 
             $comportamiento = comportamiento::create([
                 'estudiante_id' => $request['estudiante_id'],
+                'tipo_comportamiento_id'   => $request['tipo_comportamiento_id'],
                 'titulo' => $request['titulo'],
                 'descripcion'  => $request['descripcion'],
                 'fecha' => $request['fecha'],
                 'multimedia'   => $url_multimedia,
-                'cod_comportamiento'   => $request['cod_comportamiento'],
                 'emisor'   => $emisor,
             ]);
             

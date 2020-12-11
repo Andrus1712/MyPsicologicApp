@@ -25,7 +25,7 @@ class actividadesRepository extends BaseRepository
         'descripcion',
         'estado',
         'comportamiento_id',
-        'tipo_comportamiento_id',
+        // 'tipo_comportamiento_id',
         'estudiante_id'
     ];
 

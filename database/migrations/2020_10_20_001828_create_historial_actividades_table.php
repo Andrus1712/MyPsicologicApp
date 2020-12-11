@@ -17,6 +17,7 @@ class CreateHistorialActividadesTable extends Migration
             $table->increments('id');
             $table->integer('actividad_id')->unsigned();
             $table->string('fecha_historial');
+            $table->string('descripcion_historial');
             $table->integer('estado_actividad');
             $table->timestamps();
 

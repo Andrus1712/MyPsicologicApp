@@ -49,7 +49,7 @@ class actividadesAPIController extends AppBaseController
             ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
             ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
             ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-            ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+            // ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
             ->select(
                 'ac.id',
                 'ac.titulo',
@@ -66,8 +66,8 @@ class actividadesAPIController extends AppBaseController
                 DB::raw('a.apellidos as apellido_acudiente'),
                 DB::raw('a.telefono as telefono_acudiente'),
                 DB::raw('a.correo as correo_acudiente'),
-                DB::raw('tc.titulo as titulo_tipo_comportamiento'),
-                DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
+                // DB::raw('tc.titulo as titulo_tipo_comportamiento'),
+                // DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
                 'ac.created_at',
                 'ac.deleted_at'
             )
@@ -138,6 +138,7 @@ class actividadesAPIController extends AppBaseController
             HistorialActividades::create([
                 'actividad_id' => $actividades->id,
                 'fecha_historial' => $actividades->fecha,
+                'descripcion_historial' => $request->descripcion_historial,
                 'estado_actividad' => $actividades->estado,
             ]);
 

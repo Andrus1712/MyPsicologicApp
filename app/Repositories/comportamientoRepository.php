@@ -20,8 +20,8 @@ class comportamientoRepository extends BaseRepository
      * @var array
      */
     protected $fieldSearchable = [
-        'cod_comportamiento',
         'estudiante_id',
+        'tipo_comportamiento_id',
         'titulo',
         'descripcion',
         'fecha',

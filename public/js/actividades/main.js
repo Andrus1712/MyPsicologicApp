@@ -162,12 +162,14 @@ $(document).ready(function () {
             fecha = $("#fecha").val()
             var id = $("#actividad_id").val();
             var fechaReprogramar = $('#fechaReprogramar').val();
+            var descripcion_historial = $('#descripcion_historial').val();
             $.ajax({
                 url: '/api/actividades/' + id,
                 headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                 type: 'PUT',
                 data: {
                     fecha: fechaReprogramar,
+                    descripcion_historial: descripcion_historial,
                     method: "reprogramar",
                 },
             })
@@ -394,6 +396,7 @@ function ModalHistorial(historial) {
     for (let i = 0; i < historial.length; i++) {
         html += `<tr>
                     <td>${historial[i].fecha_historial}</td>
+                    <td>${historial[i].descripcion_historial}</td>
                     <td>${historial[i].estado_actividad == 1 ? `<i class="fa fa-check-circle" style="color: green;"></i> Cumplida` :
                 historial[i].estado_actividad == 2 ? `<i class="fa fa-exclamation-circle" style="color: red;"></i> Incumplida` :
                     `<i class="fa  fa-exclamation-triangle" style="color: orange;" ></i> En espera`}</td>
@@ -418,6 +421,7 @@ function ModalHistorial(historial) {
         </tr>
         <tr>
             <th scope="col">Fecha anterior</th>
+            <th scope="col">Razon por la que se pospuso</th>
             <th scope="col">Estado</th>
         </tr>
         </thead>
@@ -465,14 +469,7 @@ function Modal() {
 
                 <div class="col-md-6">
 
-                    <div class="form-group">
-                        <label >Tipo de comportamiento: </label>
-                        <div class="input-group">
-                            <select class="form-control" id="tipo_comportamiento_id" style="width: 100%;">
-
-                            </select>
-                        </div>
-                    </div>
+                    
 
                     <div class="form-group">
                         <label>Fecha de la actividad: </label>
@@ -548,18 +545,13 @@ function ModalReprogramar() {
 
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Fecha de la actividad: </label>
-                        <div class="input-group date" id="timepicker">
-                            <div class="input-group-addon">
-                                <i class="fa fa-calendar"></i>
-                            </div>
-                            <input type="text" class="form-control pull-right" id="fecha" >
-                        </div>
+                        <label>Informacion de porque se pospone: </label>
+                        <textarea id="descripcion_historial" class="form-control" style="resize: vertical;" rows="3" placeholder="Escriba aqui la razon de posponer la actividad ..."></textarea>
                     </div>
 
-                    </div>
+                </div>
 
-                    <div class="col-md-6">
+                <div class="col-md-6">
 
                     <div class="form-group">
                         <label>Reprogramar Para: </label>

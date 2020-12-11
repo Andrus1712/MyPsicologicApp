@@ -45,10 +45,11 @@ class comportamientoAPIController extends AppBaseController
             ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
             ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
             ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+            ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
             ->where(DB::raw('c.deleted_at', '!=', 'date()'))
             ->select(
                 'c.id',
-                'c.cod_comportamiento',
+                'tc.id as tipo_comportamiento',
                 'c.titulo',
                 'c.descripcion',
                 'c.fecha',
@@ -87,8 +88,8 @@ class comportamientoAPIController extends AppBaseController
             }
 
             comportamiento::where('id', $request->id)->update([
-                'cod_comportamiento' => $request->cod_comportamiento,
                 'estudiante_id' => $request->estudiante_id,
+                'tipo_comportamiento_id' => $request->tipo_comportamiento_id,
                 'titulo' => $request->titulo,
                 'descripcion' => $request->descripcion,
                 'fecha' => $request->fecha,
@@ -113,7 +114,7 @@ class comportamientoAPIController extends AppBaseController
                 'descripcion'  => $request->descripcion,
                 'fecha' => $request->fecha,
                 'multimedia'   => $url_multimedia,
-                'cod_comportamiento'   => $request->cod_comportamiento,
+                'tipo_comportamiento_id'   => $request->tipo_comportamiento_id,
                 'emisor'   => Auth()->user(),
             ]);
 

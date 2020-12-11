@@ -30,8 +30,8 @@ class comportamiento extends Model
 
 
     public $fillable = [
-        'cod_comportamiento',
         'estudiante_id',
+        'tipo_comportamiento_id',
         'titulo',
         'descripcion',
         'fecha',
@@ -46,7 +46,7 @@ class comportamiento extends Model
      */
     protected $casts = [
         'id' => 'integer',
-        'cod_comportamiento' => 'integer',
+        'tipo_comportamiento_id' => 'integer',
         'estudiante_id' => 'integer',
         'titulo' => 'string',
         'descripcion' => 'string',

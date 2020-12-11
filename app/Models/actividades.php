@@ -31,7 +31,7 @@ class actividades extends Model
         'descripcion',
         'estado',
         'comportamiento_id',
-        'tipo_comportamiento_id',
+        // 'tipo_comportamiento_id',
         'estudiante_id'
     ];
 
@@ -47,7 +47,7 @@ class actividades extends Model
         'descripcion' => 'string',
         'estado' => 'integer',
         'comportamiento_id' => 'integer',
-        'tipo_comportamiento_id' => 'integer',
+        // 'tipo_comportamiento_id' => 'integer',
         'estudiante_id' => 'intger'
     ];
 

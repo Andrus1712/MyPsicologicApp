@@ -19,6 +19,7 @@ class HistorialActividades extends Model
     public $fillable = [
         'actividad_id',
         'fecha_historial',
+        'descripcion_historial',
         'estado_actividad'
     ];
 
@@ -31,6 +32,7 @@ class HistorialActividades extends Model
         'id' => 'integer',
         'actividad_id' => 'integer',
         'fecha_historial' => 'date',
+        'descripcion_historial' => 'string',
     ];
 
     /**

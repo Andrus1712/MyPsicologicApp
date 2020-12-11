@@ -20,11 +20,11 @@ class CreateActividadesTable extends Migration
             $table->string('descripcion');
             $table->integer('estado');
             $table->integer('comportamiento_id')->unsigned();
-            $table->integer('tipo_comportamiento_id')->unsigned();
+            // $table->integer('tipo_comportamiento_id')->unsigned();
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('comportamiento_id')->references('id')->on('comportamientos');
-            $table->foreign('tipo_comportamiento_id')->references('id')->on('tipo_comportamientos');
+            // $table->foreign('tipo_comportamiento_id')->references('id')->on('tipo_comportamientos');
         });
     }
 

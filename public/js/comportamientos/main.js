@@ -76,6 +76,7 @@ $(document).ready(function () {
             modal.modal("show");
             Modal()
             LoadEstudiantes()
+            LoadTiposComportamientos()
 
 
             $("#save").text("Actualizar")
@@ -192,6 +193,7 @@ $(document).ready(function () {
         modal.modal('show')
         Modal()
         LoadEstudiantes()
+        LoadTiposComportamientos()
         establecer_fecha()
 
         // $('#btn_add').on('click', function(){
@@ -199,15 +201,15 @@ $(document).ready(function () {
         // })
 
         $('#save').on('click', function () {
-            var cod_comportamiento = Math.random() * 9999,
+            var tipo_comportamiento_id = $("#tipo_comportamiento_id").val(),
                 estudiante_id = $("#estudiante_id").val(),
                 titulo = $("#titulo").val(),
-                descripcion = $("#descripcion").val(),
+                descripcion = $("#descripcion").val(), 
                 fecha = $("#fecha").val(),
                 // emisor = "X",
                 multimedia = $("#multimedia")[0].files;
 
-            if (cod_comportamiento == '' || estudiante_id == '' || titulo == '' || descripcion == '' || fecha == '') {
+            if ( estudiante_id == '' || titulo == '' || descripcion == '' || fecha == '') {
                 toastr.warning("Complete todos los campos")
             }
             else {
@@ -225,7 +227,7 @@ $(document).ready(function () {
                 form.append('descripcion', descripcion)
                 form.append('fecha', fecha)
                 // form.append('emisor', emisor)
-                form.append('cod_comportamiento', cod_comportamiento)
+                form.append('tipo_comportamiento_id', tipo_comportamiento_id)
                 // form.append('multimedia', multimedia)
 
                 $.ajax({
@@ -350,7 +352,7 @@ $(document).ready(function () {
         modal.modal("show");
         ModalReporte();
 
-        LoadTiposComportamientos();
+        LoadTiposComportamientos2();
         var start = moment().subtract(29, 'days');
         var end = moment();
 
@@ -458,6 +460,28 @@ function establecer_fecha() {
 }
 
 function LoadTiposComportamientos() {
+    $("#tipo_comportamiento_id").select2({
+        placeholder: 'Seleccione el tipo comportamiento',
+        allowClear: true,
+        dropdownParent: modal,
+        width: 'resolve'
+    });
+
+    $.ajax({
+        url: '/api/tipo_comportamientos',
+    })
+        .done(function (response) {
+            for (var i in response.data) {
+                $("#tipo_comportamiento_id").append(`<option value='${response.data[i].id}'>${response.data[i].titulo}</option>`)
+            }
+
+        })
+        .fail(function () {
+            console.log("error");
+        })
+}
+
+function LoadTiposComportamientos2() {
     // $("#tipo_comportamiento_id").select2({
     //     placeholder: 'Seleccione el tipo comportamiento',
     //     allowClear: true,
@@ -705,6 +729,16 @@ function Modal() {
                             <input type="text" class="form-control" placeholder="Titulo" id="titulo">
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        <label >Tipo de comportamiento: </label>
+                        <div class="input-group">
+                            <select class="form-control" id="tipo_comportamiento_id" style="width: 100%;">
+
+                            </select>
+                        </div>
+                    </div>
+
                 </div>
 
                 <div class="col-md-6">
@@ -1070,12 +1104,13 @@ function DataTable(response) {
 
                 my_item.render = function (data, type, row) {
                     return `<div>
-                                ${JSON.parse(row.emisor).email}
+                                x
                             </div>`
                 }
                 my_columns.push(my_item);
             }
         })
+        //${JSON.parse(row.emisor).email}
 
         $('#comportamientos-table').DataTable({
             //'responsive': true,
