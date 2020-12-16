@@ -52,7 +52,7 @@ $(document).ready(function () {
                             descripcion: descripcion,
                             fecha: fecha,
                             estado: estado,
-                            tipo_comportamiento_id: tipo_comportamiento_id,
+                            
                         },
                     })
                         .done(function () {

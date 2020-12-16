@@ -16,7 +16,7 @@ class CreateComportamientosTable extends Migration
         Schema::create('comportamientos', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('estudiante_id')->unsigned();
-            $table->integer('tipo_comportamiento_id')->unsigned();
+            $table->integer('tipo_comportamiento_id')->nullable()->unsigned();
             $table->string('titulo');
             $table->string('descripcion');
             $table->date('fecha');
@@ -25,7 +25,8 @@ class CreateComportamientosTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('estudiante_id')->references('id')->on('estudiantes');
-            $table->foreign('tipo_comportamiento_id')->references('id')->on('tipo_comportamientos');
+            $table->foreign('tipo_comportamiento_id')
+            ->references('id')->on('tipo_comportamientos');
         });
     }
 

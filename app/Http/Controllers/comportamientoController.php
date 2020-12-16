@@ -38,7 +38,7 @@ class comportamientoController extends AppBaseController
         if ($user->havePermission('make.reportes')) {
 
 
-            set_time_limit(300);///FFFFFFFF
+            set_time_limit(300); ///FFFFFFFF
             // $data = tipoComportamiento::all();
             $data = DB::table(DB::raw('tipo_comportamientos tp'))->where(DB::raw('tp.deleted_at'), '=', NULL)
                 ->join(DB::raw('actividades ac'), 'ac.tipo_comportamiento_id', '=', 'tp.id')
@@ -93,10 +93,10 @@ class comportamientoController extends AppBaseController
 
             strftime("%A %d de %B del %Y");
             view()->share('comportamientos', [
-                'data' => $data, 
+                'data' => $data,
                 'fecha' => Carbon::now()->format('d-m-Y'),
-                'count' => $count, 
-                'psi' => $psi, 
+                'count' => $count,
+                'psi' => $psi,
                 'fechaFormat' => Carbon::now()->toFormattedDateString(),
             ]);
             $pdf = PDF::loadView('pdf_view', $data)
@@ -146,11 +146,11 @@ class comportamientoController extends AppBaseController
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
                     ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
                     ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                    ->leftjoin(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->where(DB::raw('c.deleted_at', '!=', 'date()'))
                     ->select(
                         'c.id',
-                        DB::raw('tc.id as cod_comportamiento'),
+                        DB::raw('tc.titulo as titulo_tc'),
                         'c.titulo',
                         'c.descripcion',
                         'c.fecha',
@@ -171,11 +171,10 @@ class comportamientoController extends AppBaseController
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
                     ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
                     ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                    ->leftjoin(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->where(DB::raw('e.correo'), '=', Auth()->user()->email)
                     ->select(
                         'c.id',
-                        DB::raw('tc.id as cod_comportamiento'),
                         'c.titulo',
                         'c.descripcion',
                         'c.fecha',
@@ -196,12 +195,11 @@ class comportamientoController extends AppBaseController
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
                     ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
                     ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                    ->leftjoin(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->where(DB::raw('c.deleted_at', '!=', 'date()'))
                     ->where(DB::raw('c.emisor'), '=', auth()->user())
                     ->select(
                         'c.id',
-                        DB::raw('tc.id as cod_comportamiento'),
                         'c.titulo',
                         'c.descripcion',
                         'c.fecha',
@@ -223,12 +221,11 @@ class comportamientoController extends AppBaseController
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
                     ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
                     ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                    ->leftjoin(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->where(DB::raw('c.deleted_at', '!=', 'date()'))
                     ->where(DB::raw('a.correo'), '=', $user->email)
                     ->select(
                         'c.id',
-                        DB::raw('tc.id as cod_comportamiento'),
                         'c.titulo',
                         'c.descripcion',
                         'c.fecha',
@@ -249,13 +246,13 @@ class comportamientoController extends AppBaseController
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
                     ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
                     ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                    ->leftjoin(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->where(DB::raw('c.deleted_at', '!=', 'date()'))
                     ->select(
                         'c.id',
-                        DB::raw('tc.id as cod_comportamiento'),
                         'c.titulo',
                         'c.descripcion',
+                        DB::raw('tc.titulo as titulo_tc'),
                         'c.fecha',
                         'c.emisor',
                         'e.nombres',
@@ -281,7 +278,7 @@ class comportamientoController extends AppBaseController
         if ($user->havePermission('delete.comportamientos')) {
             array_push($permisos, "delete.comportamientos");
         }
-        
+
         if ($user->havePermission('create.actividades')) {
             array_push($permisos, "create.actividades");
         }
@@ -636,14 +633,14 @@ class comportamientoController extends AppBaseController
 
             $comportamiento = comportamiento::create([
                 'estudiante_id' => $request['estudiante_id'],
-                'tipo_comportamiento_id'   => $request['tipo_comportamiento_id'],
+                'tipo_comportamiento_id' => $request['tipo_comportamiento_id'] == null ? NULL : $request['tipo_comportamiento_id'],
                 'titulo' => $request['titulo'],
-                'descripcion'  => $request['descripcion'],
+                'descripcion' => $request['descripcion'],
                 'fecha' => $request['fecha'],
                 'multimedia'   => $url_multimedia,
                 'emisor'   => $emisor,
             ]);
-            
+
             // $user_psi = DB::table(DB::raw('role_user role'))
             //     ->join(DB::raw('roles r'), 'role.role_id', '=', 'r.id')
             //     ->join(DB::raw('users u'), 'role.user_id', '=', 'u.id')
@@ -662,26 +659,24 @@ class comportamientoController extends AppBaseController
             $rol_users = Role::with('users')->where('name', 'Psicoorientador')
                 ->each(function (Role $role_user) use ($comportamiento) {
                     foreach ($role_user->users as $u) {
-                    $u->notify(new NuevoComportamiento($comportamiento));
-                    
-                        
+                        $u->notify(new NuevoComportamiento($comportamiento));
                     }
                 });
-                
-                $psi = DB::table(DB::raw('psicologos psi'))->where(DB::raw('psi.deleted_at'), '=', null)
-                    ->select(DB::raw('psi.nombres'),DB::raw('psi.telefono'))
-                    ->get();
-                    
-                    // foreach($psi as $item){
-                    //     // Notificacion via sms
-                    //     $nexmo = app('Nexmo\Client');
-                    //     $nexmo->message()->send([
-                    //         'to'   => '57'.$item->telefono,
-                    //         'from' => '57'.$item->telefono,
-                    //         'text' => 'Hola '. $item->nombres . ', Hay un nuevo comportamiento registrado: ' . $comportamiento->titulo .' Descripcion:'. $comportamiento->descripcion
-                    //     ]);
-                    // }
-                
+
+            $psi = DB::table(DB::raw('psicologos psi'))->where(DB::raw('psi.deleted_at'), '=', null)
+                ->select(DB::raw('psi.nombres'), DB::raw('psi.telefono'))
+                ->get();
+
+            // foreach($psi as $item){
+            //     // Notificacion via sms
+            //     $nexmo = app('Nexmo\Client');
+            //     $nexmo->message()->send([
+            //         'to'   => '57'.$item->telefono,
+            //         'from' => '57'.$item->telefono,
+            //         'text' => 'Hola '. $item->nombres . ', Hay un nuevo comportamiento registrado: ' . $comportamiento->titulo .' Descripcion:'. $comportamiento->descripcion
+            //     ]);
+            // }
+
 
             return response()->json(['status' => 'Comportamiento saved successfully.']);
         }

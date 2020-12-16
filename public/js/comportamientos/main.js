@@ -1,9 +1,12 @@
 var modal = $('#modal-comportamientos')
+var modal2 = $('#modal-tc')
 var AllRegister = [];
 
 var getAct;
 
 var permisos = [];
+
+var rol;
 
 var element = [];
 
@@ -15,21 +18,58 @@ $(document).ready(function () {
 
     $('#comportamientos-table').on('click', '[id^=Btn_act_]', function () {
         var id = $(this).attr('data-id');
+        const filtro = AllRegister.filter(f => f.id == id);
+
+        if (filtro[0].titulo_tc == null) {
+            modal2.modal('show');
+            LoadModalTC(filtro);
+            LoadTiposComportamientos(modal2);
+
+            $('#save2').on('click', function () {
+                var tipo_comportamiento_id = $("#tipo_comportamiento_id").val();
+
+                var form = new FormData();
+
+                form.append('method', 'update')
+                form.append('id', id)
+                form.append('tipo_comportamiento_id', tipo_comportamiento_id)
+
+                $.ajax({
+                    url: '/api/comportamientos/' + id,
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    type: 'PUT',
+                    data: {
+                        tipo_comportamiento_id: tipo_comportamiento_id,                       
+                    },
+                })
+                    .done(function () {
+                        setTimeout(function () { modal2.modal("hide") }, 600);
+                        toastr.info("información actualizada");
+                        Reload()
+                    })
+                    .fail(function () {
+                        toastr.error("Ha ocurrido un error");
+                    })
+                    .always(function () {
+                        $("#save2").addClass("disabled");
+                    });
+
+            });
+        }
+
         modal.modal('show');
         ModalActividades()
         $('#input_actividad').hide()
         LoadComportamientos(id)
-        LoadTiposComportamientos()
 
         $('#save').on('click', function () {
             var comportamiento_id = $("#comportamiento_id").val(),
                 titulo = $("#titulo").val(),
                 descripcion = $("#descripcion").val(),
                 fecha = $("#fecha").val(),
-                tipo_comportamiento_id = $("#tipo_comportamiento_id").val(),
                 estado = 0 //estado por defecto de las actividades
 
-            if (comportamiento_id == '' || titulo == '' || descripcion == '' || fecha == '' || tipo_comportamiento_id == '') {
+            if (comportamiento_id == '' || titulo == '' || descripcion == '' || fecha == '') {
                 toastr.warning("Complete todos los campos")
             } else {
                 $.ajax({
@@ -42,7 +82,6 @@ $(document).ready(function () {
                         descripcion: descripcion,
                         fecha: fecha,
                         estado: estado,
-                        tipo_comportamiento_id: tipo_comportamiento_id,
                         estado: estado
                     },
                 })
@@ -76,7 +115,7 @@ $(document).ready(function () {
             modal.modal("show");
             Modal()
             LoadEstudiantes()
-            LoadTiposComportamientos()
+            LoadTiposComportamientos(modal)
 
 
             $("#save").text("Actualizar")
@@ -87,7 +126,6 @@ $(document).ready(function () {
             // $('#rutaFile').attr('target', '_blank')
             // $("#rutaFile").text('Ver documento')
 
-            $("#cod_comportamiento").val(filtro[0].cod_comportamiento)
             $("#cod_comportamiento").attr("disabled", true)
             $("#titulo").val(filtro[0].titulo)
             $("#estudiante_id").val(filtro[0].estudiante_id)
@@ -123,7 +161,6 @@ $(document).ready(function () {
                     form.append('titulo', titulo)
                     form.append('descripcion', descripcion)
                     form.append('fecha', fecha)
-                    form.append('cod_comportamiento', 2342)
                     // form.append('emisor', "x")
                     // form.append('multimedia', multimedia)
                     form.append('method', 'update')
@@ -192,9 +229,16 @@ $(document).ready(function () {
     $('#add-comportamientos').on('click', function () {
         modal.modal('show')
         Modal()
+        $("#tc").hide();
+        
         LoadEstudiantes()
-        LoadTiposComportamientos()
         establecer_fecha()
+
+        console.log(rol)
+        if(rol != "Acu-user"){
+            LoadTiposComportamientos();
+            $("#tc").show();
+        }
 
         // $('#btn_add').on('click', function(){
         //     alert("agregar estudiante")
@@ -204,12 +248,12 @@ $(document).ready(function () {
             var tipo_comportamiento_id = $("#tipo_comportamiento_id").val(),
                 estudiante_id = $("#estudiante_id").val(),
                 titulo = $("#titulo").val(),
-                descripcion = $("#descripcion").val(), 
+                descripcion = $("#descripcion").val(),
                 fecha = $("#fecha").val(),
                 // emisor = "X",
                 multimedia = $("#multimedia")[0].files;
 
-            if ( estudiante_id == '' || titulo == '' || descripcion == '' || fecha == '') {
+            if (estudiante_id == '' || titulo == '' || descripcion == '' || fecha == '') {
                 toastr.warning("Complete todos los campos")
             }
             else {
@@ -402,10 +446,10 @@ $(document).ready(function () {
                 contentType: false,
             })
                 .done(function (response) {
-                    console.log("info response "+response);
+                    console.log("info response " + response);
                     // if (response.length != 0) {
                     //     // DataTableReport(response);
-                        
+
                     // } else {
                     //     $('#reportes-table').dataTable().fnClearTable();
                     //     $('#reportes-table').dataTable().fnDestroy();
@@ -459,11 +503,11 @@ function establecer_fecha() {
     $("#fecha").val(hoy);
 }
 
-function LoadTiposComportamientos() {
+function LoadTiposComportamientos(modal_parent) {
     $("#tipo_comportamiento_id").select2({
         placeholder: 'Seleccione el tipo comportamiento',
         allowClear: true,
-        dropdownParent: modal,
+        dropdownParent: modal_parent,
         width: 'resolve'
     });
 
@@ -581,6 +625,7 @@ function Reload() {
             if (response.length != 0) {
                 AllRegister = response.comportamientos;
                 permisos = response.permisos;
+                rol = response.rol;
                 // console.log(response.comportamientos);
                 DataTable(response.comportamientos);
             } else {
@@ -730,7 +775,7 @@ function Modal() {
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" id="tc">
                         <label >Tipo de comportamiento: </label>
                         <div class="input-group">
                             <select class="form-control" id="tipo_comportamiento_id" style="width: 100%;">
@@ -797,6 +842,37 @@ function Modal() {
     });
 }
 
+function LoadModalTC(comp) {
+    modal2.find('.modal-content').empty().append(`
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Tipo de comportamiento</h4>
+        </div>
+        <div class="modal-body">
+            <p>Por favor asigne un tipo de conducta al comportamiento*</p>
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label >Comportamiento: </label>
+                        <div class="input-group">
+                            <select class="form-control" id="tipo_comportamiento_id" style="width: 100%;">
+
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="save2">Guardar</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Omitir</button>
+        </div>
+    `)
+}
+
 function ModalActividades() {
     modal.find('.modal-content').empty().append(`
         <div class="modal-header">
@@ -829,15 +905,6 @@ function ModalActividades() {
                 </div>
 
                 <div class="col-md-6">
-
-                    <div class="form-group">
-                        <label >Tipo de comportamiento: </label>
-                        <div class="input-group">
-                            <select class="form-control" id="tipo_comportamiento_id" style="width: 100%;">
-
-                            </select>
-                        </div>
-                    </div>
 
                     <div class="form-group">
                         <label>Fecha de la actividad: </label>
@@ -1104,7 +1171,18 @@ function DataTable(response) {
 
                 my_item.render = function (data, type, row) {
                     return `<div>
-                                x
+                                ${JSON.parse(row.emisor).email}
+                            </div>`
+                }
+                my_columns.push(my_item);
+            }
+            else if (key == 'titulo_tc') {
+
+                my_item.title = 'Tipo de conducta';
+
+                my_item.render = function (data, type, row) {
+                    return `<div>
+                                ${row.titulo_tc == null ? `<span class="label label-warning">Sin asignar</span>` : row.titulo_tc}
                             </div>`
                 }
                 my_columns.push(my_item);
@@ -1154,7 +1232,8 @@ function DataTable(response) {
         $('thead > tr> th:nth-child(4)').css({ 'min-width': '80px', 'max-width': '80px' });
         $('thead > tr> th:nth-child(5)').css({ 'min-width': '120px', 'max-width': '120px' });
         $('thead > tr> th:nth-child(6)').css({ 'min-width': '120px', 'max-width': '120px' });
-        $('thead > tr> th:nth-child(10)').css({ 'min-width': '120px', 'max-width': '120px' })
+        $('thead > tr> th:nth-child(7)').css({ 'min-width': '120px', 'max-width': '120px' });
+        $('thead > tr> th:nth-child(11)').css({ 'min-width': '120px', 'max-width': '120px' })
 
 
     }

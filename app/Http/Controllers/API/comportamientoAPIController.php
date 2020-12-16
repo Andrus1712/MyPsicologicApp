@@ -45,7 +45,7 @@ class comportamientoAPIController extends AppBaseController
             ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
             ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
             ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
-            ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+            ->leftjoin(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
             ->where(DB::raw('c.deleted_at', '!=', 'date()'))
             ->select(
                 'c.id',

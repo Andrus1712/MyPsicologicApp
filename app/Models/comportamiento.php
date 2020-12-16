@@ -31,7 +31,7 @@ class comportamiento extends Model
 
     public $fillable = [
         'estudiante_id',
-        'tipo_comportamiento_id',
+        // 'tipo_comportamiento_id',
         'titulo',
         'descripcion',
         'fecha',
