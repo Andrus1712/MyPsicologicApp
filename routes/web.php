@@ -68,7 +68,6 @@ Route::get('/getRoles', 'rolesController@getRoles');
 Route::resource('modeloSeguimientos', 'modelo_seguimientoController');
 Route::get('/getModeloSeguimiento', 'modelo_seguimientoController@getModeloSeguimiento');
 Route::get('/modelo_seguimientoPdf','modelo_seguimientoController@createPDF');
-Route::post('/generarReporte','modelo_seguimientoController@generarReporte');
 
 
 Route::resource('usuarios', 'UsuariosController');

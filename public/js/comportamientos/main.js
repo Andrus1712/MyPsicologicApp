@@ -8,6 +8,8 @@ var permisos = [];
 
 var rol;
 
+var user;
+
 var element = [];
 
 
@@ -39,7 +41,7 @@ $(document).ready(function () {
                     headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                     type: 'PUT',
                     data: {
-                        tipo_comportamiento_id: tipo_comportamiento_id,                       
+                        tipo_comportamiento_id: tipo_comportamiento_id,
                     },
                 })
                     .done(function () {
@@ -230,16 +232,16 @@ $(document).ready(function () {
         modal.modal('show')
         Modal()
         $("#tc").hide();
-        
+
         LoadEstudiantes()
         establecer_fecha()
 
-        console.log(rol)
-        if(rol != "Acu-user"){
+        console.log(permisos);
+        console.log(permisos.includes('tipos.comportamientos'));
+        if (permisos.includes('tipos.comportamientos')) {
             LoadTiposComportamientos();
             $("#tc").show();
         }
-
         // $('#btn_add').on('click', function(){
         //     alert("agregar estudiante")
         // })
@@ -436,7 +438,7 @@ $(document).ready(function () {
             form.append("fecha_f", ff);
 
             $.ajax({
-                url: '/generarReporte',
+                url: '/comportamientosPdf',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
@@ -626,8 +628,23 @@ function Reload() {
                 AllRegister = response.comportamientos;
                 permisos = response.permisos;
                 rol = response.rol;
-                // console.log(response.comportamientos);
-                DataTable(response.comportamientos);
+                user = response.user;
+
+                if (user != null) {
+
+                    var my_data = [];
+
+                    for (let index = 0; index < AllRegister.length; index++) {
+                        // const element = AllRegister[index];
+                        if (JSON.parse(AllRegister[index].emis0r).email == user.email) {
+                            
+                            my_data.push(AllRegister[index]);
+                        }
+                    }
+                    DataTable(my_data);
+                } else {
+                    DataTable(response.comportamientos);
+                }
             } else {
                 $('#comportamientos-table').dataTable().fnClearTable();
                 $('#comportamientos-table').dataTable().fnDestroy();

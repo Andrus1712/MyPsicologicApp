@@ -44,11 +44,6 @@ class modelo_seguimientoController extends AppBaseController
             return redirect('/home');
         }
     }
-    public function generarReporte(Request $request)
-    {
-        $datos = $request;
-        return response()->json($datos);
-    }
     
     public function createPDF()
     {

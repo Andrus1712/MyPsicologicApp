@@ -138,6 +138,9 @@ class comportamientoController extends AppBaseController
             ->where('role_user.user_id', '=', Auth()->user()->id)
             ->limit(1)
             ->get();
+
+            $datos = [];
+
         if (count($queryUsers) != 0) {
             if ($queryUsers[0]->role_id == 1) {
 
@@ -197,13 +200,13 @@ class comportamientoController extends AppBaseController
                     ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
                     ->leftjoin(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->where(DB::raw('c.deleted_at', '!=', 'date()'))
-                    ->where(DB::raw('c.emisor'), '=', auth()->user())
+                    // ->where(DB::raw('c.emisor'), '=', auth()->user())
                     ->select(
                         'c.id',
                         'c.titulo',
                         'c.descripcion',
                         'c.fecha',
-                        'c.emisor',
+                        DB::raw('c.emisor as emis0r'),
                         'e.nombres',
                         'e.apellidos',
                         DB::raw('a.nombres as nombre_acudiente'),
@@ -211,7 +214,6 @@ class comportamientoController extends AppBaseController
                         'g.grado',
                         'g.curso',
                         'c.multimedia',
-                        'c.emisor',
                         'e.created_at'
                     )->get();
             } else if ($queryUsers[0]->role_id == 4) {
@@ -236,7 +238,7 @@ class comportamientoController extends AppBaseController
                         'g.grado',
                         'g.curso',
                         'c.multimedia',
-                        'c.emisor',
+                        // 'c.emisor',
                         'a.correo',
                         'e.created_at'
                     )->get();
@@ -262,7 +264,6 @@ class comportamientoController extends AppBaseController
                         'g.grado',
                         'g.curso',
                         'c.multimedia',
-                        'c.emisor',
                         'e.created_at'
                     )->get();
             }
@@ -282,11 +283,15 @@ class comportamientoController extends AppBaseController
         if ($user->havePermission('create.actividades')) {
             array_push($permisos, "create.actividades");
         }
+        if ($user->havePermission('tipos.comportamientos')) {
+            array_push($permisos, "tipos.comportamientos");
+        }
 
         $datos = [
             'comportamientos' => $comportamientos,
             'rol' => $rol,
-            'permisos' => $permisos
+            'permisos' => $permisos,
+            'user' => str_contains($rol, "Doc-user") ? $user : NULL
         ];
         return response()->json($datos);
     }
