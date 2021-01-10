@@ -10,17 +10,15 @@ var rol;
 
 var user;
 
-var element = [];
-
 
 $(document).ready(function () {
-    getActividades();
-    Reload()
-
+    Reload();
 
     $('#comportamientos-table').on('click', '[id^=Btn_act_]', function () {
         var id = $(this).attr('data-id');
         const filtro = AllRegister.filter(f => f.id == id);
+
+        modal.modal('hide');
 
         if (filtro[0].titulo_tc == null) {
             modal2.modal('show');
@@ -29,12 +27,6 @@ $(document).ready(function () {
 
             $('#save2').on('click', function () {
                 var tipo_comportamiento_id = $("#tipo_comportamiento_id").val();
-
-                var form = new FormData();
-
-                form.append('method', 'update')
-                form.append('id', id)
-                form.append('tipo_comportamiento_id', tipo_comportamiento_id)
 
                 $.ajax({
                     url: '/api/comportamientos/' + id,
@@ -47,7 +39,8 @@ $(document).ready(function () {
                     .done(function () {
                         setTimeout(function () { modal2.modal("hide") }, 600);
                         toastr.info("información actualizada");
-                        Reload()
+                        Reload();
+
                     })
                     .fail(function () {
                         toastr.error("Ha ocurrido un error");
@@ -56,10 +49,19 @@ $(document).ready(function () {
                         $("#save2").addClass("disabled");
                     });
 
+                modal.modal('show');
+            });
+
+            $('#omitir').on('click', function () {
+                setTimeout(function () { modal2.modal("hide") }, 600);
+                modal.modal('show');
             });
         }
 
-        modal.modal('show');
+        if (filtro[0].titulo_tc != null) {
+            modal.modal('show');
+        }
+
         ModalActividades()
         $('#input_actividad').hide()
         LoadComportamientos(id)
@@ -84,7 +86,6 @@ $(document).ready(function () {
                         descripcion: descripcion,
                         fecha: fecha,
                         estado: estado,
-                        estado: estado
                     },
                 })
                     .done(function () {
@@ -102,11 +103,6 @@ $(document).ready(function () {
         })
 
     })
-
-    // $('#comportamientos-table').on('click', '[id^=Btn_search_]', function () {
-    //     alert("info acudiente")
-    // })
-
 
     $('#comportamientos-table').on('click', '[id^=Btn_Edit_]', function () {
         var id = $(this).attr('data-id');
@@ -128,7 +124,6 @@ $(document).ready(function () {
             // $('#rutaFile').attr('target', '_blank')
             // $("#rutaFile").text('Ver documento')
 
-            $("#cod_comportamiento").attr("disabled", true)
             $("#titulo").val(filtro[0].titulo)
             $("#estudiante_id").val(filtro[0].estudiante_id)
             $("#descripcion").val(filtro[0].descripcion)
@@ -137,15 +132,15 @@ $(document).ready(function () {
 
             $("#update").on('click', function () {
 
-                var estudiante_id = $("#estudiante_id").val(),
+                var tipo_comportamiento_id = $("#tipo_comportamiento_id").val(),
+                    estudiante_id = $("#estudiante_id").val(),
                     titulo = $("#titulo").val(),
                     descripcion = $("#descripcion").val(),
                     fecha = $("#fecha").val()
 
                 if (estudiante_id == '' || titulo == '' || descripcion == '' || fecha == '') {
                     toastr.warning("Complete todos los campos")
-                }
-                else {
+                } else {
 
                     var form = new FormData();
 
@@ -163,8 +158,7 @@ $(document).ready(function () {
                     form.append('titulo', titulo)
                     form.append('descripcion', descripcion)
                     form.append('fecha', fecha)
-                    // form.append('emisor', "x")
-                    // form.append('multimedia', multimedia)
+                    form.append('tipo_comportamiento_id', tipo_comportamiento_id)
                     form.append('method', 'update')
                     form.append('id', id)
 
@@ -183,7 +177,7 @@ $(document).ready(function () {
                         .done(function () {
                             setTimeout(function () { modal.modal("hide") }, 600);
                             toastr.info("información actualizada");
-                            Reload()
+                            Reload();
                         })
                         .fail(function () {
                             toastr.error("Ha ocurrido un error");
@@ -192,7 +186,7 @@ $(document).ready(function () {
                             $("#update").addClass("disabled");
                         });
                 }
-                modal.find('.modal-content').empty()
+                // modal.find('.modal-content').empty()
             })
         }
     })
@@ -257,8 +251,7 @@ $(document).ready(function () {
 
             if (estudiante_id == '' || titulo == '' || descripcion == '' || fecha == '') {
                 toastr.warning("Complete todos los campos")
-            }
-            else {
+            } else {
                 var form = new FormData();
                 var archivos = 0;
                 jQuery.each(jQuery('#multimedia')[0].files, function (i, file) {
@@ -300,7 +293,6 @@ $(document).ready(function () {
             }
         })
     })
-
 
     $('#comportamientos-table').on('click', '[id^=Btn_file_]', function () {
         modal.modal('show')
@@ -395,374 +387,344 @@ $(document).ready(function () {
     });
 
     $('#make-reporte').on('click', function () {
+
         modal.modal("show");
         ModalReporte();
-
         LoadTiposComportamientos2();
+
+        // Se carga de dateRangePicker
         var start = moment().subtract(29, 'days');
         var end = moment();
 
         var fi;
         var ff;
         function cb(start, end) {
-            $('#report-range span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+            $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
             fi = start.format('YYYY-MM-DD');
             ff = end.format('YYYY-MM-DD');
         }
-        $('#report-range').daterangepicker({
+
+
+        $('#reportrange').daterangepicker({
             startDate: start,
             endDate: end,
             ranges: {
-                'Today': [moment(), moment()],
-                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                'This Month': [moment().startOf('month'), moment().endOf('month')],
-                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                'Hoy': [moment(), moment()],
+                'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Últimos 7 dias': [moment().subtract(6, 'days'), moment()],
+                'Últimos 30 dias': [moment().subtract(29, 'days'), moment()],
+                'Este mes': [moment().startOf('month'), moment().endOf('month')],
+                'Ultimo mes': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "locale": {
+                "separator": " - ",
+                "applyLabel": "Aplicar",
+                "cancelLabel": "Cancelar",
+                "fromLabel": "DE",
+                "toLabel": "HASTA",
+                "customRangeLabel": "Custom",
+                "daysOfWeek": [
+                    "Dom",
+                    "Lun",
+                    "Mar",
+                    "Mie",
+                    "Jue",
+                    "Vie",
+                    "Sáb"
+                ],
+                "monthNames": [
+                    "Enero",
+                    "Febrero",
+                    "Marzo",
+                    "Abril",
+                    "Mayo",
+                    "Junio",
+                    "Julio",
+                    "Agosto",
+                    "Septiembre",
+                    "Octubre",
+                    "Noviembre",
+                    "Diciembre"
+                ],
+                "firstDay": 1
             }
         }, cb);
 
         cb(start, end);
 
-        $('#tc_all').on('click', function () {
-            var checked = this.checked;
-            $('input[name="tc"]').each(function () {
-                this.checked = checked;
-            });
+
+        // Se carga el Slider
+        $('#range').html(`
+            <input id="mySlider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="[5,20]"/>
+            <span style="
+            margin-left: 10px;" id="mySliderCurrentSliderValLabel">Intervalo: 
+                [<span id="mySliderVal">5,20</span>] (años)
+            </span>
+        `);
+
+        $("#mySlider").slider();
+
+        $("#mySlider").on("slide", function (slideEvt) {
+            $("#mySliderVal").text(slideEvt.value);
         });
 
-        $('#visualizar').on('click', function () {
-            // alert("inicio: " + fi + " fin: " + ff)
-            var form = new FormData();
-            form.append("fecha_i", fi);
-            form.append("fecha_f", ff);
+        // funcion Enviar
+        $('#save').on('click ', function () {
+            ArrayTC = [];
+            ArrayG = [];
+            fecha = [];
+            var valor;
 
-            $.ajax({
-                url: '/comportamientosPdf',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                type: 'POST',
-                data: form,
-                processData: false,
-                contentType: false,
-            })
-                .done(function (response) {
-                    console.log("info response " + response);
-                    // if (response.length != 0) {
-                    //     // DataTableReport(response);
+            $('input[name="tc"]:checkbox:checked').each(
+                function () {
+                    if ($(this).val() != 'on') {
+                        ArrayTC.push($(this).val());
+                    }
+                }
+            );
 
-                    // } else {
-                    //     $('#reportes-table').dataTable().fnClearTable();
-                    //     $('#reportes-table').dataTable().fnDestroy();
-                    //     $('#reportes-table thead').empty();
-                    //     console.log("sin datos");
-                    // }
-                })
-                .fail(function () {
-                    toastr.error("Ha ocurrido un error");
-                })
-
+            $('input[name="genero"]:checkbox:checked').each(
+                function () {
+                    if ($(this).val() != 'on') {
+                        ArrayG.push($(this).val());
+                    }
+                }
+            );
+            fecha.push(fi);
+            fecha.push(ff);
+            valor = $('#mySlider').val();
+            
+            console.log("Conducta: " + ArrayTC);
+            console.log("Genero: " + ArrayG);
+            console.log("fecha: " + fecha);
+            console.log("Rango edad: " + valor.split(","));
         });
+
+
         // window.open("/comportamientosPdf", "_blank");
     });
-});
 
-function LoadEstudiantes() {
-    $("#estudiante_id").select2({
-        placeholder: 'Seleccione el estudiante',
-        allowClear: true,
-        dropdownParent: modal,
-        width: 'resolve'
-    });
 
-    $.ajax({
-        url: '/getEstudiantes',
-        type: "GET",
-        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-        dataType: "JSON",
-    })
-        .done(function (response) {
-            if (response.estudiantes.length != 0) {
-                for (var i = 0; i < response.estudiantes.length; i++) {
-                    $("#estudiante_id").append(`<option value='${response.estudiantes[i].id}'>${response.estudiantes[i].nombres} ${response.estudiantes[i].apellidos} </option>`)
+    function LoadEstudiantes() {
+        $("#estudiante_id").select2({
+            placeholder: 'Seleccione el estudiante',
+            allowClear: true,
+            dropdownParent: modal,
+            width: 'resolve'
+        });
+
+        $.ajax({
+            url: '/getEstudiantes',
+            type: "GET",
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            dataType: "JSON",
+        })
+            .done(function (response) {
+                if (response.estudiantes.length != 0) {
+                    for (var i = 0; i < response.estudiantes.length; i++) {
+                        $("#estudiante_id").append(`<option value='${response.estudiantes[i].id}'>${response.estudiantes[i].nombres} ${response.estudiantes[i].apellidos} </option>`)
+                    }
+                } else {
+
                 }
-            } else {
-
-            }
 
 
+            })
+            .fail(function () {
+                console.log("error");
+            })
+    }
+
+    function establecer_fecha() {
+        var hoy = new Date();
+        hoy.setMinutes(hoy.getMinutes() - hoy.getTimezoneOffset());
+        hoy = hoy.toJSON().slice(0, 10);
+        $("#fecha").val(hoy);
+    }
+
+    function LoadTiposComportamientos(modal_parent) {
+        $("#tipo_comportamiento_id").select2({
+            placeholder: 'Seleccione el tipo comportamiento',
+            allowClear: true,
+            dropdownParent: modal_parent,
+            width: 'resolve'
+        });
+
+        $.ajax({
+            url: '/api/tipo_comportamientos',
         })
-        .fail(function () {
-            console.log("error");
+            .done(function (response) {
+                for (var i in response.data) {
+                    $("#tipo_comportamiento_id").append(`<option value='${response.data[i].id}'>${response.data[i].titulo}</option>`)
+                }
+
+            })
+            .fail(function () {
+                console.log("error");
+            })
+    }
+
+    function LoadTiposComportamientos2() {
+        $.ajax({
+            url: '/api/tipo_comportamientos',
         })
-}
-
-function establecer_fecha() {
-    var hoy = new Date();
-    hoy.setMinutes(hoy.getMinutes() - hoy.getTimezoneOffset());
-    hoy = hoy.toJSON().slice(0, 10);
-    $("#fecha").val(hoy);
-}
-
-function LoadTiposComportamientos(modal_parent) {
-    $("#tipo_comportamiento_id").select2({
-        placeholder: 'Seleccione el tipo comportamiento',
-        allowClear: true,
-        dropdownParent: modal_parent,
-        width: 'resolve'
-    });
-
-    $.ajax({
-        url: '/api/tipo_comportamientos',
-    })
-        .done(function (response) {
-            for (var i in response.data) {
-                $("#tipo_comportamiento_id").append(`<option value='${response.data[i].id}'>${response.data[i].titulo}</option>`)
-            }
-
-        })
-        .fail(function () {
-            console.log("error");
-        })
-}
-
-function LoadTiposComportamientos2() {
-    // $("#tipo_comportamiento_id").select2({
-    //     placeholder: 'Seleccione el tipo comportamiento',
-    //     allowClear: true,
-    //     dropdownParent: modal,
-    //     width: 'resolve',
-    //     // theme: 'bootstrap4',
-    // });
-
-    $.ajax({
-        url: '/api/tipo_comportamientos',
-    })
-        .done(function (response) {
-            $("#tipos_comportamientos").append(`
-                <div class="checkbox">
-                    <label style="font-weight: bold;">
-                        <input id="tc_all" type="checkbox">Select all</input>
-                    </label>
-                </div>
-            `);
-            for (var i in response.data) {
-                $("#tipos_comportamientos").append(`
+            .done(function (response) {
+                // $("#tipos_comportamientos").append(`
+                //     <div class="checkbox">
+                //         <label style="font-weight: bold;">
+                //             <input id="tc_all" type="checkbox">Select all</input>
+                //         </label>
+                //     </div>
+                // `);
+                for (var i in response.data) {
+                    $("#tipos_comportamientos").append(`
                     <div class="checkbox">
                         <label>
                             <input id="tc_${i}" value="${response.data[i].id}" name="tc" type="checkbox">${response.data[i].titulo}
                         </label>
                     </div>
                 `)
-            }
-
-        })
-        .fail(function () {
-            console.log("error");
-        })
-}
-
-function LoadComportamientos(id) {
-    $("#comportamiento_id").select2({
-        placeholder: 'Seleccione el comportamiento',
-        allowClear: true,
-        dropdownParent: modal,
-        width: 'resolve'
-    });
-
-    $.ajax({
-        url: '/api/comportamientos',
-    })
-        .done(function (response) {
-            for (var i in response.data) {
-                if (response.data[i].id == id) {
-                    $("#comportamiento_id").append(`<option value='${response.data[i].id}'>${response.data[i].titulo} | ${response.data[i].nombres}  ${response.data[i].apellidos} | CMP${response.data[i].id} </option>`)
                 }
-            }
 
-        })
-        .fail(function () {
-            console.log("error");
-        })
-}
+            })
+            .fail(function () {
+                console.log("error");
+            })
+    }
 
-function getActividades() {
-    $.ajax({
-        url: "/getActividades",
-        type: "GET",
-        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-        dataType: "JSON",
-    })
-
-        .done(function (response) {
-            if (response.length != 0) {
-                getAct = []
-
-                getAct = response['actividades'];
-                for (let index = 0; index < getAct.length; index++) {
-                    element.push(getAct[index].id_comportamiento);
-
-                }
-                // console.log(element);
-            } else {
-                console.log('sin datos');
-            }
-        })
-
-        .fail(function () {
-            console.log("error");
+    function LoadComportamientos(id) {
+        $("#comportamiento_id").select2({
+            placeholder: 'Seleccione el comportamiento',
+            allowClear: true,
+            dropdownParent: modal,
+            width: 'resolve'
         });
-}
 
-function Reload() {
-    $.ajax({
-        url: "/getComportamientos",
-        type: "GET",
-        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-        dataType: "JSON",
-    })
-
-        .done(function (response) {
-            if (response.length != 0) {
-                AllRegister = response.comportamientos;
-                permisos = response.permisos;
-                rol = response.rol;
-                user = response.user;
-
-                if (user != null) {
-
-                    var my_data = [];
-
-                    for (let index = 0; index < AllRegister.length; index++) {
-                        // const element = AllRegister[index];
-                        if (JSON.parse(AllRegister[index].emis0r).email == user.email) {
-                            
-                            my_data.push(AllRegister[index]);
-                        }
+        $.ajax({
+            url: '/api/comportamientos',
+        })
+            .done(function (response) {
+                for (var i in response.data) {
+                    if (response.data[i].id == id) {
+                        $("#comportamiento_id").append(`<option value='${response.data[i].id}'>${response.data[i].titulo} | ${response.data[i].nombres}  ${response.data[i].apellidos} | CMP${response.data[i].id} </option>`)
                     }
-                    DataTable(my_data);
-                } else {
-                    DataTable(response.comportamientos);
                 }
-            } else {
-                $('#comportamientos-table').dataTable().fnClearTable();
-                $('#comportamientos-table').dataTable().fnDestroy();
-                $('#comportamientos-table thead').empty()
-            }
+
+            })
+            .fail(function () {
+                console.log("error");
+            })
+    }
+
+    function Reload() {
+        $.ajax({
+            url: "/getComportamientos",
+            type: "GET",
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            dataType: "JSON",
         })
 
-        .fail(function () {
-            console.log("error");
-        });
-}
+            .done(function (response) {
+                if (response.length != 0) {
+                    AllRegister = response.comportamientos;
+                    permisos = response.permisos;
+                    rol = response.rol;
+                    user = response.user;
 
-// function ReloadAct() {
-//     $.ajax({
-//         url: "/api/actividades",
-//         type: "GET",
-//         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-//         dataType: "JSON",
-//     })
+                    if (user != null) {
 
-//         .done(function (response) {
-//             if (response.length != 0) {
-//                 AllRegister = response.data;
+                        var my_data = [];
 
-//                 DataTableAct(response.data);
-//             } else {
-//                 $('#act-table').dataTable().fnClearTable();
-//                 $('#act-table').dataTable().fnDestroy();
-//                 $('#act-table thead').empty()
-//             }
-//         })
+                        for (let index = 0; index < AllRegister.length; index++) {
+                            // const element = AllRegister[index];
+                            if (JSON.parse(AllRegister[index].emis0r).email == user.email) {
 
-//         .fail(function () {
-//             console.log("error");
-//         });
-// }
+                                my_data.push(AllRegister[index]);
+                            }
+                        }
+                        DataTable(my_data);
+                    } else {
+                        DataTable(response.comportamientos);
+                    }
+                } else {
+                    $('#comportamientos-table').dataTable().fnClearTable();
+                    $('#comportamientos-table').dataTable().fnDestroy();
+                    $('#comportamientos-table thead').empty()
+                }
+            })
 
-function ModalReporte() {
-    modal.find('.modal-content').empty().append(`
+            .fail(function () {
+                console.log("error");
+            });
+    }
+
+    function ModalReporte() {
+        $('#modal_tam').removeClass('modal-lg');
+        $('#modal_tam').addClass('modal-md');
+        modal.find('.modal-content').empty().append(`
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Reporte</h4>
+            <h4 class="modal-title">Crear Reporte</h4>
         </div>
         <div class="modal-body">
 
             <div class="row">
                 
-                <div class="col-md-6">
-                    
-                    <div class="form-group">
+            <!-- centro -->
+            <div class="panel-body">
+
+                <div class="row">
+
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <label>Fecha del registro: </label>
-                        <div id="report-range"
-                            style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+                        <div id="reportrange"
+                            style="background: #fff; cursor: pointer; 
+                            padding: 5px 10px; border: 1px solid #ccc; 
+                            width: 100%; margin-bottom: 10px;>
                             <i class="fa fa-calendar"></i>&nbsp;
                             <span></span> <i class="fa fa-caret-down"></i>
                         </div>
                     </div>
+                </div> 
 
-                </div>
+                <div class="row">
 
-                <div class="col-md-6">
-
-                    <div class="form-group">
-                        <div class="input-group">
-                            <label>Tipo de comportamiento: </label>
-                            <div id="tipos_comportamientos">
-                                
-                            </div>
+                    <div class="col-lg-6 col-sm-12 col-xs-12">
+                        <label>Conductas</label>
+                        <div id="tipos_comportamientos">
                             
                         </div>
-
                     </div>
 
-                    <div class="form-group">
-                        <div class="input-group">
-                            <label>Variables: </label>
-                            <div id="variables">
-                            <div class="checkbox">
-                                <label>
-                                    <input id="1" value="show.comportamientos" name="ver" type="checkbox">Actividades
-                                </label>
-                            </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input id="2" value="show.comportamientos" name="ver" type="checkbox">Estudiantes
-                                </label>
-                            </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input id="3" value="show.comportamientos" name="ver" type="checkbox">Estado actividades
-                                </label>
-                            </div>
-                            </div>
+                    <div class="col-lg-6 col-sm-12 col-xs-12">
+                        <label>Genero</label>
+                        <div class="checkbox">
+                            <label>
+                                <input id="M" value="M" name="genero" type="checkbox">Masculino
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input id="F" value="F" name="genero" type="checkbox">Femenino
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                    <label>Edad</label>
+                        <div id="range" style="
+                        margin-left: 10px;">
                             
                         </div>
-
                     </div>
                 </div>
-                
-            </div>
 
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <button type="button" class="btn btn-primary" id="visualizar">Pre-visualizar</button>
-                    </div>
-                </div>
             </div>
-
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="table">
-                        <table class="table table-bordered table-hover" id="reportes-table">
-                            
-                        </table>
-                    </div>
-                </div>
-            </div>
+            
+            <!--Fin centro -->
+            
 
         </div>
 
@@ -772,10 +734,12 @@ function ModalReporte() {
         </div>
     `);
 
-}
+    }
 
-function Modal() {
-    modal.find('.modal-content').empty().append(`
+    function Modal() {
+        $('#modal_tam').removeClass('modal-md');
+        $('#modal_tam').addClass('modal-lg');
+        modal.find('.modal-content').empty().append(`
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Formulario de Comportamientos</h4>
@@ -854,13 +818,13 @@ function Modal() {
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
     `)
-    $("#timepicker").datetimepicker({
-        format: "YYYY-MM-DD"
-    });
-}
+        $("#timepicker").datetimepicker({
+            format: "YYYY-MM-DD"
+        });
+    }
 
-function LoadModalTC(comp) {
-    modal2.find('.modal-content').empty().append(`
+    function LoadModalTC(comp) {
+        modal2.find('.modal-content').empty().append(`
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Tipo de comportamiento</h4>
@@ -885,13 +849,13 @@ function LoadModalTC(comp) {
 
         <div class="modal-footer">
             <button type="button" class="btn btn-primary" id="save2">Guardar</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">Omitir</button>
+            <button type="button" class="btn btn-default" id="omitir" data-dismiss="modal">Omitir</button>
         </div>
     `)
-}
+    }
 
-function ModalActividades() {
-    modal.find('.modal-content').empty().append(`
+    function ModalActividades() {
+        modal.find('.modal-content').empty().append(`
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Formulario de Actividades</h4>
@@ -963,433 +927,274 @@ function ModalActividades() {
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
     `)
-    $("#fecha").datetimepicker({
-        format: "YYYY-MM-DD"
-    });
-}
-
-function DataTableReport(response) {
-
-    if ($.fn.DataTable.isDataTable('#reportes-table')) {
-        $('#reportes-table').dataTable().fnClearTable();
-        $('#reportes-table').dataTable().fnDestroy();
-        $('#reportes-table thead').empty()
-    }
-    else {
-        $('#reportes-table thead').empty()
+        $("#fecha").datetimepicker({
+            format: "YYYY-MM-DD"
+        });
     }
 
-    // console.log("info tabla " + response);
+    function DataTableReport(response) {
 
-    if (response.length != 0) {
-        let my_columns = []
-        $.each(response[0], function (key, value) {
-            var my_item = {};
-            // my_item.class = "filter_C";
-            my_item.data = key;
-            if (key == "fecha_f") {
+        if ($.fn.DataTable.isDataTable('#reportes-table')) {
+            $('#reportes-table').dataTable().fnClearTable();
+            $('#reportes-table').dataTable().fnDestroy();
+            $('#reportes-table thead').empty()
+        } else {
+            $('#reportes-table thead').empty()
+        }
 
-                my_item.title = 'Fecha';
+        // console.log("info tabla " + response);
 
-                my_item.render = function (data, type, row) {
-                    return `  <div> 
+        if (response.length != 0) {
+            let my_columns = []
+            $.each(response[0], function (key, value) {
+                var my_item = {};
+                // my_item.class = "filter_C";
+                my_item.data = key;
+                if (key == "fecha_f") {
+
+                    my_item.title = 'Fecha';
+
+                    my_item.render = function (data, type, row) {
+                        return `  <div> 
                                 ${row.fecha_f}
                             </div>`
-                }
-                my_columns.push(my_item);
+                    }
+                    my_columns.push(my_item);
 
-            }
-            else if (key == "fecha_i") {
+                } else if (key == "fecha_i") {
 
-                my_item.title = 'Fecha';
+                    my_item.title = 'Fecha';
 
-                my_item.render = function (data, type, row) {
-                    return `  <div> 
+                    my_item.render = function (data, type, row) {
+                        return `  <div> 
                                 ${row.fecha_i}
                             </div>`
+                    }
+                    my_columns.push(my_item);
+
                 }
-                my_columns.push(my_item);
+            });
+            $('#reportes-table').DataTable({
+                // 'scrollX': my_columns.length >= 6 ? true : false,
+                "destroy": true,
+                data: response,
+                "columns": my_columns,
+                dom: 'Bfrtip',
+                responsive: true,
+                paging: true,
+            });
+        }
 
-            }
-        });
-        $('#reportes-table').DataTable({
-            // 'scrollX': my_columns.length >= 6 ? true : false,
-            "destroy": true,
-            data: response,
-            "columns": my_columns,
-            dom: 'Bfrtip',
-            responsive: true,
-            paging: true,
-        });
     }
 
-}
-
-function DataTable(response) {
+    function DataTable(response) {
 
 
-    if ($.fn.DataTable.isDataTable('#comportamientos-table')) {
-        $('#comportamientos-table').dataTable().fnClearTable();
-        $('#comportamientos-table').dataTable().fnDestroy();
-        $('#comportamientos-table thead').empty()
-    }
-    else {
-        $('#comportamientos-table thead').empty()
-    }
+        if ($.fn.DataTable.isDataTable('#comportamientos-table')) {
+            $('#comportamientos-table').dataTable().fnClearTable();
+            $('#comportamientos-table').dataTable().fnDestroy();
+            $('#comportamientos-table thead').empty()
+        } else {
+            $('#comportamientos-table thead').empty()
+        }
 
 
-    if (response.length != 0) {
-        let my_columns = []
-        $.each(response[0], function (key, value) {
-            var my_item = {};
-            // my_item.class = "filter_C";
-            my_item.data = key;
+        if (response.length != 0) {
+            let my_columns = []
+            $.each(response[0], function (key, value) {
+                var my_item = {};
+                // my_item.class = "filter_C";
+                my_item.data = key;
 
-            if (key == 'created_at') {
-                my_item.title = 'Acción';
+                if (key == 'created_at') {
+                    my_item.title = 'Acción';
 
-                my_item.render = function (data, type, row) {
-                    var html = '';
-                    for (let i = 0; i < permisos.length; i++) {
-                        if (permisos[i] == "delete.comportamientos") {
-                            html += `
+                    my_item.render = function (data, type, row) {
+                        var html = '';
+                        for (let i = 0; i < permisos.length; i++) {
+                            if (permisos[i] == "delete.comportamientos") {
+                                html += `
                                     <a data-id=${row.id} id="Btn_delete_${row.id}" class='btn btn-circle btn-sm btn-danger'>
                                         <i class="fa fa-trash" aria-hidden="true"></i>
                                     </a> `
-                        } else if (permisos[i] == "edit.comportamientos") {
-                            html += `
+                            } else if (permisos[i] == "edit.comportamientos") {
+                                html += `
                                     <a data-id=${row.id} id="Btn_Edit_${row.id}" class='btn btn-circle btn-sm btn-primary'>
                                         <i class="fa fa-edit" aria-hidden="true"></i>
                                     </a>
                                     `
-                        } else if (permisos[i] == "create.actividades") {
-                            html += `
+                            } else if (permisos[i] == "create.actividades") {
+                                html += `
                                     <a data-id=${row.id} id="Btn_act_${row.id}" class='btn btn-circle btn-sm btn-success'>
                                         <i class="fa fa-calendar-plus-o" aria-hidden="true"></i>
                                     </a> `
+                            }
                         }
-                    }
-                    return `<div align="center">
+                        return `<div align="center">
                                 <div class="btn-group btn-group-circle btn-group-solid" align="center">
                                     ${html}
                                 </div>
                             </div>`;
 
-                }
-                if (permisos.length != 0) {
-                    my_columns.push(my_item);
-                }
+                    }
+                    if (permisos.length != 0) {
+                        my_columns.push(my_item);
+                    }
 
-            }
+                } else if (key == 'id') {
 
-            else if (key == 'id') {
+                    my_item.title = '#';
 
-                my_item.title = '#';
-
-                my_item.render = function (data, type, row) {
-                    return `  <div'> 
+                    my_item.render = function (data, type, row) {
+                        return `  <div'> 
                                 CMP${row.id}
                             </div>`
-                }
-                my_columns.push(my_item);
+                    }
+                    my_columns.push(my_item);
 
-            }
+                } else if (key == 'fecha') {
 
-            else if (key == 'fecha') {
+                    my_item.title = 'Fecha de reporte';
 
-                my_item.title = 'Fecha de reporte';
-
-                my_item.render = function (data, type, row) {
-                    return `  <div'> 
+                    my_item.render = function (data, type, row) {
+                        return `  <div'> 
                                 ${row.fecha}
                             </div>`
-                }
-                my_columns.push(my_item);
+                    }
+                    my_columns.push(my_item);
 
-            }
+                } else if (key == 'titulo') {
 
-            else if (key == 'titulo') {
+                    my_item.title = 'Titulo';
 
-                my_item.title = 'Titulo';
-
-                my_item.render = function (data, type, row) {
-                    return `<div>
+                    my_item.render = function (data, type, row) {
+                        return `<div>
                                 ${row.titulo} 
                             </div>`
-                }
-                my_columns.push(my_item);
-            }
+                    }
+                    my_columns.push(my_item);
+                } else if (key == 'descripcion') {
 
-            else if (key == 'descripcion') {
+                    my_item.title = 'Descripcion';
 
-                my_item.title = 'Descripcion';
-
-                my_item.render = function (data, type, row) {
-                    return `<div>
+                    my_item.render = function (data, type, row) {
+                        return `<div>
                                 ${row.descripcion} 
                             </div>`
-                }
-                my_columns.push(my_item);
-            }
+                    }
+                    my_columns.push(my_item);
+                } else if (key == 'nombres') {
 
-            else if (key == 'nombres') {
+                    my_item.title = 'Estudiante';
 
-                my_item.title = 'Estudiante';
-
-                my_item.render = function (data, type, row) {
-                    return `<div>
+                    my_item.render = function (data, type, row) {
+                        return `<div>
                                 ${row.nombres + " " + row.apellidos} 
                             </div>`
-                }
-                my_columns.push(my_item);
-            }
+                    }
+                    my_columns.push(my_item);
+                } else if (key == 'nombre_acudiente') {
 
-            else if (key == 'nombre_acudiente') {
+                    my_item.title = 'Acudiente';
 
-                my_item.title = 'Acudiente';
-
-                my_item.render = function (data, type, row) {
-                    return `<div>
+                    my_item.render = function (data, type, row) {
+                        return `<div>
                                 ${row.nombre_acudiente + " " + row.apellido_acudiente}
                             </div>`
-                }
-                my_columns.push(my_item);
-            }
+                    }
+                    my_columns.push(my_item);
+                } else if (key == 'grado') {
 
-            else if (key == 'grado') {
+                    my_item.title = 'Curso';
 
-                my_item.title = 'Curso';
-
-                my_item.render = function (data, type, row) {
-                    return `<div>
+                    my_item.render = function (data, type, row) {
+                        return `<div>
                                 ${row.grado + "-" + row.curso} 
                             </div>`
-                }
-                my_columns.push(my_item);
-            }
+                    }
+                    my_columns.push(my_item);
+                } else if (key == 'multimedia') {
 
-            else if (key == 'multimedia') {
+                    my_item.title = 'Multimedia';
 
-                my_item.title = 'Multimedia';
-
-                my_item.render = function (data, type, row) {
-                    return `<div align="center">
+                    my_item.render = function (data, type, row) {
+                        return `<div align="center">
                                 <a class="btn btn-default ${row.multimedia == 'undefined' || row.multimedia == null ? 'disabled' : ''}" id="Btn_file_${row.id}" data-id=${row.id} >
                                     <i class="fa fa-file"></i>
                                 </a>
                             </div>`
-                }
-                my_columns.push(my_item);
-            }
+                    }
+                    my_columns.push(my_item);
+                } else if (key == 'emisor') {
 
-            else if (key == 'emisor') {
+                    my_item.title = 'Emisor';
 
-                my_item.title = 'Emisor';
-
-                my_item.render = function (data, type, row) {
-                    return `<div>
+                    my_item.render = function (data, type, row) {
+                        return `<div>
                                 ${JSON.parse(row.emisor).email}
                             </div>`
-                }
-                my_columns.push(my_item);
-            }
-            else if (key == 'titulo_tc') {
+                    }
+                    my_columns.push(my_item);
+                } else if (key == 'titulo_tc') {
 
-                my_item.title = 'Tipo de conducta';
+                    my_item.title = 'Tipo de conducta';
 
-                my_item.render = function (data, type, row) {
-                    return `<div>
+                    my_item.render = function (data, type, row) {
+                        return `<div>
                                 ${row.titulo_tc == null ? `<span class="label label-warning">Sin asignar</span>` : row.titulo_tc}
                             </div>`
+                    }
+                    my_columns.push(my_item);
                 }
-                my_columns.push(my_item);
-            }
-        })
-        //${JSON.parse(row.emisor).email}
+            })
+            //${JSON.parse(row.emisor).email}
 
-        $('#comportamientos-table').DataTable({
-            //'responsive': true,
-            'scrollX': my_columns.length >= 6 ? true : false,
-            "destroy": true,
-            data: response,
-            "columns": my_columns,
-            "language": {
-                "aria": {
-                    "sortAscending": ": activate to sort column ascending",
-                    "sortDescending": ": activate to sort column descending"
+            $('#comportamientos-table').DataTable({
+                //'responsive': true,
+                'scrollX': my_columns.length >= 6 ? true : false,
+                "destroy": true,
+                data: response,
+                "columns": my_columns,
+                "language": {
+                    "aria": {
+                        "sortAscending": ": activate to sort column ascending",
+                        "sortDescending": ": activate to sort column descending"
+                    },
+                    "emptyTable": "No hay datos registrados",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ comportamientos",
+                    "infoEmpty": "No hay comportamientos registrados",
+                    "infoFiltered": "(Filtrado de _MAX_  comportamientos)",
+                    "lengthMenu": "_MENU_ comportamientos",
+                    "search": "Buscar:",
+                    "zeroRecords": "No se han encontrado registros"
                 },
-                "emptyTable": "No hay datos registrados",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ comportamientos",
-                "infoEmpty": "No hay comportamientos registrados",
-                "infoFiltered": "(Filtrado de _MAX_  comportamientos)",
-                "lengthMenu": "_MENU_ comportamientos",
-                "search": "Buscar:",
-                "zeroRecords": "No se han encontrado registros"
-            },
-            buttons: [
-                'copy', 'excel', 'pdf'
-            ],
-            "order": [
-                [2, 'asc']
-            ],
-            "lengthMenu": [
-                [10, 15, 20, -1],
-                [10, 15, 20, "Todos"]
-            ],
-            "createdRow": function (row, data, dataIndex) {
-                if (!element.includes(data.id, 0)) {
-                    $(row).css('background-color', '#ffedd9');
+                buttons: [
+                    'copy', 'excel', 'pdf'
+                ],
+                "order": [
+                    [2, 'asc']
+                ],
+                "lengthMenu": [
+                    [10, 15, 20, -1],
+                    [10, 15, 20, "Todos"]
+                ],
+                "createdRow": function (row, data, dataIndex) {
+                    if (AllRegister[dataIndex].id_actividad == null) {
+                        $(row).css('background-color', '#ffedd9');
+                    }
                 }
-            }
-        });
+            });
 
-        $('thead > tr> th:nth-child(1)').css({ 'min-width': '30px', 'max-width': '30px' });
-        $('thead > tr> th:nth-child(2)').css({ 'min-width': '100px', 'max-width': '100px' });
-        $('thead > tr> th:nth-child(3)').css({ 'min-width': '160px', 'max-width': '160px' });
-        $('thead > tr> th:nth-child(4)').css({ 'min-width': '80px', 'max-width': '80px' });
-        $('thead > tr> th:nth-child(5)').css({ 'min-width': '120px', 'max-width': '120px' });
-        $('thead > tr> th:nth-child(6)').css({ 'min-width': '120px', 'max-width': '120px' });
-        $('thead > tr> th:nth-child(7)').css({ 'min-width': '120px', 'max-width': '120px' });
-        $('thead > tr> th:nth-child(11)').css({ 'min-width': '120px', 'max-width': '120px' })
+            $('thead > tr> th:nth-child(1)').css({ 'min-width': '30px', 'max-width': '30px' });
+            $('thead > tr> th:nth-child(2)').css({ 'min-width': '100px', 'max-width': '100px' });
+            $('thead > tr> th:nth-child(3)').css({ 'min-width': '160px', 'max-width': '160px' });
+            $('thead > tr> th:nth-child(4)').css({ 'min-width': '80px', 'max-width': '80px' });
+            $('thead > tr> th:nth-child(5)').css({ 'min-width': '120px', 'max-width': '120px' });
+            $('thead > tr> th:nth-child(6)').css({ 'min-width': '120px', 'max-width': '120px' });
+            $('thead > tr> th:nth-child(7)').css({ 'min-width': '120px', 'max-width': '120px' });
+            $('thead > tr> th:nth-child(11)').css({ 'min-width': '120px', 'max-width': '120px' })
 
 
+        }
     }
-}
-
-// function DataTableAct(response) {
-
-//     console.log(response)
-//     if ($.fn.DataTable.isDataTable('#act-table')) {
-//         $('#act-table').dataTable().fnClearTable();
-//         $('#act-table').dataTable().fnDestroy();
-//         $('#act-table thead').empty()
-//     }
-//     else {
-//         $('#act-table thead').empty()
-//     }
-
-
-//     if (response.length != 0) {
-//         let my_columns = []
-//         $.each(response[0], function (key, value) {
-//             var my_item = {};
-//             // my_item.class = "filter_C";
-//             my_item.data = key;
-//             if (key == 'created_at') {
-
-//                 my_item.title = 'Actividades';
-
-//                 my_item.render = function (data, type, row) {
-//                     return `<p>
-//                             <span class="label label-danger">A</span>
-//                             <span class="label label-success">C</span>
-//                             <span class="label label-danger">C</span>
-//                             </p>`
-
-//                 }
-//                 my_columns.push(my_item);
-
-//             }
-
-//             else if (key == 'id') {
-
-//                 my_item.title = '#';
-
-//                 my_item.render = function (data, type, row) {
-//                     return `  <div'> 
-//                                 ${row.id}
-//                             </div>`
-//                 }
-//                 my_columns.push(my_item);
-
-//             }
-
-//             else if (key == 'titulo_comportamiento') {
-
-//                 my_item.title = 'Comportamiento';
-
-//                 my_item.render = function (data, type, row) {
-//                     return `  <div'> 
-//                                 ${row.titulo_comportamiento}
-//                             </div>`
-//                 }
-//                 my_columns.push(my_item);
-//             }
-
-//             else if (key == 'nombre_estudiante') {
-
-//                 my_item.title = 'Estudiante';
-
-//                 my_item.render = function (data, type, row) {
-//                     return `<div>
-//                                 ${row.nombre_estudiante+" "+row.apellido_estudiante} 
-//                             </div>`
-//                 }
-//                 my_columns.push(my_item);
-//             }
-
-//             else if (key == 'conducta') {
-
-//                 my_item.title = 'Conducta';
-
-//                 my_item.render = function (data, type, row) {
-//                     return `<div>
-//                                 ${row.conducta} <a data-id=${row.id} id="Btn_search_${row.id}" class='btn btn-circle btn-xs btn-default'>
-//                                                     <i class="fa fa-info-circle" aria-hidden="true"></i>
-//                                                 </a>
-//                             </div>`
-//                 }
-//                 my_columns.push(my_item);
-//             }
-
-//             else if (key == 'fecha') {
-
-//                 my_item.title = 'Fecha';
-
-//                 my_item.render = function (data, type, row) {
-//                     return `<div>
-//                                 ${row.fecha} 
-//                             </div>`
-//                 }
-//                 my_columns.push(my_item);
-//             }
-//         })
-
-//         $('#act-table').DataTable({
-//             // responsive: true,
-//             "destroy": true,
-//             data: response,
-//             "columns": my_columns,
-//             "language": {
-//                 "aria": {
-//                     "sortAscending": ": activate to sort column ascending",
-//                     "sortDescending": ": activate to sort column descending"
-//                 },
-//                 "emptyTable": "No hay datos registrados",
-//                 "info": "Mostrando _START_ a _END_ de _TOTAL_ comportamientos",
-//                 "infoEmpty": "No hay comportamientos registrados",
-//                 "infoFiltered": "(Filtrado de _MAX_  comportamientos)",
-//                 "lengthMenu": "_MENU_ comportamientos",
-//                 "search": "Buscar:",
-//                 "zeroRecords": "No se han encontrado registros"
-//             },
-//             buttons: [
-//                 'copy', 'excel', 'pdf'
-//             ],
-
-
-//             "order": [
-//                 [0, 'asc']
-//             ],
-
-//             "columnDefs": [
-//                 { "width": "15%", "targets": 3 }
-//             ],
-
-//             "lengthMenu": [
-//                 [10, 15, 20, -1],
-//                 [10, 15, 20, "Todos"]
-//             ]
-//         });
-//     }
-// }
+});

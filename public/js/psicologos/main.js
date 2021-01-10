@@ -126,8 +126,8 @@ $(document).ready(function () {
 
             if (tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '' || fechaNacimiento == '' || telefono == '' || direccion == '') {
                 toastr.warning("Complete todos los campos")
-            } 
-            
+            }
+
             else {
                 $.ajax({
                     url: '/api/psicologos',
@@ -144,12 +144,18 @@ $(document).ready(function () {
                         direccion: direccion,
                     },
                 })
-                    .done(function () {
+                    .done(function (response) {
+                        toastr.success("psicoorientador agregado");
                         setTimeout(function () { modal.modal("hide") }, 600);
-                        Reload()
+                        Reload();
                     })
-                    .fail(function () {
-                        toastr.error("Ha ocurrido un error");
+                    .fail(function (response) {
+                        // console.log(response.responseJSON);
+                        if (response.responseJSON.message == "id-registrada") {
+                            toastr.warning("La identificacion ya se encuentra registrada");
+                        } else {
+                            toastr.error("Ha ocurrido un error");
+                        }
                     })
                     .always(function () {
                         $("#save").addClass("disabled");

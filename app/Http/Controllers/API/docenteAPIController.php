@@ -59,17 +59,26 @@ class docenteAPIController extends AppBaseController
     {
         $input = $request->all();
 
-        $docente = $this->docenteRepository->create($input);
+        $user = User::where('identificacion', '=', $request->identificacion)->first();
 
-        $usuario = User::create([
-            'name' => $request->nombres . ' ' . $request->apellidos,
-            'email' => $request->correo,
-            'password' => Hash::make($request->identificacion),
-        ]);
+        if ($user === null) {
 
-        $usuario->asignarRol(3);
+            $usuario = User::create([
+                'identificacion' => $request->identificacion,
+                'name' => $request->nombres . ' ' . $request->apellidos,
+                'email' => $request->correo,
+                'password' => Hash::make($request->identificacion),
+            ]);
 
-        return $this->sendResponse($docente->toArray(), 'Docente saved successfully');
+            $usuario->asignarRol(3);
+
+            $docente = $this->docenteRepository->create($input);
+
+            return $this->sendResponse($docente->toArray(), 'Docente saved successfully');
+        } else {
+
+            return $this->sendError('id-registrada');
+        }
     }
 
     /**

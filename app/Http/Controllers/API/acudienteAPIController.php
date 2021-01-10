@@ -58,17 +58,27 @@ class acudienteAPIController extends AppBaseController
     {
         $input = $request->all();
 
-        $acudiente = $this->acudienteRepository->create($input);
+        $user = User::where('identificacion', '=', $request->identificacion)->first();
 
-        $usuario = User::create([
-            'name' => $request->nombres . ' ' . $request->apellidos,
-            'email' => $request->correo,
-            'password' => Hash::make($request->identificacion),
-        ]);
+        if ($user === null) {
+            // user doesn't exist
 
-        $usuario->asignarRol(4);
 
-        return $this->sendResponse($acudiente->toArray(), 'Acudiente saved successfully');
+            $usuario = User::create([
+                'identificacion' => $request->identificacion,
+                'name' => $request->nombres . ' ' . $request->apellidos,
+                'email' => $request->correo,
+                'password' => Hash::make($request->identificacion),
+            ]);
+            $usuario->asignarRol(4);
+
+            $acudiente = $this->acudienteRepository->create($input);
+
+            return $this->sendResponse($acudiente->toArray(), 'Acudiente saved successfully');
+        } else {
+
+            return $this->sendError('id-registrada');
+        }
     }
 
     /**

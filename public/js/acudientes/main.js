@@ -49,7 +49,7 @@ $(document).ready(function () {
             $("#save").attr("id", 'update')
 
             $("#identificacion").val(filtro[0].identificacion)
-            $("#identificacion").attr("readonly", true)
+            $("#identificacion").attr("readonly", false)
 
             $("#nombres").val(filtro[0].nombres)
             $("#apellidos").val(filtro[0].apellidos)
@@ -141,12 +141,18 @@ $(document).ready(function () {
                         direccion: direccion,
                     },
                 })
-                    .done(function () {
+                    .done(function (response) {
+                        toastr.success("Acudiente agregado");
                         setTimeout(function () { modal.modal("hide") }, 600);
-                        Reload()
+                        Reload();
                     })
-                    .fail(function () {
-                        toastr.error("Ha ocurrido un error");
+                    .fail(function (response) {
+                        // console.log(response.responseJSON);
+                        if (response.responseJSON.message == "id-registrada") {
+                            toastr.warning("La identificacion ya se encuentra registrada");
+                        } else {
+                            toastr.error("Ha ocurrido un error");
+                        }
                     })
                     .always(function () {
                         $("#save").addClass("disabled");

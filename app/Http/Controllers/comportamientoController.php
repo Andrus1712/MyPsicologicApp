@@ -150,6 +150,7 @@ class comportamientoController extends AppBaseController
                     ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
                     ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
                     ->leftjoin(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                    ->leftjoin(DB::raw('actividades ac'), 'ac.comportamiento_id', '=', 'c.id')
                     ->where(DB::raw('c.deleted_at', '!=', 'date()'))
                     ->select(
                         'c.id',
@@ -166,7 +167,9 @@ class comportamientoController extends AppBaseController
                         'g.curso',
                         'c.multimedia',
                         'c.emisor',
-                        'e.created_at'
+                        'e.created_at',
+                        DB::raw('ac.id as id_actividad'),
+                        DB::raw('ac.deleted_at as estado_actividad')
                     )->get();
             } else if ($queryUsers[0]->role_id == 2) {
                 $comportamientos = DB::table(DB::raw('comportamientos c'))->where(DB::raw('c.deleted_at'), '=', NULL)
@@ -174,6 +177,7 @@ class comportamientoController extends AppBaseController
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
                     ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
                     ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                    ->leftjoin(DB::raw('actividades ac'), 'ac.comportamiento_id', '=', 'c.id')
                     ->leftjoin(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->where(DB::raw('e.correo'), '=', Auth()->user()->email)
                     ->select(
@@ -190,7 +194,9 @@ class comportamientoController extends AppBaseController
                         'g.curso',
                         // 'c.multimedia',
                         // 'c.emisor',
-                        'e.created_at'
+                        'e.created_at',
+                        DB::raw('ac.id as id_actividad'),
+                        DB::raw('ac.deleted_at as estado_actividad')
                     )->get();
             } else if ($queryUsers[0]->role_id == 3) {
                 $comportamientos = DB::table(DB::raw('comportamientos c'))->where(DB::raw('c.deleted_at'), '=', NULL)
@@ -198,6 +204,7 @@ class comportamientoController extends AppBaseController
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
                     ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
                     ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                    ->leftjoin(DB::raw('actividades ac'), 'ac.comportamiento_id', '=', 'c.id')
                     ->leftjoin(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->where(DB::raw('c.deleted_at', '!=', 'date()'))
                     // ->where(DB::raw('c.emisor'), '=', auth()->user())
@@ -214,7 +221,9 @@ class comportamientoController extends AppBaseController
                         'g.grado',
                         'g.curso',
                         'c.multimedia',
-                        'e.created_at'
+                        'e.created_at',
+                        DB::raw('ac.id as id_actividad'),
+                        DB::raw('ac.deleted_at as estado_actividad')
                     )->get();
             } else if ($queryUsers[0]->role_id == 4) {
                 $comportamientos = DB::table(DB::raw('comportamientos c'))
@@ -223,6 +232,7 @@ class comportamientoController extends AppBaseController
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
                     ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
                     ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                    ->leftjoin(DB::raw('actividades ac'), 'ac.comportamiento_id', '=', 'c.id')
                     ->leftjoin(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->where(DB::raw('c.deleted_at', '!=', 'date()'))
                     ->where(DB::raw('a.correo'), '=', $user->email)
@@ -240,7 +250,9 @@ class comportamientoController extends AppBaseController
                         'c.multimedia',
                         // 'c.emisor',
                         'a.correo',
-                        'e.created_at'
+                        'e.created_at',
+                        DB::raw('ac.id as id_actividad'),
+                        DB::raw('ac.deleted_at as estado_actividad')
                     )->get();
             } else {
                 $comportamientos = DB::table(DB::raw('comportamientos c'))->where(DB::raw('c.deleted_at'), '=', NULL)
@@ -248,6 +260,7 @@ class comportamientoController extends AppBaseController
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
                     ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
                     ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                    ->leftjoin(DB::raw('actividades ac'), 'ac.comportamiento_id', '=', 'c.id')
                     ->leftjoin(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->where(DB::raw('c.deleted_at', '!=', 'date()'))
                     ->select(
@@ -264,7 +277,9 @@ class comportamientoController extends AppBaseController
                         'g.grado',
                         'g.curso',
                         'c.multimedia',
-                        'e.created_at'
+                        'e.created_at',
+                        DB::raw('ac.id as id_actividad'),
+                        DB::raw('ac.deleted_at as estado_actividad')
                     )->get();
             }
         }
@@ -291,7 +306,6 @@ class comportamientoController extends AppBaseController
             'comportamientos' => $comportamientos,
             'rol' => $rol,
             'permisos' => $permisos,
-            'user' => str_contains($rol, "Doc-user") ? $user : NULL
         ];
         return response()->json($datos);
     }
@@ -601,7 +615,7 @@ class comportamientoController extends AppBaseController
 
             comportamiento::where('id', $request->id)->update([
                 'estudiante_id' => $request->estudiante_id,
-                'tipo_comportamiento_id' => $request->tipo_comportamiento_id,
+                'tipo_comportamiento_id' => $request['tipo_comportamiento_id'] == 'null' ? null : $request['tipo_comportamiento_id'],
                 'titulo' => $request->titulo,
                 'descripcion' => $request->descripcion,
                 'fecha' => $request->fecha,
@@ -609,6 +623,7 @@ class comportamientoController extends AppBaseController
                 // 'emisor'  => $request->emisor,
             ]);
             return response()->json(['status' => 'Avances updated successfully.']);
+
         } else {
             $url_multimedia = $request->archivos != 0 ? '' : null;
 
@@ -620,38 +635,20 @@ class comportamientoController extends AppBaseController
                     }
                 }
             }
-            // dd($archivosR);
 
 
             $emisor = auth()->user();
 
 
-            // $this->comportamientoRepository->create([
-            //     'estudiante_id' => $request->estudiante_id,
-            //     'titulo' => $request->titulo,
-            //     'descripcion'  => $request->descripcion,
-            //     'fecha' => $request->fecha,
-            //     'multimedia'   => $url_multimedia,
-            //     'cod_comportamiento'   => $request->cod_comportamiento,
-            //     'emisor'   => auth()->user()->id,
-            // ]);
-
             $comportamiento = comportamiento::create([
                 'estudiante_id' => $request['estudiante_id'],
-                'tipo_comportamiento_id' => $request['tipo_comportamiento_id'] == null ? NULL : $request['tipo_comportamiento_id'],
+                'tipo_comportamiento_id' => $request['tipo_comportamiento_id'] == 'null' ? null : $request['tipo_comportamiento_id'],
                 'titulo' => $request['titulo'],
                 'descripcion' => $request['descripcion'],
                 'fecha' => $request['fecha'],
                 'multimedia'   => $url_multimedia,
                 'emisor'   => $emisor,
             ]);
-
-            // $user_psi = DB::table(DB::raw('role_user role'))
-            //     ->join(DB::raw('roles r'), 'role.role_id', '=', 'r.id')
-            //     ->join(DB::raw('users u'), 'role.user_id', '=', 'u.id')
-            //     ->where('role.role_id', '=', '1')
-            //     ->select(DB::raw('u.id'))
-            //     ->get();
 
 
             // //Notificacion via sms

@@ -31,7 +31,7 @@ $(document).ready(function () {
             $("#correo").val(filtro[0].correo)
             $("#direccion").val(filtro[0].direccion)
             $('#acudiente_id').val(filtro[0].id_acudiente),
-            $("#fechaNacimiento").val(filtro[0].fechaNacimiento)
+                $("#fechaNacimiento").val(filtro[0].fechaNacimiento)
             $("#tipoIdentificacion").empty()
             $("#tipoIdentificacion").append(`<option value="${filtro[0].tipoIdentificacion}">
                 ${filtro[0].tipoIdentificacion == 'CC' ? 'Cédula de ciudadania' : filtro[0].tipoIdentificacion == 'CE' ? 'Cédula extranjera' : 'Pasaporte'}
@@ -73,13 +73,18 @@ $(document).ready(function () {
 
                         },
                     })
-                        .done(function () {
+                        .done(function (response) {
+                            toastr.primary("Datos editados correctamente");
                             setTimeout(function () { modal.modal("hide") }, 600);
-                            toastr.info("información actualizada");
-                            Reload()
+                            Reload();
                         })
-                        .fail(function () {
-                            toastr.error("Ha ocurrido un error");
+                        .fail(function (response) {
+                            // console.log(response.responseJSON);
+                            if (response.responseJSON.message == "id-registrada") {
+                                toastr.warning("La identificacion ya se encuentra registrada");
+                            } else {
+                                toastr.error("Ha ocurrido un error");
+                            }
                         })
                         .always(function () {
                             $("#update").addClass("disabled");
@@ -163,12 +168,18 @@ $(document).ready(function () {
 
                     },
                 })
-                    .done(function () {
+                    .done(function (response) {
+                        toastr.success("estudiante agregado");
                         setTimeout(function () { modal.modal("hide") }, 600);
-                        Reload()
+                        Reload();
                     })
-                    .fail(function () {
-                        toastr.error("Ha ocurrido un error");
+                    .fail(function (response) {
+                        // console.log(response.responseJSON);
+                        if (response.responseJSON.message == "id-registrada") {
+                            toastr.warning("La identificacion ya se encuentra registrada");
+                        } else {
+                            toastr.error("Ha ocurrido un error");
+                        }
                     })
                     .always(function () {
                         $("#save").addClass("disabled");

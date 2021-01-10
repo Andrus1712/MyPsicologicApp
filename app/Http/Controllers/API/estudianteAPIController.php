@@ -80,22 +80,27 @@ class estudianteAPIController extends AppBaseController
     public function store(CreateestudianteAPIRequest $request)
     {
         $input = $request->all();
+        $user = User::where('identificacion', '=', $request->identificacion)->first();
 
-        $estudiante = $this->estudianteRepository->create($input);
+        if ($user === null) {
 
-        // 'name', 'email', 'password',
+            // 'name', 'email', 'password',
 
-        $usuario = User::create([
-            'name' => $request->nombres . ' ' . $request->apellidos,
-            'email' => $request->correo,
-            'password' => Hash::make($request->identificacion),
-        ]);
-
-
-        $usuario->asignarRol(2);
+            $usuario = User::create([
+                'name' => $request->nombres . ' ' . $request->apellidos,
+                'email' => $request->correo,
+                'password' => Hash::make($request->identificacion),
+            ]);
 
 
-        return $this->sendResponse($estudiante->toArray(), 'Estudiante saved successfully');
+            $usuario->asignarRol(2);
+
+            $estudiante = $this->estudianteRepository->create($input);
+
+            return $this->sendResponse($estudiante->toArray(), 'Estudiante saved successfully');
+        } else {
+            return $this->sendError('id-registrada');
+        }
     }
 
     /**

@@ -61,18 +61,25 @@ class psicologoAPIController extends AppBaseController
     {
         $input = $request->all();
 
-        $psicologo = $this->psicologoRepository->create($input);
+        $user = User::where('identificacion', '=', $request->identificacion)->first();
 
+        if ($user === null) {
 
-        $usuario = User::create([
-            'name' => $request->nombres . ' ' . $request->apellidos,
-            'email' => $request->correo,
-            'password' => Hash::make($request->identificacion),
-        ]);
+            $usuario = User::create([
+                'identificacion' => $request->identificacion,
+                'name' => $request->nombres . ' ' . $request->apellidos,
+                'email' => $request->correo,
+                'password' => Hash::make($request->identificacion),
+            ]);
 
-        $usuario->asignarRol(1);
+            $usuario->asignarRol(1);
 
-        return $this->sendResponse($psicologo->toArray(), 'Psicologo saved successfully');
+            $psicologo = $this->psicologoRepository->create($input);
+
+            return $this->sendResponse($psicologo->toArray(), 'Psicologo saved successfully');
+        } else {
+            return $this->sendError('id-registrada');
+        }
     }
 
     /**

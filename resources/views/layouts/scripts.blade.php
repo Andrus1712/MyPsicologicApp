@@ -60,5 +60,8 @@
 {{-- Save World --}}
 <script src="../assets/jQuery-Word-Export/jquery.wordexport.js"></script>
 
+{{-- Slider Bootstrap --}}
+{{-- <script src="../assets/range-slider-master/js/rSlider.min.js"></script> --}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/8.0.0/bootstrap-slider.min.js"></script>
 
 <script src="../js/session.js"></script>
