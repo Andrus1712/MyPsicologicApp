@@ -66,9 +66,13 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
     {{-- Slider --}}
-    {{-- <link rel="stylesheet" href="../assets/range-slider-master/css/rSlider.min.css"> --}}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/8.0.0/css/bootstrap-slider.min.css">
+    {{--
+    <link rel="stylesheet" href="../assets/range-slider-master/css/rSlider.min.css"> --}}
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/8.0.0/css/bootstrap-slider.min.css">
 
+
+    <link rel="stylesheet" href="../css/loading-spinner.css">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
 
@@ -76,8 +80,11 @@
 </head>
 
 <body class="skin-purple-light sidebar-mini">
+
     @if (!Auth::guest())
         <div class="wrapper">
+
+            <div class="loading" id="loading-spinner" style="display: none;">Loading&#8230;</div>
             <!-- Main Header -->
             <header class="main-header">
 
@@ -327,9 +334,8 @@
         </div>
     @endif
 
-
     @yield('scripts')
-    
+
 
 </body>
 

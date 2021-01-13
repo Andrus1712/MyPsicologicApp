@@ -32,51 +32,52 @@ class comportamientoController extends AppBaseController
         $this->comportamientoRepository = $comportamientoRepo;
     }
 
-    public function createPDF()
+    public function createPDF(Request $request)
     {
         $user = Auth()->user();
         if ($user->havePermission('make.reportes')) {
 
+            // $edad = $request['r_edad'];
+            // $fecha = $request['fecha'];
+            // $conducta  = $request['conducta'];
 
-            set_time_limit(300); ///FFFFFFFF
+            set_time_limit(300);
+
             // $data = tipoComportamiento::all();
-            $data = DB::table(DB::raw('tipo_comportamientos tp'))->where(DB::raw('tp.deleted_at'), '=', NULL)
-                ->join(DB::raw('actividades ac'), 'ac.tipo_comportamiento_id', '=', 'tp.id')
-                ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
+            $data = DB::table(DB::raw('tipo_comportamientos tc'))->where(DB::raw('tc.deleted_at'), '=', NULL)
+                ->leftjoin(DB::raw('comportamientos c'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                ->leftjoin(DB::raw('actividades ac'), 'ac.comportamiento_id', '=', 'c.id')
                 ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
-                ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
                 ->select(
                     DB::raw('c.id'),
                     DB::raw('c.fecha'),
-                    DB::raw('tp.titulo'),
+                    DB::raw('tc.titulo'),
                     DB::raw('c.titulo  AS casos'),
                     DB::raw('c.descripcion  AS caracteristicas'),
-                    DB::raw('g.grado AS nivel'),
                     DB::raw('ac.estado'),
                     DB::raw('ac.titulo AS estrategia')
                 )
                 ->groupBy(
                     DB::raw('c.id'),
                     DB::raw('c.fecha'),
-                    DB::raw('tp.titulo'),
+                    DB::raw('tc.titulo'),
                     DB::raw('ac.estado'),
-                    DB::raw('g.grado'),
                     DB::raw('c.descripcion'),
                     DB::raw('ac.titulo'),
                     DB::raw('c.titulo')
                 )
                 ->get();
 
-            $count = DB::table(DB::raw('tipo_comportamientos tp'))->where(DB::raw('tp.deleted_at'), '=', NULL)
-                ->join(DB::raw('actividades ac'), 'ac.tipo_comportamiento_id', '=', 'tp.id')
-                ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
+            $count = DB::table(DB::raw('tipo_comportamientos tc'))->where(DB::raw('tc.deleted_at'), '=', NULL)
+                ->leftjoin(DB::raw('comportamientos c'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                ->leftjoin(DB::raw('actividades ac'), 'ac.comportamiento_id', '=', 'c.id')
                 ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                 ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
                 ->select(
-                    DB::raw('tp.titulo'),
-                    DB::raw('COUNT(tp.id) as cantidad'),
+                    DB::raw('tc.titulo'),
+                    DB::raw('COUNT(tc.id) as cantidad'),
                 )
-                ->groupBy(DB::raw('tp.titulo'))
+                ->groupBy(DB::raw('tc.titulo'))
                 ->get();
 
             $psi = DB::table(DB::raw('users u'))
@@ -89,7 +90,10 @@ class comportamientoController extends AppBaseController
                 )
                 ->get();
 
+
+
             // dd($data);
+
 
             strftime("%A %d de %B del %Y");
             view()->share('comportamientos', [
@@ -99,10 +103,12 @@ class comportamientoController extends AppBaseController
                 'psi' => $psi,
                 'fechaFormat' => Carbon::now()->toFormattedDateString(),
             ]);
+
             $pdf = PDF::loadView('pdf_view', $data)
                 ->setPaper('a4', 'landscape');
 
-            return $pdf->stream('pdf_file.pdf');
+            // return $pdf->stream('pdf_file.pdf');
+            return view('pdf_view');
         } else {
             return redirect('/home');
         }
@@ -139,7 +145,7 @@ class comportamientoController extends AppBaseController
             ->limit(1)
             ->get();
 
-            $datos = [];
+        $datos = [];
 
         if (count($queryUsers) != 0) {
             if ($queryUsers[0]->role_id == 1) {
@@ -623,7 +629,6 @@ class comportamientoController extends AppBaseController
                 // 'emisor'  => $request->emisor,
             ]);
             return response()->json(['status' => 'Avances updated successfully.']);
-
         } else {
             $url_multimedia = $request->archivos != 0 ? '' : null;
 
@@ -639,7 +644,7 @@ class comportamientoController extends AppBaseController
 
             $emisor = auth()->user();
 
-
+            // Descomentar
             $comportamiento = comportamiento::create([
                 'estudiante_id' => $request['estudiante_id'],
                 'tipo_comportamiento_id' => $request['tipo_comportamiento_id'] == 'null' ? null : $request['tipo_comportamiento_id'],
@@ -658,6 +663,10 @@ class comportamientoController extends AppBaseController
             //     'from' => '573177765722',
             //     'text' => 'Hola'. $est->nombres . ', Tienes una nueva actividad: ' . $request->titulo .' fecha:'. $request->fecha
             // ]);
+
+
+
+            //Descomentar
             $rol_users = Role::with('users')->where('name', 'Psicoorientador')
                 ->each(function (Role $role_user) use ($comportamiento) {
                     foreach ($role_user->users as $u) {

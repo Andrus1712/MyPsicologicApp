@@ -36,7 +36,7 @@
             <a class="btn bg-red" id="make-reporte" target="_blank">
                 Exportar a PDF <i class="fa fa-file-pdf"></i></a>
 
-            {{-- <input type="text" id="mySlider" class="slider"> --}}
+
         @endif
         {{-- <div class="text-center">
             <h2>Lorem</h2>
@@ -51,24 +51,4 @@
 
     @include('layouts.scripts')
     <script src="js/comportamientos/main.js"></script>
-
-    {{-- <script>
-        var mySlider = new rSlider({
-            target: '#mySlider',
-            values: {
-                min: 0,
-                max: 100
-            },
-            step: 2,
-            width: 300,
-            range: true,
-            set: [5, 20],
-            scale: true,
-            labels: false,
-            onChange: function(vals) {
-                console.log(vals);
-            }
-        });
-
-    </script> --}}
 @endsection

@@ -1,227 +1,108 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>Reporte de comportamientos</title>
-    <style>
-        table {
-            border-collapse: collapse;
-            margin: auto;
-            font-family: 'Montserrat', sans-serif;
-            font-style: normal;
-            font-weight: normal;
-            src: url('/fonts/Montserrat/Montserrat-Regular.ttf') format('truetype');
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Document</title>
 
-        .verticalTableHeader {
-            text-align: center;
-            white-space: nowrap;
-            transform-origin: 50% 50%;
-            transform: rotate(90deg);
-        }
+    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
 
-        .verticalTableHeader:before {
-            content: '';
-            padding-top: 110%;
-            /* takes width as reference, + 10% for faking some extra padding */
-            display: inline-block;
-            vertical-align: middle;
-        }
+    <!-- Favicons -->
+    <link href="../template/img/favicon.png" rel="icon">
+    <link href="../template/img/apple-touch-icon.png" rel="apple-touch-icon">
 
-        small {
-            font-size: 0.7em;
-        }
-    </style>
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+        integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+
+    <!-- Theme style -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/2.4.3/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/2.4.3/css/skins/_all-skins.min.css">
+
+    <!-- iCheck -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/iCheck/1.0.2/skins/square/_all.css">
+
+    {{-- Select2 --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css">
+    {{--
+    <link rel="stylesheet" href="/path/to/select2.css">
+    <link rel="stylesheet" href="/path/to/select2-bootstrap4.css"> --}}
+
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css">
+
+    <!-- Data tables Bootstrap 3 -->
+    {{--
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.3.1/css/buttons.bootstrap.min.css">
+    --}}
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.datatables.net/buttons/1.6.5/css/buttons.bootstrap.min.css" />
+
+
+    {{-- Sweet alert --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css">
+
+    {{-- Toastr --}}
+    {{--
+    <link rel="stylesheet" href="../assets/toastr/toastr.css"> --}}
+    <link rel="stylesheet" href="../assets/toastr/toastr.min.css">
+
+    {{-- Full Calendar --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.3.2/main.min.css">
+
+    {{-- daterangeTime --}}
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+    {{-- Slider --}}
+    {{--
+    <link rel="stylesheet" href="../assets/range-slider-master/css/rSlider.min.css"> --}}
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/8.0.0/css/bootstrap-slider.min.css">
 
 
 </head>
 
 <body>
-    
-    <table style="width: 100%;">
-        <tr>
-          {{-- <td align="left"><img src="{{ public_path('/img/log.png')}}" width="140"></td> --}}
-          <td align="left"><img src="http://toolpsico.codet-colombia.com/img/logoreporte.png" width="140"></td>
-        </tr>
-    </table>
+    <div class="box-body">
+        <div class="row">
 
-    <br>
-  
-    <h4 style="text-align: center">REPORTE DE CASOS DE DEPRESION Y AGRESIVIDAD QUE AFECTAN LA CONVIVENCIA ESCOLAR</h3>
-    <br>
-    <table border="1">
-        <tr>
-            <td align="center" colspan="8">
-                <strong>
-                    <span style="font-size: 0.8em;">REPORTE DE CASOS</span>
-                </strong>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="6">
-                <strong style="margin-left: 10px;">
-                    INSTITUCIÓN EDUCATIVA: LA RIBERA
-                </strong>
-            </td>
+            <div class="col-md-12">
+                <label>Fecha del registro: </label>
+                <div id="reportrange1"
+                    style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+                    <i class="fa fa-calendar"></i>&nbsp;
+                    <span></span> <i class="fa fa-caret-down"></i>
+                </div>
+            </div>
 
-            <td colspan="2">
-                <strong style="margin-left: 10px;">
-                    FECHA DEL REPORTE: {{$modelo['fecha']}}
-                </strong>
-            </td>
-        </tr>
+        </div>
 
-        <tr>
-            <td rowspan="2" align="center">
-                <strong>
-                    <small>
-                        ID
-                    </small>
-                </strong>
-            </td>
+        <h4 id="not-chart1"></h4>
 
-            <td rowspan="2" align="center" style="width: 10%;">
-                <strong>
-                    <small>
-                        FECHA
-                    </small>
-                </strong>
-            </td>
+        <div id="chartEstamento"></div>
 
-            <td rowspan="2" align="center">
-                <strong>
-                    <small>
-                        CASO PRESENTADO
-                    </small>
-                </strong>
-            </td>
-            <td rowspan="2" align="center">
-                <strong>
-                    <small>
-                        CARACTERISTICAS
-                    </small>
-                </strong>
-            </td>
-            <td rowspan="2" align="center">
-                <strong>
-                    <small>
-                        ESTRATEGIA(S) UTILIZADA
-                    </small>
-                </strong>
-            </td>
-            <td align="center" rowspan="2">
-                <strong>
-                    <small>REMITIDO</small>
-                </strong>
-            </td>
-            <td rowspan="2" style="width: 20%;" align="center">
-                <strong>
-                    <small>
-                        ENTIDAD A LA QUE ES REMITIDO
-                    </small>
-                </strong>
+    </div>
 
-            </td>
-            <td align="center" style="width: 20%;">
-                <strong>
-                    <small>
-                        ESTADO DE LA ATENCION
-                    </small>
-                </strong>
-            </td>
-        </tr>
-        <tr>
-            <td align="center">
-                <table style="width: 100%;">
-                    <tr>
-                        <td rowspan="1" align="center">
-                            <small>
-                                Solucionado
-                            </small>
-                        </td>
-                        <td rowspan="1" align="center">
-                            <small>
-                                Incumplido
-                            </small>
-                        </td>
-                        <td rowspan="1" align="center">
-                            <small>
-                                En espera
-                            </small>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-        @foreach ($modelo['data'] as $item)
-        <tr>
-            <td align="center">{{$item->id}}</td>
-            <td align="center">{{$item->fecha}}</td>
-            <td align="center">{{$item->caso}}</td>
-            <td align="center"> {{$item->descripcion}}</td>
-            <td align="center"> {{$item->solucion}}</td>
-            <td align="center"> {{$item->remitido == null? 'NO' : 'SI'}}</td>
-            <td align="center"> {{$item->remitido == null? ' ' : $item->remitido}}</td>
-            <td align="center">
-                <table style="width: 100%;">
-                    <tr>
-                        <td style="width: 33%; text-align: center;">{{$item->estado == 'Solucionado' ? 'X' : '&emsp;'}}</td>
-                        <td style="width: 33%; text-align: center;">{{$item->estado == 'Incumplida' ? 'X' : '&emsp;'}}</td>
-                        <td style="width: 33%; text-align: center;">{{$item->estado == 'En espera' ? 'X' : '&emsp;'}}</td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-        @endforeach
-    </table>
-            
-    <div style="page-break-after:always;"></div>
 
-    <table style="width: 100%;">
-        <tr>
-          {{-- <td align="left"><img src="{{ public_path('/img/log.png')}}" width="140"></td> --}}
-          <td align="left"><img src="http://toolpsico.codet-colombia.com/img/logoreporte.png" width="140"></td>
-        </tr>
-    </table>
-
-    <br>
-    <table>
-      <tr>
-        <td>
-            
-            <br>
-          <br>
-          <br>
-          <p style="text-align: justify">
-            Nota: Este formato es generado por la plataforma ToolPsico a la fecha de {{$modelo['fechaFormat'] }}, con
-            el consentimiento de los directivos de la institucion educvativa la Ribera tomando como datos la informacion
-            de los estudiantes registrados en el sistema. 
-            
-            <P>Esta informacion solo es manipulada por la psicoorientadora y algunos directivos de la institucion.</P>
-          </p>
-          <br>
-          <br>
-          <br>
-          <p>
-            Cordial saludo,
-          </p>
-          <br>
-          <br>
-          <br>
-          @foreach ($modelo['psi'] as $item)
-
-          @endforeach
-          <p>
-            {{$item->psicologo}}<br>
-            {{$item->id}} <br>
-            Tel: {{$item->telefono}} <br>
-            e-mail: {{$item->correo}} <br>
-          </p>
-        </td>
-      </tr>
-    </table>
-    
-    
+    @include('layouts.scripts')
+    @include('layouts.datatables_js')
+    <script src="js/modelo_seguimiento/main.js"></script>
 </body>
 
 </html>

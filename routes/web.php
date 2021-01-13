@@ -21,7 +21,7 @@ Route::get('/reportes', function () {
     return view('reporte');
 });
 
-Route::get('/legal', function(){
+Route::get('/legal', function () {
     return view('legal');
 });
 
@@ -51,7 +51,7 @@ Route::resource('comportamientos', 'comportamientoController');
 Route::post('/add_comportamientos', 'comportamientoController@add_comportamientos');
 Route::get('/getComportamientos', 'comportamientoController@getComportamientos');
 Route::get('/getCountComp', 'comportamientoController@getCountComp');
-Route::get('/comportamientosPdf','comportamientoController@createPDF');
+Route::get('/comportamientosPdf', 'comportamientoController@createPDF')->name('report');
 
 Route::resource('actividades', 'actividadesController');
 Route::post('/add_actividades', 'actividadesController@store');
@@ -67,7 +67,7 @@ Route::get('/getRoles', 'rolesController@getRoles');
 
 Route::resource('modeloSeguimientos', 'modelo_seguimientoController');
 Route::get('/getModeloSeguimiento', 'modelo_seguimientoController@getModeloSeguimiento');
-Route::get('/modelo_seguimientoPdf','modelo_seguimientoController@createPDF');
+Route::get('/modelo_seguimientoPdf', 'modelo_seguimientoController@createPDF');
 
 
 Route::resource('usuarios', 'UsuariosController');
