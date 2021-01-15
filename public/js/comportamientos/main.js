@@ -390,6 +390,93 @@ $(document).ready(function () {
 
         modal.modal("show");
         ModalReporte();
+
+        $('#btn_reporte_general').on('click', function () {
+            modal.modal("hide");
+
+            modal2.modal("show");
+            ModalReporteGeneral();
+            $('#back').on('click', function () {
+                modal2.modal("hide");
+                modal.modal("show");
+            });
+
+
+            //** ****************************DateRangepicker**************************** */
+            // Se carga de dateRangePicker
+            var start = moment().subtract(29, 'days');
+            var end = moment();
+
+            var fechas;
+            function cb(start, end) {
+                $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+                fechas = {
+                    fecha_i: start.format('YYYY-MM-DD'),
+                    fecha_f: end.format('YYYY-MM-DD')
+                };
+                console.log(fechas);
+            }
+
+
+            $('#reportrange').daterangepicker({
+                startDate: start,
+                endDate: end,
+                ranges: {
+                    'Hoy': [moment(), moment()],
+                    'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Últimos 7 dias': [moment().subtract(6, 'days'), moment()],
+                    'Últimos 30 dias': [moment().subtract(29, 'days'), moment()],
+                    'Este mes': [moment().startOf('month'), moment().endOf('month')],
+                    'Ultimo mes': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                },
+                "locale": {
+                    "separator": " - ",
+                    "applyLabel": "Aplicar",
+                    "cancelLabel": "Cancelar",
+                    "fromLabel": "DE",
+                    "toLabel": "HASTA",
+                    "customRangeLabel": "Custom",
+                    "daysOfWeek": [
+                        "Dom",
+                        "Lun",
+                        "Mar",
+                        "Mie",
+                        "Jue",
+                        "Vie",
+                        "Sáb"
+                    ],
+                    "monthNames": [
+                        "Enero",
+                        "Febrero",
+                        "Marzo",
+                        "Abril",
+                        "Mayo",
+                        "Junio",
+                        "Julio",
+                        "Agosto",
+                        "Septiembre",
+                        "Octubre",
+                        "Noviembre",
+                        "Diciembre"
+                    ],
+                    "firstDay": 1
+                }
+            }, cb);
+
+            cb(start, end);
+            //** ********************************************************************** */
+
+            /** Acion al generar el pdf */
+            $('#generar').on('click', function () {
+                openWindowWithPostRequest(fechas)
+            });
+
+
+        });
+
+
+
+
         LoadTiposComportamientos2();
 
         // Se carga de dateRangePicker
@@ -493,7 +580,7 @@ $(document).ready(function () {
             fecha.push(fi);
             fecha.push(ff);
             valor = $('#mySlider').val();
-            
+
             console.log("Conducta: " + ArrayTC);
             console.log("Genero: " + ArrayG);
             console.log("fecha: " + fecha);
@@ -504,6 +591,38 @@ $(document).ready(function () {
         // window.open("/comportamientosPdf", "_blank");
     });
 
+
+    function openWindowWithPostRequest(params) {
+        var winName = 'reporte general';
+        var winURL = '/download_pdf';
+        var windowoption = 'resizable=yes,height=600,width=800,location=0,menubar=0,scrollbars=1';
+
+        var form = document.createElement("form");
+        form.setAttribute("method", "post");
+        form.setAttribute("action", winURL);
+        form.setAttribute("target", winName);
+        for (var i in params) {
+            if (params.hasOwnProperty(i)) {
+                var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = i;
+                    input.value = params[i];
+                    form.appendChild(input);
+            }
+        }
+
+        let csrfField = document.createElement('input');
+            csrfField.setAttribute('type', 'hidden');
+            csrfField.setAttribute('name', '_token');
+            csrfField.setAttribute('value', $('meta[name="csrf-token"]').attr('content'));
+            form.appendChild(csrfField);
+
+        document.body.appendChild(form);
+        window.open('', winName, windowoption);
+        form.target = winName;
+        form.submit();
+        document.body.removeChild(form);
+    }
 
     function LoadEstudiantes() {
         $("#estudiante_id").select2({
@@ -658,7 +777,7 @@ $(document).ready(function () {
             });
     }
 
-    function ModalReporte() {
+    function ModalReporteAvanzado() {
         $('#modal_tam').removeClass('modal-lg');
         $('#modal_tam').addClass('modal-md');
         modal.find('.modal-content').empty().append(`
@@ -731,6 +850,61 @@ $(document).ready(function () {
         <div class="modal-footer">
             <button type="button" class="btn btn-primary" id="save">Enviar</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    `);
+    }
+
+    function ModalReporteGeneral() {
+        $('#modal2_tam').removeClass('modal-lg');
+        $('#modal2_tam').addClass('modal-md');
+        modal2.find('.modal-content').empty().append(`
+        <div class="modal-header">
+            <a class="btn pull-left" id="back"><i class="fas fa-arrow-left"></i></a>
+            <h4 class="modal-title">Crear Reporte</h4>
+        </div>
+        <div class="modal-body">
+
+                <div class="row">
+
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <label>Fecha del registro: </label>
+                        <div id="reportrange"
+                            style="background: #fff; cursor: pointer; 
+                            padding: 5px 10px; border: 1px solid #ccc; 
+                            width: 100%; margin-bottom: 10px;>
+                            <i class="fa fa-calendar"></i>&nbsp;
+                            <span></span> <i class="fa fa-caret-down"></i>
+                        </div>
+                    </div>
+                </div>
+
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="generar">Generar PDF</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    `);
+    }
+
+    function ModalReporte() {
+        $('#modal1_tam').removeClass('modal-lg');
+        $('#modal1_tam').addClass('modal-md');
+        modal.find('.modal-content').empty().append(`
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Crear Reporte</h4>
+        </div>
+        <div class="modal-body">
+
+            <div class="row">
+                <div class="col-md-6">
+                    <a id="btn_reporte_general" class="btn bg-purple">Reporte General</a>
+                </div>
+                <div class="col-md-6">
+                    <a id="btn_reporte_avanzado" class="btn bg-purple">Reporte vanzado</a>
+                </div>
+            </div>
         </div>
     `);
 

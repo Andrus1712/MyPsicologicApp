@@ -114,6 +114,79 @@ class comportamientoController extends AppBaseController
         }
     }
 
+    public function download_pdf(Request $request){
+        $user = Auth()->user();
+        if ($user->havePermission('make.reportes')) {
+
+            $r = $request->all();
+
+            $consulta = DB::table(DB::raw('tipo_comportamientos tc'))
+                ->leftjoin(DB::raw('comportamientos c'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                ->leftjoin(DB::raw('actividades ac'), 'ac.comportamiento_id', '=', 'c.id')
+                ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+                ->where(DB::raw('tc.deleted_at'), '=', NULL)
+                ->where(DB::raw('c.deleted_at'), '=', NULL)
+                ->whereIn(DB::raw('c.fecha'), $r)
+                ->select(
+                    DB::raw('c.id'),
+                    DB::raw('c.fecha'),
+                    DB::raw('tc.titulo'),
+                    DB::raw('c.titulo  AS casos'),
+                    DB::raw('c.descripcion  AS caracteristicas'),
+                    DB::raw('ac.estado'),
+                    DB::raw('ac.titulo AS estrategia')
+                )
+                ->groupBy(
+                    DB::raw('c.id'),
+                    DB::raw('c.fecha'),
+                    DB::raw('tc.titulo'),
+                    DB::raw('ac.estado'),
+                    DB::raw('c.descripcion'),
+                    DB::raw('ac.titulo'),
+                    DB::raw('c.titulo')
+                )
+                ->get();
+
+            
+            $conteo = DB::table(DB::raw('tipo_comportamientos tc'))
+                ->leftjoin(DB::raw('comportamientos c'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                ->leftjoin(DB::raw('actividades ac'), 'ac.comportamiento_id', '=', 'c.id')
+                ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+                ->where(DB::raw('tc.deleted_at'), '=', NULL)
+                ->where(DB::raw('c.deleted_at'), '=', NULL)
+                ->whereIn(DB::raw('c.fecha'), $r)
+                ->select(
+                    DB::raw('tc.titulo'),
+                    DB::raw('COUNT(tc.titulo)  AS cantidad'),
+                )
+                ->groupBy(
+                    DB::raw('tc.titulo'),
+                )
+                ->get();
+
+                $cont = 0;
+                foreach ($conteo as $value) {
+                    $cont += intval($value->cantidad);
+                }
+
+            $data = [
+                'consulta' => $consulta,
+                'conteo' => $conteo,
+                'total' => $cont,
+                'fecha_hoy' => Carbon::now()->format('d-m-Y'),
+            ];
+
+            $pdf = PDF::loadView('pdf_view', $data)
+                ->setPaper('a4', 'landscape');
+
+            // return view('pdf_view')->with($data);
+            // return $data;
+            return $pdf->stream('report.pdf');
+        } else {
+            return redirect('/home');
+        }
+    }
+
     /**
      * Display a listing of the comportamiento.
      *

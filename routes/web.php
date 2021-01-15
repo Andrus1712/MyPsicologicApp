@@ -51,7 +51,8 @@ Route::resource('comportamientos', 'comportamientoController');
 Route::post('/add_comportamientos', 'comportamientoController@add_comportamientos');
 Route::get('/getComportamientos', 'comportamientoController@getComportamientos');
 Route::get('/getCountComp', 'comportamientoController@getCountComp');
-Route::get('/comportamientosPdf', 'comportamientoController@createPDF')->name('report');
+Route::get('/comportamientosPdf', 'comportamientoController@createPDF');
+Route::post('/download_pdf', 'comportamientoController@download_pdf');
 
 Route::resource('actividades', 'actividadesController');
 Route::post('/add_actividades', 'actividadesController@store');

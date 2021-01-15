@@ -3,277 +3,240 @@
 
 <head>
     <title>Reporte de comportamientos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Favicons -->
+    <link href="../template/img/favicon.png" rel="icon">
+    <link href="../template/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
+
     <style>
-        table {
-            border-collapse: collapse;
-            margin: auto;
-            font-family: 'Montserrat', sans-serif;
-            font-style: normal;
-            font-weight: normal;
-            src: url('/fonts/Montserrat/Montserrat-Regular.ttf') format('truetype');
-        }
-
-        .verticalTableHeader {
-            text-align: center;
-            white-space: nowrap;
-            transform-origin: 50% 50%;
-            transform: rotate(90deg);
-        }
-
-        .verticalTableHeader:before {
-            content: '';
-            padding-top: 110%;
-            /* takes width as reference, + 10% for faking some extra padding */
-            display: inline-block;
-            vertical-align: middle;
-        }
-
-        small {
-            font-size: 0.7em;
+        .page-break {
+            page-break-after: always;
         }
 
     </style>
-
 
 </head>
 
 <body>
 
-    <table style="width: 100%;">
-        <tr>
-            {{-- <td align="left"><img src="{{ public_path('/img/log.png') }}"
-                    width="140"></td> --}}
-            <td align="left"><img src="http://toolpsico.codet-colombia.com/img/logoreporte.png" width="140"></td>
-        </tr>
-    </table>
+    <div class="container">
 
-    <br>
-
-    <h4 style="text-align: center">REPORTE DE CASOS QUE AFECTAN LA CONVIVENCIA ESCOLAR</h3>
-        <p>Reporte general del sistema</p>
-        <br>
-
-        <table border="1">
-            <tr>
-                <td align="center" colspan="8">
-                    <strong>
-                        <span style="font-size: 0.8em;">REPORTE DE CASOS</span>
-                    </strong>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="6">
-                    <strong style="margin-left: 10px;">
-                        INSTITUCIÓN EDUCATIVA: LA RIBERA
-                    </strong>
-                </td>
-
-                <td colspan="2">
-                    <strong style="margin-left: 10px;">
-                        FECHA DEL REPORTE: {{ $comportamientos['fecha'] }}
-
-                    </strong>
-                </td>
-            </tr>
-
-            <tr>
-                <td rowspan="2" align="center">
-                    <strong>
-                        <small>
-                            ID
-                        </small>
-                    </strong>
-                </td>
-
-                <td rowspan="2" align="center" style="width: 10%;">
-                    <strong>
-                        <small>
-                            FECHA
-                        </small>
-                    </strong>
-                </td>
-
-                <td rowspan="2" align="center">
-                    <strong>
-                        <small>
-                            SITUACIONES QUE AFECTAN LA CONVIVENCIA ESCOLAR
-                        </small>
-                    </strong>
-                </td>
-                <td rowspan="2" align="center">
-                    <strong>
-                        <small>
-                            CASO PRESENTADO
-                        </small>
-                    </strong>
-                </td>
-                <td rowspan="2" align="center">
-                    <strong>
-                        <small>
-                            CARACTERISTICA DEL CASO
-                        </small>
-                    </strong>
-                </td>
-                <td rowspan="2" style="width: 20%;" align="center">
-                    <strong>
-                        <small>
-                            ESTRATEGIA UTILIZADA PARA LA ATENCIÓN DEL CASO
-                        </small>
-                    </strong>
-
-                </td>
-                <td align="center">
-                    <strong>
-                        <small>
-                            ESTADO DE ACTIVIDAD
-                        </small>
-                    </strong>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <table style="width: 100%;">
-                        <tr>
-                            <td align="center" style="width: 33%;">CM</td>
-                            <td align="center" style="width: 33%;">IC</td>
-                            <td align="center" style="width: 33%;">EE</td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            @foreach ($comportamientos['data'] as $item)
+        <div class="row">
+            <table style="width: 100%;">
                 <tr>
-                    <td align="center">CMP{{ $item->id }}</td>
-                    <td align="center">{{ $item->fecha }}</td>
-                    <td align="center">{{ $item->titulo }}</td>
-                    <td align="center"> {{ $item->casos }}</td>
-                    <td align="center"> {{ $item->caracteristicas }}</td>
-                    <td align="center"> {{ $item->estrategia == null ? 'NaN' : $item->estrategia }}</td>
-                    <td align="center">
-                        <table style="width: 100%;">
-                            <tr>
-                                @if ($item->estado != null)
-                                    <td style="width: 33%; text-align: center;">
-                                        {{ $item->estado == 1 ? 'X' : '&emsp;' }}
-                                    </td>
-                                    <td style="width: 33%; text-align: center;">
-                                        {{ $item->estado == 2 ? 'X' : '&emsp;' }}
-                                    </td>
-                                    <td style="width: 33%; text-align: center;">
-                                        {{ $item->estado == 0 ? 'X' : '&emsp;' }}
-                                    </td>
-                                @endif
-                            </tr>
-                        </table>
+                    <td align="left"><img src="http://toolpsico.codet-colombia.com/img/logoreporte.png" width="140">
                     </td>
                 </tr>
-            @endforeach
-        </table>
-        <span>Nota: El estado de la actividad es de tres tipos, CM: cumplida; IC: incumplida; EE: en espera</span>
-        <br>
-        <br>
-        <br>
-        <br>
+            </table>
+            <h4 style="text-align: center">REPORTE DE CASOS QUE AFECTAN LA CONVIVENCIA ESCOLAR</h3>
+                <br>
 
-        <div id="chartReport"></div>
+                <table class="table table-bordered">
+                    <tr>
+                        <td align="center" colspan="7">
+                            <strong>
+                                <span style="font-size: 0.8em;">REPORTE DE CASOS</span>
+                            </strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5">
+                            <strong style="margin-left: 10px;">
+                                INSTITUCIÓN EDUCATIVA: LA RIBERA
+                            </strong>
+                        </td>
 
-        <table border="1" style="width: 70%;">
-            <tr>
-                <td colspan="2" align="center">
-                    <strong>
-                        <span style="font-size: 0.8em;">REPORTE DE NUMERO DE CASOS</span>
-                    </strong>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <strong style="margin-left: 10px;">
-                        INSTITUCIÓN EDUCATIVA: LA RIBERA
-                    </strong>
-                </td>
-                <td colspan="1">
-                    <strong style="margin-left: 10px;">
-                        FECHA DEL REPORTE: {{ $comportamientos['fecha'] }}
+                        <td colspan="2">
+                            <strong style="margin-left: 10px;">
+                                FECHA DEL REPORTE: {{ $fecha_hoy }}
 
-                    </strong>
-                </td>
-            </tr>
-            <tr>
-                <td rowspan="1" align="center">
-                    <strong>
-                        <small>
-                            SITUACIONES QUE AFECTAN LA CONVIVENCIA ESCOLAR
-                        </small>
-                    </strong>
-                </td>
-                <td rowspan="1" align="center" style="width: 35%;">
-                    <strong>
-                        <small>
-                            CANTIDAD DE CASOS PRESENTADOS
-                        </small>
-                    </strong>
-                </td>
-            </tr>
-            @foreach ($comportamientos['count'] as $item)
-                <tr>
-                    <td>{{ $item->titulo }}</td>
-                    <td align="center"> {{ $item->cantidad }} </td>
-                </tr>
-            @endforeach
-        </table>
+                            </strong>
+                        </td>
+                    </tr>
 
+                    <tr>
+                        <td rowspan="2" align="center">
+                            <strong>
+                                <small>
+                                    ID
+                                </small>
+                            </strong>
+                        </td>
 
-        <div style="page-break-after:always;"></div>
+                        <td rowspan="2" align="center" style="width: 10%;">
+                            <strong>
+                                <small>
+                                    FECHA
+                                </small>
+                            </strong>
+                        </td>
 
-        <table style="width: 100%;">
-            <tr>
-                <td align="left"><img src="{{ public_path('/img/log.png') }}" width="140"></td>
-                <td align="left"><img src="http://toolpsico.codet-colombia.com/img/logoreporte.png" width="130"></td>
-            </tr>
-        </table>
+                        <td rowspan="2" align="center">
+                            <strong>
+                                <small>
+                                    SITUACIONES QUE AFECTAN LA CONVIVENCIA ESCOLAR
+                                </small>
+                            </strong>
+                        </td>
+                        <td rowspan="2" align="center">
+                            <strong>
+                                <small>
+                                    CASO PRESENTADO
+                                </small>
+                            </strong>
+                        </td>
+                        <td rowspan="2" align="center">
+                            <strong>
+                                <small>
+                                    CARACTERISTICA DEL CASO
+                                </small>
+                            </strong>
+                        </td>
+                        <td rowspan="2" style="width: 20%;" align="center">
+                            <strong>
+                                <small>
+                                    ESTRATEGIA UTILIZADA PARA LA ATENCIÓN DEL CASO
+                                </small>
+                            </strong>
 
-        <br>
-        <table>
-            <tr>
-                <td>
+                        </td>
+                        <td align="center">
+                            <strong>
+                                <small>
+                                    ESTADO DE ACTIVIDAD
+                                </small>
+                            </strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table style="width: 100%;">
+                                <tr>
+                                    <td align="center" style="width: 33%;">CM</td>
+                                    <td align="center" style="width: 33%;">IC</td>
+                                    <td align="center" style="width: 33%;">EE</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
 
-                    <br>
-                    <br>
-                    <br>
-                    <p style="text-align: justify">
-                        Nota: Este formato es generado por la plataforma ToolPsico a la fecha de
-                        {{ $comportamientos['fechaFormat'] }}, con
-
-                        el consentimiento de los directivos de la institucion educvativa la Ribera tomando como datos la
-                        informacion
-                        de los estudiantes registrados en el sistema.
-
-                    <P>Esta informacion solo es manipulada por la psicoorientadora y algunos directivos de la
-                        institucion.</P>
-                    </p>
-                    <br>
-                    <br>
-                    <br>
-                    <p>
-                        Cordial saludo,
-                    </p>
-                    <br>
-                    <br>
-                    <br>
-                    {{-- @foreach ($comportamientos['psi'] as $item)
-
+                    @foreach ($consulta as $item)
+                        <tr>
+                            <td>CMP-{{ $item->id }}</td>
+                            <td>{{ $item->fecha }}</td>
+                            <td>{{ $item->titulo }}</td>
+                            <td align="center"> {{ $item->casos }} </td>
+                            <td align="center"> {{ $item->caracteristicas }} </td>
+                            <td align="center"> {{ $item->estrategia }} </td>
+                            <td align="center">
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <td style="width: 33%; text-align: center;">
+                                            {{ $item->estado == 1 ? 'X' : '&emsp;' }}
+                                        </td>
+                                        <td style="width: 33%; text-align: center;">
+                                            {{ $item->estado == 2 ? 'X' : '&emsp;' }}
+                                        </td>
+                                        <td style="width: 33%; text-align: center;">
+                                            {{ $item->estado == 0 ? 'X' : '&emsp;' }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
                     @endforeach
-                    <p>
-                        {{ $item->psicologo }}<br>
-                        {{ $item->id }} <br>
-                        Tel: {{ $item->telefono }} <br>
-                        e-mail: {{ $item->correo }} <br>
-                    </p> --}}
-                </td>
-            </tr>
-        </table>
+
+                </table>
+                <span>Nota: El estado de la actividad es de tres tipos, CM: cumplida; IC: incumplida; EE: en
+                    espera</span>
+        </div>
+        <div class="page-break"></div>
+
+        <div class="row">
+            <table style="width: 100%;">
+                <tr>
+                    <td align="left"><img src="http://toolpsico.codet-colombia.com/img/logoreporte.png" width="140">
+                    </td>
+                </tr>
+            </table>
+            <h4 style="text-align: center">Conteo de casos</h3>
+                <br>
+
+                <table class="table table-sm table-bordered">
+                    <tr>
+                        <td align="center" colspan="2">
+                            <strong>
+                                <span style="font-size: 0.8em;">REPORTE DE CASOS</span>
+                            </strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td >
+                            <strong style="margin-left: 10px;">
+                                INSTITUCIÓN EDUCATIVA: LA RIBERA
+                            </strong>
+                        </td>
+
+                        <td >
+                            <strong style="margin-left: 10px;">
+                                FECHA DEL REPORTE: {{ $fecha_hoy }}
+
+                            </strong>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="center">
+                            <strong>
+                                <small>
+                                    CASO PRESENTADO
+                                </small>
+                            </strong>
+                        </td>
+
+                        <td align="center">
+                            <strong>
+                                <small>
+                                    CANTIDAD
+                                </small>
+                            </strong>
+                        </td>
+                        
+                    </tr>
+
+                    @foreach ($conteo as $item)
+                        <tr>
+                            <td>{{ $item->titulo }}</td>
+                            <td>{{ $item->cantidad }}</td>
+                        </tr>
+                    @endforeach
+
+                    <tr>
+                        <td>
+                            <strong>
+                                Total
+                            </strong>
+                        </td>
+
+                        <td >
+                            <strong>
+                                {{ $total }}
+                            </strong>
+                        </td>
+                    </tr>
+
+                </table>
+        </div>
+    </div>
 
 
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </body>
 
 </html>
