@@ -118,7 +118,7 @@ $(document).ready(function () {
                 descripcion = $("#descripcion").val(),
                 fecha = $("#fecha").val(),
                 tipo_comportamiento_id = $("#tipo_comportamiento_id").val(),
-                estado = 0 //estado por defecto de las actividades
+                estado = 3 //estado por defecto de las actividades
 
             if (comportamiento_id == '' || titulo == '' || descripcion == '' || fecha == '' || tipo_comportamiento_id == '') {
                 toastr.warning("Complete todos los campos")
@@ -487,7 +487,7 @@ function Modal() {
                             <option value=""> Selecione un estado </option>
                             <option value="1"> cumplida </option>
                             <option value="2"> incumplida </option>
-                            <option value="0"> en espera </option>
+                            <option value="3"> en espera </option>
                         </select>
                     </div>
 
@@ -630,7 +630,7 @@ function ReloadCalendario() {
                         groupId: JSON.stringify(response.actividades[i]),
                         title: response.actividades[i].titulo+' | '+'CMP'+response.actividades[i].id_comportamiento,
                         start: response.actividades[i].fecha,
-                        backgroundColor: response.actividades[i].estado == 0 ? '#F4A460' : response.actividades[i].estado == 1 ? '#3CB371' : '#FF6347',
+                        backgroundColor: response.actividades[i].estado == 3 ? '#F4A460' : response.actividades[i].estado == 1 ? '#3CB371' : '#FF6347',
                         borderColor: "gray",
                     })
                 }
@@ -662,7 +662,7 @@ function ModalShow(filtro) {
                             <div class="box-body">
                                 <div class="form-group">
                                     <label>Estado</label>
-                                    <p>${filtro[0].estado == 0 ? "En espera" : filtro[0].estado == 1 ? "Cumplida" : "Inclumplida"} </p>
+                                    <p>${filtro[0].estado == 3 ? "En espera" : filtro[0].estado == 1 ? "Cumplida" : "Inclumplida"} </p>
                                 </div>
                                 <div class="form-group">
                                     <label>Fecha</label>
@@ -774,7 +774,7 @@ function ModalShowEst(filtro) {
                             <div class="box-body">
                                 <div class="form-group">
                                     <label>Estado</label>
-                                    <p>${filtro[0].estado == 0 ? "En espera" : filtro[0].estado == 1 ? "Cumplida" : "Inclumplida"} </p>
+                                    <p>${filtro[0].estado == 3 ? "En espera" : filtro[0].estado == 1 ? "Cumplida" : "Inclumplida"} </p>
                                 </div>
                                 <div class="form-group">
                                     <label>Fecha</label>
@@ -838,7 +838,7 @@ function ModalEst(actividadFilter, event, options) {
                             <div class="box-body">
                                 <div class="form-group">
                                     <label>Estado</label>
-                                    <p>${actividadFilter.estado == 0 ? "En espera" : actividadFilter.estado == 1 ? "Cumplida" : "Inclumplida"} </p>
+                                    <p>${actividadFilter.estado == 3 ? "En espera" : actividadFilter.estado == 1 ? "Cumplida" : "Inclumplida"} </p>
                                 </div>
                                 <div class="form-group">
                                     <label>Fecha</label>
@@ -903,7 +903,7 @@ function ModalPsico(actividadFilter, event, options) {
                             <div class="box-body">
                                 <div class="form-group">
                                     <label>Estado</label>
-                                    <p>${actividadFilter.estado == 0 ? "En espera" : actividadFilter.estado == 1 ? "Cumplida" : "Inclumplida"} </p>
+                                    <p>${actividadFilter.estado == 3 ? "En espera" : actividadFilter.estado == 1 ? "Cumplida" : "Inclumplida"} </p>
                                 </div>
                                 <div class="form-group">
                                     <label>Fecha</label>

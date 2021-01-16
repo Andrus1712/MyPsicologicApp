@@ -71,7 +71,7 @@ $(document).ready(function () {
                 titulo = $("#titulo").val(),
                 descripcion = $("#descripcion").val(),
                 fecha = $("#fecha").val(),
-                estado = 0 //estado por defecto de las actividades
+                estado = 3 //estado por defecto de las actividades
 
             if (comportamiento_id == '' || titulo == '' || descripcion == '' || fecha == '') {
                 toastr.warning("Complete todos los campos")
@@ -391,6 +391,7 @@ $(document).ready(function () {
         modal.modal("show");
         ModalReporte();
 
+        //Reporte general
         $('#btn_reporte_general').on('click', function () {
             modal.modal("hide");
 
@@ -468,134 +469,231 @@ $(document).ready(function () {
 
             /** Acion al generar el pdf */
             $('#generar').on('click', function () {
-                openWindowWithPostRequest(fechas)
+                openWindowWithPostRequest('/download_pdf', fechas)
             });
 
 
         });
+        // ************************
 
+        //Reporte Avanzado
+        $('#btn_reporte_avanzado').on('click', function () {
+            modal.modal("hide");
+            modal2.modal("show");
+            ModalReporteAvanzado();
+            $('#back').on('click', function () {
+                modal2.modal("hide");
+                modal.modal("show");
+            });
 
+            //** ****************************DateRangepicker**************************** */
+            var start = moment().subtract(29, 'days');
+            var end = moment();
 
-
-        LoadTiposComportamientos2();
-
-        // Se carga de dateRangePicker
-        var start = moment().subtract(29, 'days');
-        var end = moment();
-
-        var fi;
-        var ff;
-        function cb(start, end) {
-            $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-            fi = start.format('YYYY-MM-DD');
-            ff = end.format('YYYY-MM-DD');
-        }
-
-
-        $('#reportrange').daterangepicker({
-            startDate: start,
-            endDate: end,
-            ranges: {
-                'Hoy': [moment(), moment()],
-                'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                'Últimos 7 dias': [moment().subtract(6, 'days'), moment()],
-                'Últimos 30 dias': [moment().subtract(29, 'days'), moment()],
-                'Este mes': [moment().startOf('month'), moment().endOf('month')],
-                'Ultimo mes': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-            },
-            "locale": {
-                "separator": " - ",
-                "applyLabel": "Aplicar",
-                "cancelLabel": "Cancelar",
-                "fromLabel": "DE",
-                "toLabel": "HASTA",
-                "customRangeLabel": "Custom",
-                "daysOfWeek": [
-                    "Dom",
-                    "Lun",
-                    "Mar",
-                    "Mie",
-                    "Jue",
-                    "Vie",
-                    "Sáb"
-                ],
-                "monthNames": [
-                    "Enero",
-                    "Febrero",
-                    "Marzo",
-                    "Abril",
-                    "Mayo",
-                    "Junio",
-                    "Julio",
-                    "Agosto",
-                    "Septiembre",
-                    "Octubre",
-                    "Noviembre",
-                    "Diciembre"
-                ],
-                "firstDay": 1
+            var fechas = [];
+            function cb(start, end) {
+                $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+                fechas = {
+                    fecha_i: start.format('YYYY-MM-DD'),
+                    fecha_f: end.format('YYYY-MM-DD')
+                };
+                console.log(fechas);
             }
-        }, cb);
 
-        cb(start, end);
+            $('#reportrange').daterangepicker({
+                startDate: start,
+                endDate: end,
+                ranges: {
+                    'Hoy': [moment(), moment()],
+                    'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Últimos 7 dias': [moment().subtract(6, 'days'), moment()],
+                    'Últimos 30 dias': [moment().subtract(29, 'days'), moment()],
+                    'Este mes': [moment().startOf('month'), moment().endOf('month')],
+                    'Ultimo mes': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                },
+                "locale": {
+                    "separator": " - ",
+                    "applyLabel": "Aplicar",
+                    "cancelLabel": "Cancelar",
+                    "fromLabel": "DE",
+                    "toLabel": "HASTA",
+                    "customRangeLabel": "Custom",
+                    "daysOfWeek": [
+                        "Dom",
+                        "Lun",
+                        "Mar",
+                        "Mie",
+                        "Jue",
+                        "Vie",
+                        "Sáb"
+                    ],
+                    "monthNames": [
+                        "Enero",
+                        "Febrero",
+                        "Marzo",
+                        "Abril",
+                        "Mayo",
+                        "Junio",
+                        "Julio",
+                        "Agosto",
+                        "Septiembre",
+                        "Octubre",
+                        "Noviembre",
+                        "Diciembre"
+                    ],
+                    "firstDay": 1
+                }
+            }, cb);
+
+            cb(start, end);
+            //** ********************************************************************** */
 
 
-        // Se carga el Slider
-        $('#range').html(`
-            <input id="mySlider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="[5,20]"/>
-            <span style="
-            margin-left: 10px;" id="mySliderCurrentSliderValLabel">Intervalo: 
-                [<span id="mySliderVal">5,20</span>] (años)
-            </span>
-        `);
+            //** ****************************Slider**************************** */
+            $('#range').html(`
+                <input id="mySlider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="50" data-slider-step="1" data-slider-value="[5,20]"/>
+                <span style="
+                margin-left: 10px;" id="mySliderCurrentSliderValLabel">Intervalo: 
+                    [<span id="mySliderVal">5,20</span>] (años)
+                </span>
+            `);
 
-        $("#mySlider").slider();
+            $("#mySlider").slider();
 
-        $("#mySlider").on("slide", function (slideEvt) {
-            $("#mySliderVal").text(slideEvt.value);
+            $("#mySlider").on("slide", function (slideEvt) {
+                $("#mySliderVal").text(slideEvt.value);
+            });
+            //** ********************************************************************** */
+
+
+            //** ********************************************************************** */
+            LoadTiposComportamientosCheck();
+
+            $('#i_genero').on('click', function () {
+                var checked = this.checked;
+
+                if (checked) {
+                    $('#check_genero').show();
+                } else {
+                    $('#check_genero').hide();
+                }
+            });
+
+            var status = false;
+            $('#i_grupo').on('click', function () {
+                var checked = this.checked;
+                if (!status) {
+                    LoadGrupos();
+                    status = true;
+                }
+                if (checked) {
+                    $('#check_grupo').show();
+                    $("#all_grupos").on('click', function () {
+                        var checked = this.checked;
+                        if (checked) {
+                            $("#grupo_id option").prop('selected', true);
+                            $("#grupo_id").trigger('change');
+                        } else {
+                            $("#grupo_id option").prop('selected', false);
+                            $("#grupo_id").trigger('change');
+                        }
+                    });
+                } else {
+                    $('#check_grupo').hide();
+                }
+            });
+
+
+            $('#i_edad').on('click', function () {
+                var checked = this.checked;
+                if (checked) {
+                    $('#check_edad').show();
+                } else {
+                    $('#check_edad').hide();
+                }
+            });
+            //** ********************************************************************** */
+
+            $('#generar').on('click', function (){
+                var ArrayConducta = [];
+                var ArrayGenero = [];
+                var ArrayEdad = [];
+                var ArrayGrupo = [];
+
+                $('input[name="conducta"]:checkbox:checked').each(
+                    function () {
+                        if ($(this).val() != 'on') {
+                            ArrayConducta.push($(this).val());
+                        }
+                    }
+                );
+                $('input[name="genero"]:checkbox:checked').each(
+                    function () {
+                        if ($(this).val() != 'on') {
+                            ArrayGenero.push($(this).val());
+                        }
+                    }
+                );
+
+                // var rangoEdad = $('#mySlider').val();
+                ArrayEdad = $('#mySlider').val().split(",");
+                ArrayGrupo = $('#grupo_id').val();
+
+                let datos = {
+                    fecha_i: fechas.fecha_i,
+                    fecha_f: fechas.fecha_f,
+                    conductas_id: ArrayConducta,
+                    generos: ArrayGenero,
+                    edades: ArrayEdad,
+                    grupos_id: ArrayGrupo
+                };
+                openWindowWithPostRequest('/download_pdf2', datos);
+            });
         });
+        //** ********************************************************************** */
+
 
         // funcion Enviar
-        $('#save').on('click ', function () {
-            ArrayTC = [];
-            ArrayG = [];
-            fecha = [];
-            var valor;
+        // $('#save').on('click ', function () {
+        //     ArrayTC = [];
+        //     ArrayG = [];
+        //     fecha = [];
+        //     var valor;
 
-            $('input[name="tc"]:checkbox:checked').each(
-                function () {
-                    if ($(this).val() != 'on') {
-                        ArrayTC.push($(this).val());
-                    }
-                }
-            );
+        //     $('input[name="conducta"]:checkbox:checked').each(
+        //         function () {
+        //             if ($(this).val() != 'on') {
+        //                 ArrayConducta.push($(this).val());
+        //             }
+        //         }
+        //     );
 
-            $('input[name="genero"]:checkbox:checked').each(
-                function () {
-                    if ($(this).val() != 'on') {
-                        ArrayG.push($(this).val());
-                    }
-                }
-            );
-            fecha.push(fi);
-            fecha.push(ff);
-            valor = $('#mySlider').val();
+        //     $('input[name="genero"]:checkbox:checked').each(
+        //         function () {
+        //             if ($(this).val() != 'on') {
+        //                 ArrayGenero.push($(this).val());
+        //             }
+        //         }
+        //     );
+        //     fecha.push(fi);
+        //     fecha.push(ff);
+        //     valor = $('#mySlider').val();
 
-            console.log("Conducta: " + ArrayTC);
-            console.log("Genero: " + ArrayG);
-            console.log("fecha: " + fecha);
-            console.log("Rango edad: " + valor.split(","));
-        });
+        //     console.log("Conducta: " + ArrayTC);
+        //     console.log("Genero: " + ArrayG);
+        //     console.log("fecha: " + fecha);
+        //     console.log("Rango edad: " + valor.split(","));
+        // });
 
 
         // window.open("/comportamientosPdf", "_blank");
     });
 
 
-    function openWindowWithPostRequest(params) {
-        var winName = 'reporte general';
-        var winURL = '/download_pdf';
-        var windowoption = 'resizable=yes,height=600,width=800,location=0,menubar=0,scrollbars=1';
+    function openWindowWithPostRequest(url, params) {
+        var winName = 'reporte';
+        var winURL = url;
+        // var windowoption = 'resizable=yes,height=1000,width=800,location=0,menubar=0,scrollbars=1';
 
         var form = document.createElement("form");
         form.setAttribute("method", "post");
@@ -604,24 +702,48 @@ $(document).ready(function () {
         for (var i in params) {
             if (params.hasOwnProperty(i)) {
                 var input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = i;
-                    input.value = params[i];
-                    form.appendChild(input);
+                input.type = 'hidden';
+                input.name = i;
+                input.value = params[i];
+                form.appendChild(input);
             }
         }
 
         let csrfField = document.createElement('input');
-            csrfField.setAttribute('type', 'hidden');
-            csrfField.setAttribute('name', '_token');
-            csrfField.setAttribute('value', $('meta[name="csrf-token"]').attr('content'));
-            form.appendChild(csrfField);
+        csrfField.setAttribute('type', 'hidden');
+        csrfField.setAttribute('name', '_token');
+        csrfField.setAttribute('value', $('meta[name="csrf-token"]').attr('content'));
+        form.appendChild(csrfField);
 
         document.body.appendChild(form);
-        window.open('', winName, windowoption);
+        window.open('', winName);
         form.target = winName;
         form.submit();
         document.body.removeChild(form);
+    }
+
+    function LoadGrupos() {
+        $("#grupo_id").select2({
+            placeholder: 'Seleccione el grupo',
+            allowClear: true,
+            dropdownParent: modal2,
+            dropdownAutoWidth: false,
+        });
+
+        $.ajax({
+            url: '/api/grupos',
+            type: "GET",
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            dataType: "JSON",
+        })
+            .done(function (response) {
+                for (var i in response.data) {
+                    $("#grupo_id").append(`<option value='${response.data[i].id}'>${response.data[i].grado} - ${response.data[i].curso}</option>`);
+                }
+            })
+            .fail(function () {
+                console.log("error");
+            });
     }
 
     function LoadEstudiantes() {
@@ -683,28 +805,20 @@ $(document).ready(function () {
             })
     }
 
-    function LoadTiposComportamientos2() {
+    function LoadTiposComportamientosCheck() {
         $.ajax({
             url: '/api/tipo_comportamientos',
         })
             .done(function (response) {
-                // $("#tipos_comportamientos").append(`
-                //     <div class="checkbox">
-                //         <label style="font-weight: bold;">
-                //             <input id="tc_all" type="checkbox">Select all</input>
-                //         </label>
-                //     </div>
-                // `);
                 for (var i in response.data) {
-                    $("#tipos_comportamientos").append(`
-                    <div class="checkbox">
-                        <label>
-                            <input id="tc_${i}" value="${response.data[i].id}" name="tc" type="checkbox">${response.data[i].titulo}
-                        </label>
-                    </div>
-                `)
+                    $("#check_conducta").append(`
+                        <div class="checkbox">
+                            <label>
+                                <input id="tc_${i}" value="${response.data[i].id}" name="conducta" type="checkbox">${response.data[i].titulo}
+                            </label>
+                        </div>
+                    `)
                 }
-
             })
             .fail(function () {
                 console.log("error");
@@ -778,77 +892,84 @@ $(document).ready(function () {
     }
 
     function ModalReporteAvanzado() {
-        $('#modal_tam').removeClass('modal-lg');
-        $('#modal_tam').addClass('modal-md');
-        modal.find('.modal-content').empty().append(`
+        $('#modal2_tam').removeClass('modal-lg');
+        $('#modal2_tam').addClass('modal-md');
+        modal2.find('.modal-content').empty().append(`
         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <a class="btn pull-left" id="back"><i class="fas fa-arrow-left"></i></a>
             <h4 class="modal-title">Crear Reporte</h4>
         </div>
+
         <div class="modal-body">
 
+
             <div class="row">
-                
-            <!-- centro -->
-            <div class="panel-body">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <label>Fecha del registro: </label>
+                    <div id="reportrange"
+                        style="background: #fff; cursor: pointer; 
+                        padding: 5px 10px; border: 1px solid #ccc; 
+                        width: 100%; margin-bottom: 10px;>
+                        <i class="fa fa-calendar"></i>&nbsp;
+                        <span></span> <i class="fa fa-caret-down"></i>
+                    </div>
+                </div>
+            </div> 
 
-                <div class="row">
+            <div class="row">
+                <div class="col-lg-6 col-sm-12 col-xs-12">
+                    <label>Incluir</label>
+                    <div class="checkbox">
+                        <label>
+                            <input id="i_grupo" type="checkbox">Grupo
+                        </label>
+                    </div>
+                    <div id="check_grupo" style="display: none; margin-left: 10px;">
+                        <div class="input-group">
+                            <select class="form-control" name="gupos[]" multiple="multiple" id="grupo_id" style="width: 100% !important;">
 
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <label>Fecha del registro: </label>
-                        <div id="reportrange"
-                            style="background: #fff; cursor: pointer; 
-                            padding: 5px 10px; border: 1px solid #ccc; 
-                            width: 100%; margin-bottom: 10px;>
-                            <i class="fa fa-calendar"></i>&nbsp;
-                            <span></span> <i class="fa fa-caret-down"></i>
+                            </select>
+                            <input type="checkbox" id="all_grupos" >Select All
                         </div>
                     </div>
-                </div> 
-
-                <div class="row">
-
-                    <div class="col-lg-6 col-sm-12 col-xs-12">
-                        <label>Conductas</label>
-                        <div id="tipos_comportamientos">
-                            
-                        </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="i_genero" type="checkbox">Genero
+                        </label>
                     </div>
-
-                    <div class="col-lg-6 col-sm-12 col-xs-12">
-                        <label>Genero</label>
+                    <div id="check_genero" style="display: none; margin-left: 10px;">
                         <div class="checkbox">
                             <label>
-                                <input id="M" value="M" name="genero" type="checkbox">Masculino
+                                <input id="i_m" value="M" name="genero" type="checkbox">Masculino
                             </label>
                         </div>
                         <div class="checkbox">
                             <label>
-                                <input id="F" value="F" name="genero" type="checkbox">Femenino
+                                <input id="i_f" value="F" name="genero" type="checkbox">Femenino
                             </label>
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-                    <label>Edad</label>
-                        <div id="range" style="
-                        margin-left: 10px;">
-                            
-                        </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="i_edad" type="checkbox">Edad
+                        </label>
+                    </div>
+                    <div id="check_edad" style="display: none; margin-left: 10px;">
+                        <div style="margin-top: 10px;" id="range" style="margin-left: 10px;"></div>
                     </div>
                 </div>
 
-            </div>
-            
-            <!--Fin centro -->
-            
+                <div class="col-lg-6 col-sm-12 col-xs-12">
+                    <label>Tipos de conducta</label>
+                    <div id="check_conducta">
 
+                    </div>
+                </div>
         </div>
 
         <div class="modal-footer">
-            <button type="button" class="btn btn-primary" id="save">Enviar</button>
+            <button type="button" class="btn btn-primary" id="generar">Generar PDF</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
     `);
@@ -1077,7 +1198,7 @@ $(document).ready(function () {
                             <option value=""> Selecione un estado </option>
                             <option value="1"> cumplida </option>
                             <option value="2"> incumplida </option>
-                            <option value="0"> en espera </option>
+                            <option value="3"> en espera </option>
                         </select>
                     </div>
 

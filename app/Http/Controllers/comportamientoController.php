@@ -32,88 +32,6 @@ class comportamientoController extends AppBaseController
         $this->comportamientoRepository = $comportamientoRepo;
     }
 
-    public function createPDF(Request $request)
-    {
-        $user = Auth()->user();
-        if ($user->havePermission('make.reportes')) {
-
-            // $edad = $request['r_edad'];
-            // $fecha = $request['fecha'];
-            // $conducta  = $request['conducta'];
-
-            set_time_limit(300);
-
-            // $data = tipoComportamiento::all();
-            $data = DB::table(DB::raw('tipo_comportamientos tc'))->where(DB::raw('tc.deleted_at'), '=', NULL)
-                ->leftjoin(DB::raw('comportamientos c'), 'c.tipo_comportamiento_id', '=', 'tc.id')
-                ->leftjoin(DB::raw('actividades ac'), 'ac.comportamiento_id', '=', 'c.id')
-                ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
-                ->select(
-                    DB::raw('c.id'),
-                    DB::raw('c.fecha'),
-                    DB::raw('tc.titulo'),
-                    DB::raw('c.titulo  AS casos'),
-                    DB::raw('c.descripcion  AS caracteristicas'),
-                    DB::raw('ac.estado'),
-                    DB::raw('ac.titulo AS estrategia')
-                )
-                ->groupBy(
-                    DB::raw('c.id'),
-                    DB::raw('c.fecha'),
-                    DB::raw('tc.titulo'),
-                    DB::raw('ac.estado'),
-                    DB::raw('c.descripcion'),
-                    DB::raw('ac.titulo'),
-                    DB::raw('c.titulo')
-                )
-                ->get();
-
-            $count = DB::table(DB::raw('tipo_comportamientos tc'))->where(DB::raw('tc.deleted_at'), '=', NULL)
-                ->leftjoin(DB::raw('comportamientos c'), 'c.tipo_comportamiento_id', '=', 'tc.id')
-                ->leftjoin(DB::raw('actividades ac'), 'ac.comportamiento_id', '=', 'c.id')
-                ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
-                ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
-                ->select(
-                    DB::raw('tc.titulo'),
-                    DB::raw('COUNT(tc.id) as cantidad'),
-                )
-                ->groupBy(DB::raw('tc.titulo'))
-                ->get();
-
-            $psi = DB::table(DB::raw('users u'))
-                ->join(DB::raw('psicologos p'), 'p.correo', '=', 'u.email')
-                ->select(
-                    DB::raw("CONCAT(p.nombres,' ',p.apellidos) AS psicologo"),
-                    DB::raw('p.correo'),
-                    DB::raw('p.telefono'),
-                    DB::raw("CONCAT(p.tipoIdentificacion,'. ',p.identificacion) AS id"),
-                )
-                ->get();
-
-
-
-            // dd($data);
-
-
-            strftime("%A %d de %B del %Y");
-            view()->share('comportamientos', [
-                'data' => $data,
-                'fecha' => Carbon::now()->format('d-m-Y'),
-                'count' => $count,
-                'psi' => $psi,
-                'fechaFormat' => Carbon::now()->toFormattedDateString(),
-            ]);
-
-            $pdf = PDF::loadView('pdf_view', $data)
-                ->setPaper('a4', 'landscape');
-
-            // return $pdf->stream('pdf_file.pdf');
-            return view('pdf_view');
-        } else {
-            return redirect('/home');
-        }
-    }
-
     public function download_pdf(Request $request){
         $user = Auth()->user();
         if ($user->havePermission('make.reportes')) {
@@ -126,7 +44,7 @@ class comportamientoController extends AppBaseController
                 ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                 ->where(DB::raw('tc.deleted_at'), '=', NULL)
                 ->where(DB::raw('c.deleted_at'), '=', NULL)
-                ->whereIn(DB::raw('c.fecha'), $r)
+                ->whereBetween(DB::raw('c.fecha'), [$r['fecha_i'], $r['fecha_f']])
                 ->select(
                     DB::raw('c.id'),
                     DB::raw('c.fecha'),
@@ -147,6 +65,24 @@ class comportamientoController extends AppBaseController
                 )
                 ->get();
 
+            $consulta2 = DB::table(DB::raw('tipo_comportamientos tc'))
+                ->leftjoin(DB::raw('comportamientos c'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                ->leftjoin(DB::raw('actividades ac'), 'ac.comportamiento_id', '=', 'c.id')
+                ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+                ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
+                ->where(DB::raw('tc.deleted_at'), '=', NULL)
+                ->where(DB::raw('c.deleted_at'), '=', NULL)
+                ->whereBetween(DB::raw('c.fecha'), [$r['fecha_i'], $r['fecha_f']])
+                ->selectRaw("tc.titulo,
+                    SUM(CASE WHEN e.sexo = 'M' THEN 1 ELSE 0 END) AS Masculino,
+                    SUM(CASE when e.sexo = 'F' THEN 1 ELSE 0 END) AS Femenino,
+                    COUNT(e.sexo) AS total
+                ")
+                ->groupBy(
+                    DB::raw('tc.titulo'),
+                )
+                ->get();
+
             
             $conteo = DB::table(DB::raw('tipo_comportamientos tc'))
                 ->leftjoin(DB::raw('comportamientos c'), 'c.tipo_comportamiento_id', '=', 'tc.id')
@@ -154,7 +90,7 @@ class comportamientoController extends AppBaseController
                 ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                 ->where(DB::raw('tc.deleted_at'), '=', NULL)
                 ->where(DB::raw('c.deleted_at'), '=', NULL)
-                ->whereIn(DB::raw('c.fecha'), $r)
+                ->whereBetween(DB::raw('c.fecha'), [$r['fecha_i'], $r['fecha_f']])
                 ->select(
                     DB::raw('tc.titulo'),
                     DB::raw('COUNT(tc.titulo)  AS cantidad'),
@@ -171,6 +107,7 @@ class comportamientoController extends AppBaseController
 
             $data = [
                 'consulta' => $consulta,
+                'consulta2' => $consulta2,
                 'conteo' => $conteo,
                 'total' => $cont,
                 'fecha_hoy' => Carbon::now()->format('d-m-Y'),
@@ -182,6 +119,82 @@ class comportamientoController extends AppBaseController
             // return view('pdf_view')->with($data);
             // return $data;
             return $pdf->stream('report.pdf');
+        } else {
+            return redirect('/home');
+        }
+    }
+
+    public function download_pdf2(Request $request){
+        $user = Auth()->user();
+        if ($user->havePermission('make.reportes')) {
+
+            $r = $request->all();
+
+            $edad = explode(",", $r['edades']);
+            $conducta = explode(",", $r['conductas_id']);
+            $genero = explode(",", $r['generos']);
+            $grupo = explode(",", $r['grupos_id']);
+
+            $consulta = DB::table(DB::raw('tipo_comportamientos tc'))
+                ->leftjoin(DB::raw('comportamientos c'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                ->leftjoin(DB::raw('actividades ac'), 'ac.comportamiento_id', '=', 'c.id')
+                ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+                ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
+                ->where(DB::raw('tc.deleted_at'), '=', NULL)
+                ->where(DB::raw('c.deleted_at'), '=', NULL)
+                ->whereBetween(DB::raw('c.fecha'), [$r['fecha_i'], $r['fecha_f']])
+                ->whereBetween(DB::raw('e.edad'), [$edad[0], $edad[1]])
+                ->whereIn(DB::raw('tc.id'), $conducta)
+                ->whereIn(DB::raw('e.sexo'), $genero)
+                ->whereIn(DB::raw('e.grupo_id'), $grupo)
+                ->select(
+                    DB::raw('c.id'),
+                    DB::raw('c.fecha'),
+                    DB::raw('tc.titulo'),
+                    DB::raw('c.titulo  AS casos'),
+                    DB::raw('e.edad'),
+                    DB::raw('e.sexo'),
+                    DB::raw('CONCAT(g.grado, "-", g.curso) as curso'),
+                    DB::raw('c.descripcion  AS caracteristicas'),
+                    DB::raw('ac.estado'),
+                    DB::raw('ac.titulo AS estrategia')
+                )
+                ->groupBy(
+                    DB::raw('c.id'),
+                    DB::raw('c.fecha'),
+                    DB::raw('tc.titulo'),
+                    DB::raw('ac.estado'),
+                    DB::raw('e.edad'),
+                    DB::raw('e.sexo'),
+                    DB::raw('c.descripcion'),
+                    DB::raw('ac.titulo'),
+                    DB::raw('c.titulo')
+                )
+                ->get();
+
+                $consulta2 = DB::table(DB::raw('tipo_comportamientos tc'))
+                ->leftjoin(DB::raw('comportamientos c'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                ->leftjoin(DB::raw('actividades ac'), 'ac.comportamiento_id', '=', 'c.id')
+                ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+                ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
+                ->where(DB::raw('tc.deleted_at'), '=', NULL)
+                ->where(DB::raw('c.deleted_at'), '=', NULL)
+                ->whereBetween(DB::raw('c.fecha'), [$r['fecha_i'], $r['fecha_f']])
+                ->whereBetween(DB::raw('e.edad'), [$edad[0], $edad[1]])
+                ->whereIn(DB::raw('tc.id'), $conducta)
+                ->whereIn(DB::raw('e.sexo'), $genero)
+                ->whereIn(DB::raw('e.grupo_id'), $grupo)
+                ->selectRaw("tc.titulo,
+                    SUM(CASE WHEN e.sexo = 'M' THEN 1 ELSE 0 END) AS Masculino,
+                    SUM(CASE when e.sexo = 'F' THEN 1 ELSE 0 END) AS Femenino,
+                    COUNT(e.sexo) AS total
+                ")
+                ->groupBy(
+                    DB::raw('tc.titulo'),
+                )
+                ->get();
+            
+            return $consulta2;
         } else {
             return redirect('/home');
         }
