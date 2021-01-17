@@ -53,6 +53,7 @@ Route::get('/getComportamientos', 'comportamientoController@getComportamientos')
 Route::get('/getCountComp', 'comportamientoController@getCountComp');
 Route::post('/download_pdf2', 'comportamientoController@download_pdf2');
 Route::post('/download_pdf', 'comportamientoController@download_pdf');
+Route::post('/import_xlsx', 'comportamientoController@import_xlsx');
 
 Route::resource('actividades', 'actividadesController');
 Route::post('/add_actividades', 'actividadesController@store');

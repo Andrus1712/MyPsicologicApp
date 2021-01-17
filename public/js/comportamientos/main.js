@@ -469,6 +469,7 @@ $(document).ready(function () {
 
             /** Acion al generar el pdf */
             $('#generar').on('click', function () {
+                // https://quickchart.io/chart?bkg=white&c={type:%27bar%27,data:{labels:[2012,2013,2014,2015,2016],datasets:[{label:%27Users%27,data:[120,60,50,180,120]}]}}
                 openWindowWithPostRequest('/download_pdf', fechas)
             });
 
@@ -614,7 +615,7 @@ $(document).ready(function () {
             });
             //** ********************************************************************** */
 
-            $('#generar').on('click', function (){
+            $('#generar').on('click', function () {
                 var ArrayConducta = [];
                 var ArrayGenero = [];
                 var ArrayEdad = [];
@@ -687,6 +688,74 @@ $(document).ready(function () {
 
 
         // window.open("/comportamientosPdf", "_blank");
+    });
+
+    $('#import-data').on('click', function () {
+        modal.modal("show");
+        ModalImport();
+
+        $('#save').on('click', function () {
+            var form = new FormData();
+            var archivos = 0;
+            jQuery.each(jQuery('#multimedia')[0].files, function (i, file) {
+                form.append('file' + i, file);
+                archivos++;
+            });
+            form.append('archivos', archivos);
+
+            $.ajax({
+                url: "/import_xlsx",
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: form,
+                processData: false,
+                contentType: false,
+            })
+                .done(function (response) {
+                    toastr.success("Comportamiento registrado");
+                    setTimeout(function () { modal.modal("hide") }, 600);
+
+                    var arr = response.split('XLSX');
+                    console.log(arr[1]);
+
+
+                    var url = arr[1];
+                    var oReq = new XMLHttpRequest();
+                    oReq.open("GET", url, true);
+                    oReq.responseType = "arraybuffer";
+
+                    oReq.onload = function (e) {
+                        var arraybuffer = oReq.response;
+
+                        /* convert data to binary string */
+                        var data = new Uint8Array(arraybuffer);
+                        var arr = new Array();
+                        for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+                        var bstr = arr.join("");
+
+                        /* Call XLSX */
+                        var workbook = XLSX.read(bstr, { type: "binary" });
+
+                        /* DO SOMETHING WITH workbook HERE */
+                        var first_sheet_name = workbook.SheetNames[0];
+                        /* Get worksheet */
+                        var worksheet = workbook.Sheets[first_sheet_name];
+                        var data = XLSX.utils.sheet_to_json(worksheet, { raw: true });
+                        console.log(data);
+
+                    }
+
+                    oReq.send();
+                })
+                .fail(function () {
+                    toastr.error("Ha ocurrido un error");
+                })
+                .always(function () {
+                    $("#save").addClass("disabled");
+                });
+        });
     });
 
 
@@ -1026,6 +1095,37 @@ $(document).ready(function () {
                     <a id="btn_reporte_avanzado" class="btn bg-purple">Reporte vanzado</a>
                 </div>
             </div>
+        </div>
+    `);
+
+    }
+
+    function ModalImport() {
+        $('#modal1_tam').removeClass('modal-lg');
+        $('#modal1_tam').addClass('modal-md');
+        modal.find('.modal-content').empty().append(`
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Crear Reporte</h4>
+        </div>
+        <div class="modal-body">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <a class="btn btn-secondary hide" id="rutaFile"></a>
+                            <br>
+                        <label>Multimedia: </label>
+                        <input type="file" name="files[]" id="multimedia">
+                        
+                        <p class="help-block">Suba archivo que ayude a reportar el comportamiento.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="save">Guardar</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
     `);
 

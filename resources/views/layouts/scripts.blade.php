@@ -64,4 +64,6 @@
 {{-- <script src="../assets/range-slider-master/js/rSlider.min.js"></script> --}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/8.0.0/bootstrap-slider.min.js"></script>
 
+<script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+
 <script src="../js/session.js"></script>

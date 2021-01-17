@@ -105,6 +105,12 @@ class comportamientoController extends AppBaseController
                     $cont += intval($value->cantidad);
                 }
 
+            //Importar imagen 
+            $img_url = "https://quickchart.io/chart?c={type:'doughnut',data:{labels:['February','March','April','May'],datasets:[{data:[60,70,180,190]}]},options:{plugins:{doughnutlabel:{labels:[{text:'550',font:{size:20}},{text:'total'}]}}}}";
+            $content = file_get_contents($img_url);
+
+            file_put_contents("./documentosPSI/graph/foto.jpg", $content);
+
             $data = [
                 'consulta' => $consulta,
                 'consulta2' => $consulta2,
@@ -198,6 +204,23 @@ class comportamientoController extends AppBaseController
         } else {
             return redirect('/home');
         }
+    }
+
+    public function import_xlsx (Request $request) {
+        \File::deleteDirectory('./documentosPSI/xlxs');
+
+        $url_multimedia = $request->archivos != 0 ? '' : null;
+
+            for ($i = 0; $i < $request->archivos; $i++) {
+                if (is_numeric($i)) {
+                    if ($request->file("file$i")) {
+                        $path = Storage::disk('public')->put('documentosPSI/xlxs', $request->file("file$i"));
+                        $url_multimedia .= 'XLSX./' . $path;
+                    }
+                }
+            }
+            
+        return $url_multimedia;
     }
 
     /**
@@ -401,118 +424,6 @@ class comportamientoController extends AppBaseController
         ];
         return response()->json($datos);
     }
-
-    // public function getComportamientos()
-    // {
-    //     $queryUsers = DB::table('role_user')
-    //         ->select('role_user.*')
-    //         ->where('role_user.user_id', '=', Auth()->user()->id)
-    //         ->limit(1)
-    //         ->get();
-    //     if (count($queryUsers) != 0) {
-    //         //ROl psicoorientador
-    //         if ($queryUsers[0]->role_id == 1) {
-    //             $comportamientos = DB::table(DB::raw('comportamientos c'))->where(DB::raw('c.deleted_at'), '=', NULL)
-    //                 ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
-    //                 ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-    //                 ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
-    //                 ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
-    //                 ->where(DB::raw('c.deleted_at', '!=', 'date()'))
-    //                 ->select(
-    //                     'c.id',
-    //                     'c.cod_comportamiento',
-    //                     'c.titulo',
-    //                     'c.descripcion',
-    //                     'c.fecha',
-    //                     'c.emisor',
-    //                     'e.nombres',
-    //                     'e.apellidos',
-    //                     DB::raw('a.nombres as nombre_acudiente'),
-    //                     DB::raw('a.apellidos as apellido_acudiente'),
-    //                     'g.grado',
-    //                     'g.curso',
-    //                     'c.multimedia',
-    //                     'c.emisor',
-    //                     'e.created_at'
-    //                 )
-    //                 ->get();
-    //             return response()->json($comportamientos);
-    //         } else if ($queryUsers[0]->role_id == 2) {
-    //             $comportamientos = [];
-    //             return response()->json($comportamientos);
-    //         } else if ($queryUsers[0]->role_id == 3) {
-    //             $comportamientos = DB::table(DB::raw('comportamientos c'))->where(DB::raw('c.deleted_at'), '=', NULL)
-    //                 ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
-    //                 ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-    //                 ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
-    //                 ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
-    //                 ->where(DB::raw('c.deleted_at', '!=', 'date()'))
-    //                 ->where(DB::raw('c.emisor'), '=', auth()->user())
-    //                 ->select(
-    //                     'c.id',
-    //                     'c.cod_comportamiento',
-    //                     'c.titulo',
-    //                     'c.descripcion',
-    //                     'c.fecha',
-    //                     'e.nombres',
-    //                     'e.apellidos',
-    //                     'g.grado',
-    //                     'g.curso',
-    //                     'c.multimedia'
-    //                 )
-    //                 ->get();
-    //             return response()->json($comportamientos);
-    //         } else if ($queryUsers[0]->role_id == 4) {
-    //             $comportamientos = DB::table(DB::raw('comportamientos c'))->where(DB::raw('c.deleted_at'), '=', NULL)
-    //                 ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
-    //                 ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-    //                 ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
-    //                 ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
-    //                 ->where(DB::raw('c.deleted_at', '!=', 'date()'))
-    //                 ->where(DB::raw('c.emisor'), '=', auth()->user())
-    //                 ->select(
-    //                     'c.id',
-    //                     'c.cod_comportamiento',
-    //                     'c.titulo',
-    //                     'c.descripcion',
-    //                     'c.fecha',
-    //                     'e.nombres',
-    //                     'e.apellidos',
-    //                     'g.grado',
-    //                     'g.curso',
-    //                     'c.multimedia'
-    //                 )
-    //                 ->get();
-    //             return response()->json($comportamientos);
-    //         } else {
-    //             $comportamientos = DB::table(DB::raw('comportamientos c'))->where(DB::raw('c.deleted_at'), '=', NULL)
-    //                 ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
-    //                 ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-    //                 ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
-    //                 ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
-    //                 ->where(DB::raw('c.deleted_at', '!=', 'date()'))
-    //                 ->select(
-    //                     'c.id',
-    //                     'c.cod_comportamiento',
-    //                     'c.titulo',
-    //                     'c.descripcion',
-    //                     'c.fecha',
-    //                     'c.emisor',
-    //                     'e.nombres',
-    //                     'e.apellidos',
-    //                     DB::raw('a.nombres as nombre_acudiente'),
-    //                     DB::raw('a.apellidos as apellido_acudiente'),
-    //                     'g.grado',
-    //                     'g.curso',
-    //                     'c.multimedia',
-    //                     'c.emisor',
-    //                     'e.created_at'
-    //                 )
-    //                 ->get();
-    //             return response()->json($comportamientos);
-    //         }
-    //     }
-    // }
 
     public function getCountComp()
     {

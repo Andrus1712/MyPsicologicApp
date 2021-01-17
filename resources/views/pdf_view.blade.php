@@ -21,7 +21,7 @@
 
 </head>
 
-<body>
+<body onload="init()">
 
     <div class="container">
 
@@ -169,159 +169,164 @@
             </table>
 
             <h4 style="text-align: center">CONTEO DE CASOS QUE AFECTAN LA CONVIVENCIA ESCOLAR</h4>
-                <br>
+            <br>
 
-                <div class="col-xm-6 col-sm-6 col-md-6">
-                    <table class="table table-bordered">
+            <div class="col-xm-6 col-sm-6 col-md-6">
+                <table class="table table-bordered">
+                    <tr>
+                        <td align="center" colspan="2">
+                            <strong>
+                                <span style="font-size: 0.8em;">REPORTE DE CONDUCTAS</span>
+                            </strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong style="margin-left: 10px;">
+                                INSTITUCIÓN EDUCATIVA: LA RIBERA
+                            </strong>
+                        </td>
+
+                        <td>
+                            <strong style="margin-left: 10px;">
+                                FECHA: {{ $fecha_hoy }}
+
+                            </strong>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="center">
+                            <strong>
+                                <small>
+                                    CASO PRESENTADO
+                                </small>
+                            </strong>
+                        </td>
+
+                        <td align="center">
+                            <strong>
+                                <small>
+                                    CANTIDAD
+                                </small>
+                            </strong>
+                        </td>
+
+                    </tr>
+
+                    @foreach ($conteo as $item)
                         <tr>
-                            <td align="center" colspan="2">
-                                <strong>
-                                    <span style="font-size: 0.8em;">REPORTE DE CONDUCTAS</span>
-                                </strong>
-                            </td>
+                            <td>{{ $item->titulo }}</td>
+                            <td>{{ $item->cantidad }}</td>
                         </tr>
-                        <tr>
-                            <td>
-                                <strong style="margin-left: 10px;">
-                                    INSTITUCIÓN EDUCATIVA: LA RIBERA
-                                </strong>
-                            </td>
+                    @endforeach
 
-                            <td>
-                                <strong style="margin-left: 10px;">
-                                    FECHA: {{ $fecha_hoy }}
+                    <tr>
+                        <td>
+                            <strong>
+                                Total
+                            </strong>
+                        </td>
 
-                                </strong>
-                            </td>
-                        </tr>
+                        <td>
+                            <strong>
+                                {{ $total }}
+                            </strong>
+                        </td>
+                    </tr>
 
-                        <tr>
-                            <td align="center">
-                                <strong>
-                                    <small>
-                                        CASO PRESENTADO
-                                    </small>
-                                </strong>
-                            </td>
+                </table>
+            </div>
 
-                            <td align="center">
-                                <strong>
-                                    <small>
-                                        CANTIDAD
-                                    </small>
-                                </strong>
-                            </td>
+            <div class="col-xm-6 col-sm-6 col-md-6">
+                <table class="table table-bordered">
+                    <tr>
+                        <td align="center" colspan="3">
+                            <strong>
+                                <span style="font-size: 0.8em;">REPORTE DE CONDUCTAS POR GENERO</span>
+                            </strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <strong style="margin-left: 10px;">
+                                INSTITUCIÓN EDUCATIVA: LA RIBERA
+                            </strong>
+                        </td>
 
-                        </tr>
+                        <td colspan="1">
+                            <strong style="margin-left: 10px;">
+                                FECHA: {{ $fecha_hoy }}
+                            </strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2" align="center" style="width: 40%">
+                            <strong>
+                                <small>
+                                    CASO PRESENTADO
+                                </small>
+                            </strong>
+                        </td>
 
-                        @foreach ($conteo as $item)
-                            <tr>
-                                <td>{{ $item->titulo }}</td>
-                                <td>{{ $item->cantidad }}</td>
-                            </tr>
-                        @endforeach
+                        <td rowspan="1" align="center" style="width: 30%">
+                            <strong>
+                                <small>
+                                    GENERO
+                                </small>
+                            </strong>
+                        </td>
 
-                        <tr>
-                            <td>
-                                <strong>
+                        <td rowspan="2" align="center">
+                            <strong>
+                                <small>
                                     Total
-                                </strong>
-                            </td>
+                                </small>
+                            </strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td rowspan="1">
+                            <table style="width: 100%;">
+                                <tr>
+                                    <td align="center" style="width: 33%;">Masculino</td>
+                                    <td align="center" style="width: 33%;">Femenino</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
 
-                            <td>
-                                <strong>
-                                    {{ $total }}
-                                </strong>
-                            </td>
-                        </tr>
-
-                    </table>
-                </div>
-
-                <div class="col-xm-6 col-sm-6 col-md-6">
-                    <table class="table table-bordered">
+                    @foreach ($consulta2 as $item)
                         <tr>
-                            <td align="center" colspan="3">
-                                <strong>
-                                    <span style="font-size: 0.8em;">REPORTE DE CONDUCTAS POR GENERO</span>
-                                </strong>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">
-                                <strong style="margin-left: 10px;">
-                                    INSTITUCIÓN EDUCATIVA: LA RIBERA
-                                </strong>
-                            </td>
-
-                            <td colspan="1">
-                                <strong style="margin-left: 10px;">
-                                    FECHA: {{ $fecha_hoy }}
-                                </strong>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td rowspan="2" align="center" style="width: 40%">
-                                <strong>
-                                    <small>
-                                        CASO PRESENTADO
-                                    </small>
-                                </strong>
-                            </td>
-
-                            <td rowspan="1" align="center" style="width: 30%">
-                                <strong>
-                                    <small>
-                                        GENERO
-                                    </small>
-                                </strong>
-                            </td>
-
-                            <td rowspan="2" align="center">
-                                <strong>
-                                    <small>
-                                        Total
-                                    </small>
-                                </strong>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td rowspan="1">
+                            <td align="center">{{ $item->titulo }}</td>
+                            <td align="center">
                                 <table style="width: 100%;">
                                     <tr>
-                                        <td align="center" style="width: 33%;">Masculino</td>
-                                        <td align="center" style="width: 33%;">Femenino</td>
+                                        <td style="width: 33%; text-align: center;">
+                                            {{ $item->Masculino }}
+                                        </td>
+                                        <td style="width: 33%; text-align: center;">
+                                            {{ $item->Femenino }}
+                                        </td>
                                     </tr>
                                 </table>
                             </td>
+                            <td align="center">{{ $item->total }}</td>
                         </tr>
+                    @endforeach
 
-                        @foreach ($consulta2 as $item)
-                            <tr>
-                                <td align="center">{{ $item->titulo }}</td>
-                                <td align="center">
-                                    <table style="width: 100%;">
-                                        <tr>
-                                            <td style="width: 33%; text-align: center;">
-                                                {{ $item->Masculino }}
-                                            </td>
-                                            <td style="width: 33%; text-align: center;">
-                                                {{ $item->Femenino }}
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </td>
-                                <td align="center">{{ $item->total }}</td>
-                            </tr>
-                        @endforeach
+                </table>
 
-                    </table>
-
-                </div>
+            </div>
         </div>
+
+
+        <div class="page-break"></div>
+        <div class="row">
+            <img src="./documentosPSI/graph/foto.jpg" width="50%">
+        </div>
+
     </div>
-
-
 
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
