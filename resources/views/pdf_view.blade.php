@@ -171,7 +171,7 @@
             <h4 style="text-align: center">CONTEO DE CASOS QUE AFECTAN LA CONVIVENCIA ESCOLAR</h4>
             <br>
 
-            <div class="col-xm-6 col-sm-6 col-md-6">
+            <div class="col-md-12">
                 <table class="table table-bordered">
                     <tr>
                         <td align="center" colspan="2">
@@ -236,9 +236,11 @@
                     </tr>
 
                 </table>
+                <br>
+
             </div>
 
-            <div class="col-xm-6 col-sm-6 col-md-6">
+            <div class="col-md-12">
                 <table class="table table-bordered">
                     <tr>
                         <td align="center" colspan="3">
@@ -322,8 +324,19 @@
 
 
         <div class="page-break"></div>
-        <div class="row">
-            <img src="./documentosPSI/graph/foto.jpg" width="50%">
+        <div class="row" style="text-align: center;">
+            <table style="width: 100%;">
+                <tr>
+                    <td align="left"><img src="http://toolpsico.codet-colombia.com/img/logoreporte.png" width="140">
+                    </td>
+                </tr>
+            </table>
+            <h4>GRÁFICO</h4>
+            <br>
+            <div class="col-md-12">
+                <img src="./documentosPSI/graph/foto.jpg" width="50%">
+                <span>fig 1. Grafico de casos que afectan la conviviencia escolar</span>
+            </div>
         </div>
 
     </div>
