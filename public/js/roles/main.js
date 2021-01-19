@@ -187,6 +187,8 @@ $(document).ready(function() {
                     if (name == '') {
                         toastr.warning("Complete todos los campos")
                     } else {
+
+                        $('#loading-spinner').show();
                         $.ajax({
                                 url: '/api/roles/' + id,
                                 headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
@@ -200,10 +202,14 @@ $(document).ready(function() {
                             })
                             .done(function() {
                                 toastr.info("Rol actualizado");
-                                setTimeout(function() { modal.modal("hide") }, 600);
+                                setTimeout(function() {
+                                    $('#loading-spinner').hide();
+                                    modal.modal("hide")
+                                }, 600);
                                 Reload()
                             })
                             .fail(function() {
+                                $('#loading-spinner').hide();
                                 toastr.error("Ha ocurrido un error");
                             })
                             .always(function() {
@@ -339,53 +345,53 @@ function Modal() {
             <div class="col-md-6">
 
                 <label style="margin-right: 15px;">Ver: </label> 
-                <label><input id="ver_all" type="checkbox">Select all</input></label>
+                <label><input id="ver_all" type="checkbox">Selecionar Todos</input></label>
                 <div class="form-group">
 
                     <div class="checkbox">
                         <label>
-                            <input id="1" value="show.estudiantes" name="ver" type="checkbox">ver estudiantes
+                            <input id="1" value="show.estudiantes" name="ver" type="checkbox">Ver estudiantes
                         </label>
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input id="2" value="show.docentes" name="ver" type="checkbox">ver docentes
+                            <input id="2" value="show.docentes" name="ver" type="checkbox">Ver docentes
                         </label>
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input id="3" value="show.acudientes" name="ver"type="checkbox">ver acudientes
+                            <input id="3" value="show.acudientes" name="ver"type="checkbox">Ver acudientes
                         </label>
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input id="4" value="show.psicologos" name="ver" type="checkbox">ver psicoorentadores
+                            <input id="4" value="show.psicologos" name="ver" type="checkbox">Ver psicoorentadores
                         </label>
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input id="5" value="show.comportamientos" name="ver" type="checkbox">ver comportamientos
+                            <input id="5" value="show.comportamientos" name="ver" type="checkbox">Ver comportamientos
                         </label>
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input id="6" value="show.actividades" name="ver" type="checkbox">ver actividades  
+                            <input id="6" value="show.actividades" name="ver" type="checkbox">Ver actividades  
                         </label>
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input id="7" value="show.avances" name="ver" type="checkbox">ver avances  
+                            <input id="7" value="show.avances" name="ver" type="checkbox">Ver avances  
                         </label>
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input id="8" value="show.cursos" name="ver" type="checkbox">ver cursos 
+                            <input id="8" value="show.cursos" name="ver" type="checkbox">Ver cursos 
                         </label>
                     </div>
                     
                     
                     <label style="margin-right: 15px;">Editar: </label>
-                    <label><input id="editar_all" type="checkbox">Select all</input></label>
+                    <label><input id="editar_all" type="checkbox">Selecionar Todos</input></label>
                     <div class="checkbox">
                         <label>
                             <input id="9" value="edit.estudiantes" name="editar" type="checkbox">editar estudiantes
@@ -398,7 +404,7 @@ function Modal() {
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input id="11" value="edit.acudientes" name="editar" type="checkbox">edtar acudientes
+                            <input id="11" value="edit.acudientes" name="editar" type="checkbox">editar acudientes
                         </label>
                     </div>
                     <div class="checkbox">
@@ -428,7 +434,7 @@ function Modal() {
                     </div>
 
                     <label style="margin-right: 15px;">Sistema: </label>
-                    <label><input id="sistema_all" type="checkbox">Select all</input></label>
+                    <label><input id="sistema_all" type="checkbox">Selecionar Todos</input></label>
                     <div class="checkbox">
                         <label>
                             <input id="35" value="create.user" name="sistema" type="checkbox">crear usuarios
@@ -478,7 +484,7 @@ function Modal() {
                 <div class="form-group">
 
                     <label style="margin-right: 15px;">Crear: </label>
-                    <label><input id="crear_all" type="checkbox">Select all</input></label>
+                    <label><input id="crear_all" type="checkbox">Selecionar Todos</input></label>
                     <div class="checkbox">
                         <label>
                             <input id="25" value="create.estudiantes" name="crear" type="checkbox">crear estudiantes
@@ -521,7 +527,7 @@ function Modal() {
                     </div>
 
                     <label style="margin-right: 15px;">Eliminar: </label>
-                    <label><input id="eliminar_all" type="checkbox">Select all</input></label>
+                    <label><input id="eliminar_all" type="checkbox">Selecionar Todos</input></label>
                     <div class="checkbox">
                         <label>
                             <input id="17" value="delete.estudiantes" name="eliminar" type="checkbox">eliminar estudiantes
@@ -565,7 +571,7 @@ function Modal() {
                 
 
                     <label style="margin-right: 15px;">Especial: </label>
-                    <label><input id="especial_all" type="checkbox">Select all</input></label>
+                    <label><input id="especial_all" type="checkbox">Selecionar Todos</input></label>
                     <div class="checkbox">
                         <label>
                             <input id="33" value="make.reportes" name="especial" type="checkbox">generar reportes
@@ -590,7 +596,7 @@ function Modal() {
 
     <div class="modal-footer">
         <button type="button" class="btn btn-primary" id="save" >Guardar</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
     </div>
     `)
 }

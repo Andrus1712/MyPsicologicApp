@@ -263,7 +263,7 @@ $(document).ready(function() {
                 <p>${filtro[0].descripcion_tipo_comportamiento}</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
             </div>
             `)
     })
@@ -399,7 +399,7 @@ function ModalInfo() {
                 <p>${AllRegister}</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
             </div>
             `)
 }
@@ -445,7 +445,7 @@ function ModalHistorial(historial) {
     </table>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
     </div>
     `);
 }
@@ -522,7 +522,7 @@ function Modal() {
 
         <div class="modal-footer">
             <button type="button" class="btn btn-primary" id="save">Guardar</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
         </div>
     `)
     $("#fecha").datetimepicker({
@@ -584,7 +584,7 @@ function ModalReprogramar() {
 
         <div class="modal-footer">
             <button type="button" class="btn btn-primary" id="save">Guardar</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
         </div>
     `);
     $("#fechaReprogramar").datetimepicker({
