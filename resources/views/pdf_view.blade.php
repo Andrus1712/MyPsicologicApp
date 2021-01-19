@@ -240,7 +240,7 @@
 
             </div>
 
-            <div class="col-md-12">
+            {{-- <div class="col-md-12">
                 <table class="table table-bordered">
                     <tr>
                         <td align="center" colspan="3">
@@ -319,7 +319,8 @@
 
                 </table>
 
-            </div>
+            </div> --}}
+            
         </div>
 
 

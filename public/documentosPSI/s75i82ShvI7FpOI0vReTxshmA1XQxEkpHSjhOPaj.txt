@@ -1,8 +1,0 @@
-SELECT e.sexo, count(tc.titulo) AS cantidad, tc.titulo, c.fecha FROM tipo_comportamientos tc
-inner JOIN comportamientos c on c.tipo_comportamiento_id = tc.id
-INNER JOIN estudiantes e ON c.estudiante_id = e.id
-WHERE tc.deleted_at IS NULL AND c.deleted_at IS NULL AND 
-c.fecha BETWEEN '2021-01-01' AND '2021-01-30' AND
-e.sexo IN('M', 'F') AND 
-tc.id IN(1,2,3,4)
-GROUP BY e.sexo, tc.titulo, c.fecha

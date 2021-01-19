@@ -150,8 +150,8 @@ class comportamientoController extends AppBaseController
             $conducta = explode(",", $r['conductas_id']);
             $genero = explode(",", $r['generos']);
             $grupo = explode(",", $r['grupos_id']);
-
-            $consulta = DB::table(DB::raw('tipo_comportamientos tc'))
+            
+                $consulta = DB::table(DB::raw('tipo_comportamientos tc'))
                 ->leftjoin(DB::raw('comportamientos c'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                 ->leftjoin(DB::raw('actividades ac'), 'ac.comportamiento_id', '=', 'c.id')
                 ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
@@ -159,7 +159,10 @@ class comportamientoController extends AppBaseController
                 ->where(DB::raw('tc.deleted_at'), '=', NULL)
                 ->where(DB::raw('c.deleted_at'), '=', NULL)
                 ->whereBetween(DB::raw('c.fecha'), [$r['fecha_i'], $r['fecha_f']])
-                ->whereBetween(DB::raw('e.edad'), [$edad[0], $edad[1]])
+                ->when(!empty($edad), function($query, $edad){
+                    return $query->whereBetween(DB::raw('e.edad'), [$edad[0], $edad[1]]);
+                })
+                // ->whereBetween(DB::raw('e.edad'), [$edad[0], $edad[1]])
                 ->whereIn(DB::raw('tc.id'), $conducta)
                 ->whereIn(DB::raw('e.sexo'), $genero)
                 ->whereIn(DB::raw('e.grupo_id'), $grupo)
@@ -188,6 +191,8 @@ class comportamientoController extends AppBaseController
                 )
                 ->get();
 
+            
+
                 $consulta2 = DB::table(DB::raw('tipo_comportamientos tc'))
                 ->leftjoin(DB::raw('comportamientos c'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                 ->leftjoin(DB::raw('actividades ac'), 'ac.comportamiento_id', '=', 'c.id')
@@ -209,11 +214,76 @@ class comportamientoController extends AppBaseController
                     DB::raw('tc.titulo'),
                 )
                 ->get();
-            
-            return $consulta2;
+
+                $conteo = DB::table(DB::raw('tipo_comportamientos tc'))
+                ->leftjoin(DB::raw('comportamientos c'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                ->leftjoin(DB::raw('actividades ac'), 'ac.comportamiento_id', '=', 'c.id')
+                ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+                ->where(DB::raw('tc.deleted_at'), '=', NULL)
+                ->where(DB::raw('c.deleted_at'), '=', NULL)
+                ->whereBetween(DB::raw('c.fecha'), [$r['fecha_i'], $r['fecha_f']])
+                ->whereIn(DB::raw('tc.id'), $conducta)
+                ->whereIn(DB::raw('e.sexo'), $genero)
+                ->whereIn(DB::raw('e.grupo_id'), $grupo)
+                ->select(
+                    DB::raw('tc.titulo'),
+                    DB::raw('COUNT(tc.titulo)  AS cantidad'),
+                )
+                ->groupBy(
+                    DB::raw('tc.titulo'),
+                )
+                ->get();
+
+                $cont = 0;
+                foreach ($conteo as $value) {
+                    $cont += intval($value->cantidad);
+                }
+
+                $labels = "[";
+                $data_url = "[";
+                foreach ($conteo as $value) {
+                    $labels .= "'$value->titulo',";
+                    $data_url .= "'$value->cantidad',";
+                }
+                $labels .= "]";
+                $data_url .= "]";
+
+            //Importar imagen 
+            $img_url = "https://quickchart.io/chart?c={type:'doughnut',data:{labels:$labels,datasets:[{data:$data_url}]},options:{plugins:{doughnutlabel:{labels:[{text:'$cont',font:{size:20}},{text:'total'}]}}}}";
+            $content = file_get_contents($img_url);
+
+            file_put_contents("./documentosPSI/graph/foto.jpg", $content);
+
+            $data = [
+                'consulta' => $consulta,
+                'consulta2' => $consulta2,
+                'conteo' => $conteo,
+                'total' => $cont,
+                'fecha_hoy' => Carbon::now()->format('d-m-Y'),
+            ];
+
+            // $pdf = PDF::loadView('pdf_view', $data)
+            //     ->setPaper('a4', 'landscape');
+
+            // return view('pdf_view')->with($data);
+            return $consulta;
+            // return $pdf->stream('report.pdf');
         } else {
             return redirect('/home');
         }
+    }
+
+
+    public function guardar_xlsx (Request $request){
+        $json = $request->all();
+
+        $array = [];
+        foreach ($json as $key => $value) {
+            array_push($array, $value['Titulo']);
+        }
+        
+
+        return $array;
     }
 
     public function import_xlsx (Request $request) {
@@ -651,7 +721,6 @@ class comportamientoController extends AppBaseController
 
             $emisor = auth()->user();
 
-            // Descomentar
             $comportamiento = comportamiento::create([
                 'estudiante_id' => $request['estudiante_id'],
                 'tipo_comportamiento_id' => $request['tipo_comportamiento_id'] == 'null' ? null : $request['tipo_comportamiento_id'],
