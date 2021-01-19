@@ -34,7 +34,7 @@
 </head>
 <body class="hold-transition login-page" 
     style="
-        background-image: url('https://i.ibb.co/GTtpTKG/Sin-t-tulo-2.png');
+        background-image: url('https://scontent.fbaq5-1.fna.fbcdn.net/v/t1.0-9/121302693_124195569440464_3858449444354290234_o.jpg?_nc_cat=107&ccb=2&_nc_sid=a26aad&_nc_eui2=AeHhIEI_bQdlymnW9gN8pxTX1_MKyz7FNZ_X8wrLPsU1n1N3dM3au55DIYlPBI4Awe0RQZ170WoGqkgiZiG2O4xn&_nc_ohc=YFVwzDHOjr4AX8oN0Dy&_nc_ht=scontent.fbaq5-1.fna&oh=213710705e5960ef48f98015a62d219d&oe=602B9634');
         background-repeat: no-repeat;
         background-size: 100%;">
 <div class="login-box">
@@ -73,23 +73,23 @@
                 @endif
 
             </div>
-            <div class="row">
-                <div class="col-xs-8">
+            <div class="row justify-content-center h-100">
+                {{-- <div class="col-xs-8">
                     <div class="checkbox icheck">
                         <label>
                             <input type="checkbox" name="remember"> Remember Me
                         </label>
                     </div>
-                </div>
+                </div> --}}
                 <!-- /.col -->
-                <div class="col-xs-4">
+                <div class="col-xs-12 align-self-center text-center " >
                     <button type="submit" class="btn btn-primary btn-block btn-flat">Ingresar</button>
                 </div>
                 <!-- /.col -->
             </div>
         </form>
-
-        <a href="{{ url('/password/reset') }}">¿Olvidaste tu contraseña?</a><br>
+{{-- 
+        <a href="{{ url('/password/reset') }}">¿Olvidaste tu contraseña?</a><br> --}}
         {{-- <a href="{{ url('/register') }}" class="text-center">Register a new membership</a> --}}
 
     </div>

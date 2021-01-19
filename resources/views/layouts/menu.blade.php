@@ -64,16 +64,17 @@
 @if (Auth()->user()->havePermission('show.estudiantes') || Auth()->user()->havePermission('show.docentes')
 || Auth()->user()->havePermission('show.acudientes') || Auth()->user()->havePermission('show.psicologos'))
 <li class="header">General</li>
-@endif
-
 
 <li class="treeview " style="height: auto;">
     <a href="#">
-      <i class="fa fa-user"></i> <span>Usuarios</span>
+      <i class="fa fa-user"></i> <span> Usuarios</span>
       <span class="pull-right-container">
         <i class="fa fa-angle-left pull-right"></i>
       </span>
     </a>
+   
+       
+    
     <ul class="treeview-menu" style="display: none;">
       
       @if (Auth()->user()->havePermission('show.estudiantes'))
@@ -102,7 +103,9 @@
       
       
     </ul>
+    
   </li>
+  @endif
 
 @if (Auth()->user()->havePermission('show.user'))
 <li class="{{ Request::is('usuarios*') ? 'active' : '' }}">
@@ -112,7 +115,7 @@
 
 @if (Auth()->user()->havePermission('show.roles'))
 <li class="{{ Request::is('roles*') ? 'active' : '' }}">
-    <a href="{{ route('roles.index') }}"><i class="fa fa-users-cog"></i><span>Configuracion</span></a>
+    <a href="{{ route('roles.index') }}"><i class="fa fa-users-cog"></i><span>Configuracion Roles</span></a>
 </li>
 @endif
 

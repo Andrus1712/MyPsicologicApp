@@ -126,47 +126,63 @@ $(document).ready(function() {
             if (tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '' || fechaNacimiento == '' || telefono == '' || direccion == '') {
                 toastr.warning("Complete todos los campos")
             } else {
-                $('#loading-spinner').show();
-                $.ajax({
-                        url: '/api/acudientes',
-                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                        type: 'POST',
-                        data: {
-                            tipoIdentificacion: tipoIdentificacion,
-                            identificacion: identificacion,
-                            nombres: nombres,
-                            apellidos: apellidos,
-                            correo: correo,
-                            fechaNacimiento: fechaNacimiento,
-                            telefono: telefono,
-                            direccion: direccion,
-                        },
-                    })
-                    .done(function(response) {
-                        toastr.success("Acudiente agregado");
-                        setTimeout(function() {
-                            $('#loading-spinner').hide();
-                            modal.modal("hide")
-                        }, 600);
-                        Reload();
-                    })
-                    .fail(function(response) {
-                        $('#loading-spinner').hide();
-                        // console.log(response.responseJSON);
-                        if (response.responseJSON.message == "id-registrada") {
-                            toastr.warning("La identificacion ya se encuentra registrada");
-                        } else {
-                            toastr.error("Ha ocurrido un error");
-                        }
-                    })
-                    .always(function() {
-                        $("#save").addClass("disabled");
-                    });
+                if (!validarFechaMenorActual(fechaNacimiento)) {
+                    toastr.success("fecha es anterior")
+                        // $('#loading-spinner').show();
+                        // $.ajax({
+                        //         url: '/api/acudientes',
+                        //         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                        //         type: 'POST',
+                        //         data: {
+                        //             tipoIdentificacion: tipoIdentificacion,
+                        //             identificacion: identificacion,
+                        //             nombres: nombres,
+                        //             apellidos: apellidos,
+                        //             correo: correo,
+                        //             fechaNacimiento: fechaNacimiento,
+                        //             telefono: telefono,
+                        //             direccion: direccion,
+                        //         },
+                        //     })
+                        //     .done(function(response) {
+                        //         toastr.success("Acudiente agregado");
+                        //         setTimeout(function() {
+                        //             $('#loading-spinner').hide();
+                        //             modal.modal("hide")
+                        //         }, 600);
+                        //         Reload();
+                        //     })
+                        //     .fail(function(response) {
+                        //         $('#loading-spinner').hide();
+                        //         // console.log(response.responseJSON);
+                        //         if (response.responseJSON.message == "id-registrada") {
+                        //             toastr.warning("La identificacion ya se encuentra registrada");
+                        //         } else {
+                        //             toastr.error("Ha ocurrido un error");
+                        //         }
+                        //     })
+                        //     .always(function() {
+                        //         $("#save").addClass("disabled");
+                        //     });
+                } else {
+                    toastr.warning("Fecha no valida")
+                }
             }
 
         });
     })
 });
+
+function validarFechaMenorActual(date) {
+
+    console.log("fecha a validar: ", date)
+    var today = new Date('YYYY-mm-dd');
+    console.log("hoy: ", today)
+    if (date >= today)
+        return false;
+    else
+        return true;
+}
 
 function Modal() {
     modal.find('.modal-content').empty().append(`
