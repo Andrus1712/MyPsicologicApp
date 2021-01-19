@@ -116,10 +116,10 @@ class comportamientoController extends AppBaseController
                 $data_url .= "]";
 
             //Importar imagen 
-            $img_url = "https://quickchart.io/chart?c={type:'doughnut',data:{labels:$labels,datasets:[{data:$data_url}]},options:{plugins:{doughnutlabel:{labels:[{text:'$cont',font:{size:20}},{text:'total'}]}}}}";
-            $content = file_get_contents($img_url);
+            // $img_url = "https://quickchart.io/chart?c={type:'doughnut',data:{labels:$labels,datasets:[{data:$data_url}]},options:{plugins:{doughnutlabel:{labels:[{text:'$cont',font:{size:20}},{text:'total'}]}}}}";
+            // $content = file_get_contents($img_url);
 
-            file_put_contents("./documentosPSI/graph/foto.jpg", $content);
+            // file_put_contents("./documentosPSI/graph/grafico.jpg", $content);
 
             $data = [
                 'consulta' => $consulta,
@@ -132,9 +132,9 @@ class comportamientoController extends AppBaseController
             $pdf = PDF::loadView('pdf_view', $data)
                 ->setPaper('a4', 'landscape');
 
-            // return view('pdf_view')->with($data);
-            // return $data_url;
-            return $pdf->stream('report.pdf');
+            return view('pdf_view')->with($data);
+            // return $consulta;
+            // return $pdf->stream('report.pdf');
         } else {
             return redirect('/home');
         }

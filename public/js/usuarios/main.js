@@ -4,15 +4,15 @@ var AllRegister = []
 var permisos = []
 
 
-$(document).ready(function () {
+$(document).ready(function() {
     Reload()
 
-    $('#add-user').on('click', function () {
+    $('#add-user').on('click', function() {
         modal.modal('show')
         Modal()
         LoadRoles()
 
-        $('#save').on('click', function () {
+        $('#save').on('click', function() {
             var name = $('#name').val(),
                 email = $('#email').val(),
                 password = $('#password').val(),
@@ -26,25 +26,30 @@ $(document).ready(function () {
                 if (password != passwordC) {
                     toastr.warning("Las contraseñas deben ser iguales")
                 } else {
+                    $('#loading-spinner').show();
                     $.ajax({
-                        url: '/api/usuarios',
-                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                        type: 'POST',
-                        data: {
-                            name: name,
-                            email: email,
-                            password: password,
-                            role_id: role_id,
-                        }
-                    })
-                        .done(function () {
-                            setTimeout(function () { modal.modal("hide") }, 600);
+                            url: '/api/usuarios',
+                            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                            type: 'POST',
+                            data: {
+                                name: name,
+                                email: email,
+                                password: password,
+                                role_id: role_id,
+                            }
+                        })
+                        .done(function() {
+                            setTimeout(function() {
+                                $('#loading-spinner').hide();
+                                modal.modal("hide")
+                            }, 600);
                             Reload()
                         })
-                        .fail(function () {
+                        .fail(function() {
+                            $('#loading-spinner').hide();
                             toastr.error("Ha ocurrido un error");
                         })
-                        .always(function () {
+                        .always(function() {
                             $("#save").addClass("disabled");
                         });
                 }
@@ -52,7 +57,7 @@ $(document).ready(function () {
         })
     })
 
-    $('#user-table').on('click', '[id^=Btn_rol_]', function () {
+    $('#user-table').on('click', '[id^=Btn_rol_]', function() {
         var id = $(this).attr('data-id');
 
         const filtro = AllRegister.filter(f => f.id == id);
@@ -67,29 +72,29 @@ $(document).ready(function () {
 
             $('#name').val(filtro[0].name);
 
-            $("#update").on('click', function () {
+            $("#update").on('click', function() {
                 var role_id = $('#role_id').val();
 
                 if (role_id == '') {
                     toastr.warning("Selecione una opcion")
                 } else {
                     $.ajax({
-                        url: '/api/usuarios/' + id,
-                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                        type: 'PUT',
-                        data: {
-                            role_id: role_id,
-                        }
-                    })
-                        .done(function () {
+                            url: '/api/usuarios/' + id,
+                            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                            type: 'PUT',
+                            data: {
+                                role_id: role_id,
+                            }
+                        })
+                        .done(function() {
                             toastr.info("rol establecido correctamente");
-                            setTimeout(function () { modal.modal("hide") }, 600);
+                            setTimeout(function() { modal.modal("hide") }, 600);
                             Reload()
                         })
-                        .fail(function () {
+                        .fail(function() {
                             toastr.error("Ha ocurrido un error");
                         })
-                        .always(function () {
+                        .always(function() {
                             $("#save").addClass("disabled");
                         });
                 }
@@ -98,7 +103,7 @@ $(document).ready(function () {
 
     })
 
-    $('#user-table').on('click', '[id^=Btn_Edit_]', function () {
+    $('#user-table').on('click', '[id^=Btn_Edit_]', function() {
         var id = $(this).attr('data-id');
 
         const filtro = AllRegister.filter(f => f.id == id);
@@ -114,7 +119,7 @@ $(document).ready(function () {
             $('#name').val(filtro[0].name);
             $('#email').val(filtro[0].email);
 
-            $("#update").on('click', function () {
+            $("#update").on('click', function() {
                 var name = $('#name').val(),
                     email = $('#email').val(),
                     password = $('#password').val(),
@@ -130,25 +135,25 @@ $(document).ready(function () {
                         toastr.warning("Las contraseñas deben ser iguales")
                     } else {
                         $.ajax({
-                            url: '/api/usuarios/' + id,
-                            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                            type: 'PUT',
-                            data: {
-                                name: name,
-                                email: email,
-                                password: password,
-                                // role_id: role_id,
-                            }
-                        })
-                            .done(function () {
+                                url: '/api/usuarios/' + id,
+                                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                                type: 'PUT',
+                                data: {
+                                    name: name,
+                                    email: email,
+                                    password: password,
+                                    // role_id: role_id,
+                                }
+                            })
+                            .done(function() {
                                 toastr.info("usuario editado correctamente");
-                                setTimeout(function () { modal.modal("hide") }, 600);
+                                setTimeout(function() { modal.modal("hide") }, 600);
                                 Reload()
                             })
-                            .fail(function () {
+                            .fail(function() {
                                 toastr.error("Ha ocurrido un error");
                             })
-                            .always(function () {
+                            .always(function() {
                                 $("#save").addClass("disabled");
                             });
                     }
@@ -157,29 +162,29 @@ $(document).ready(function () {
         }
     })
 
-    $('#user-table').on('click', '[id^=Btn_delete_]', function () {
+    $('#user-table').on('click', '[id^=Btn_delete_]', function() {
         var id = $(this).attr('data-id')
 
         swal({
-            title: "¿Realmente deseas eliminar el usuario?",
-            text: "Ten en cuenta que eliminaras toda su información del sistema",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonClass: "btn-danger",
-            confirmButtonText: "Si, eliminar",
-            closeOnConfirm: false
-        },
-            function () {
+                title: "¿Realmente deseas eliminar el usuario?",
+                text: "Ten en cuenta que eliminaras toda su información del sistema",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Si, eliminar",
+                closeOnConfirm: false
+            },
+            function() {
                 $.ajax({
-                    url: "/api/usuarios/" + id,
-                    type: "DELETE",
-                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                })
-                    .done(function () {
+                        url: "/api/usuarios/" + id,
+                        type: "DELETE",
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    })
+                    .done(function() {
                         swal("Eliminado!", "Se ha eliminado el acudiente", "success");
                         Reload();
                     })
-                    .fail(function () {
+                    .fail(function() {
                         swal("Error!", "Ha ocurrido un error", "error");
                     });
 
@@ -296,21 +301,21 @@ function Reload() {
         dataType: "JSON",
     })
 
-        .done(function (response) {
-            if (response.length != 0) {
-                AllRegister = response.usuarios;
-                permisos = response.permisos;
-                DataTable(response.usuarios);
-            } else {
-                $('#user-table').dataTable().fnClearTable();
-                $('#user-table').dataTable().fnDestroy();
-                $('#user-table thead').empty()
-            }
-        })
+    .done(function(response) {
+        if (response.length != 0) {
+            AllRegister = response.usuarios;
+            permisos = response.permisos;
+            DataTable(response.usuarios);
+        } else {
+            $('#user-table').dataTable().fnClearTable();
+            $('#user-table').dataTable().fnDestroy();
+            $('#user-table thead').empty()
+        }
+    })
 
-        .fail(function () {
-            console.log("error");
-        });
+    .fail(function() {
+        console.log("error");
+    });
 }
 
 function LoadRoles() {
@@ -322,15 +327,15 @@ function LoadRoles() {
     });
 
     $.ajax({
-        url: '/api/roles',
-    })
-        .done(function (response) {
+            url: '/api/roles',
+        })
+        .done(function(response) {
             for (var i in response.data) {
                 $("#role_id").append(`<option value='${response.data[i].id}'>${response.data[i].name}</option>`)
             }
 
         })
-        .fail(function () {
+        .fail(function() {
             console.log("error");
         })
 }
@@ -352,14 +357,13 @@ function DataTable(response) {
         $('#user-table').dataTable().fnClearTable();
         $('#user-table').dataTable().fnDestroy();
         $('#user-table thead').empty()
-    }
-    else {
+    } else {
         $('#user-table thead').empty()
     }
 
     if (response.length != 0) {
         let my_columns = []
-        $.each(response[0], function (key, value) {
+        $.each(response[0], function(key, value) {
             var my_item = {};
             // my_item.class = "filter_C";
             my_item.data = key;
@@ -368,7 +372,7 @@ function DataTable(response) {
 
                 my_item.title = 'Acción';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     var html = '';
                     for (let i = 0; i < permisos.length; i++) {
                         if (permisos[i] == "delete.user") {
@@ -399,12 +403,11 @@ function DataTable(response) {
                     my_columns.push(my_item);
                 }
 
-            }
-            else if (key == 'id') {
+            } else if (key == 'id') {
 
                 my_item.title = '#';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `  <div> 
                                 ${row.id}
                             </div>`
@@ -412,37 +415,31 @@ function DataTable(response) {
                 my_columns.push(my_item);
 
 
-            }
-
-            else if (key == 'name') {
+            } else if (key == 'name') {
 
                 my_item.title = 'Nombre';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `  <div> 
                                 ${row.name}
                             </div>`
                 }
                 my_columns.push(my_item);
-            }
-
-            else if (key == 'email') {
+            } else if (key == 'email') {
 
                 my_item.title = 'Email';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `<div>
                                 ${row.email} 
                             </div>`
                 }
                 my_columns.push(my_item);
-            }
-
-            else if (key == 'created_at') {
+            } else if (key == 'created_at') {
 
                 my_item.title = 'Rol';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     if (row.roles.length != 0) {
                         return `<div>
                                 ${row.roles[0].name} 
@@ -456,7 +453,7 @@ function DataTable(response) {
             } else {
                 my_item.title = 'created At';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `  <div> 
                                 ${new Date(row.created_at)}
                             </div>`

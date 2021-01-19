@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Toolpisco</title>
+  <title>Toolpsico</title>
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <meta content="" name="keywords">
   <meta content="" name="description">
@@ -53,10 +53,10 @@
       <nav id="nav-menu-container">
         <ul class="nav-menu">
           <li class="menu-active"><a href="#body">Inicio</a></li>
-          <li><a href="#about">Modulos</a></li>
+          <li><a href="#about">Módulos</a></li>
           <li><a href="#services">Beneficios y Utilidades</a></li>
           <li><a href="#portfolio"> ¿Quiénes somos?</a></li>
-          <li><a href="#contact"> Contactanos</a></li>
+          <li><a href="#contact"> Contáctanos</a></li>
           <li><a href="#team">Team</a></li>
           <li><a href="{{url('/legal')}}">Legal</a></li>
           <li><a href="{{url('/login')}}">Ingresar</a></li>
@@ -73,7 +73,7 @@
   <section id="intro">
 
     <div class="intro-content">
-      <h2>Monitoreo de comportamiento <br> estudiantil <br>¡Un apoyo al psicoorientador!</h2>
+      <h2>Monitoreo de Comportamiento <br> estudiantil <br>¡Un apoyo al psicoorientador!</h2>
       <div>
         <a href="{{url('/login')}}" class="btn-get-started scrollto">Ingresar</a>
       </div>
@@ -108,11 +108,11 @@
               las siguientes funcionalidades: </h3>
 
             <ul>
-              <li><i class="ion-android-checkmark-circle"></i> Gestión de comportamientos.</li>
-              <li><i class="ion-android-checkmark-circle"></i> Gestión de citas.</li>
-              <li><i class="ion-android-checkmark-circle"></i> Gestión de usuarios.</li>
+              <li><i class="ion-android-checkmark-circle"></i> Gestión de Comportamientos.</li>
+              <li><i class="ion-android-checkmark-circle"></i> Gestión de Citas.</li>
+              <li><i class="ion-android-checkmark-circle"></i> Gestión de Usuarios.</li>
               <li><i class="ion-android-checkmark-circle"></i> Gestión de Actividades.</li>
-              <li><i class="ion-android-checkmark-circle"></i> Reportes con estandares locales.</li>
+              <li><i class="ion-android-checkmark-circle"></i> Reportes con Estándares Locales.</li>
             </ul>
 
           </div>
@@ -137,9 +137,9 @@
           <div class="col-lg-6">
             <div class="box wow fadeInLeft">
               <div class="icon"><i class="fa fa-bar-chart"></i></div>
-              <h4 class="title"><a href="">Estadisticas a un Clic </a></h4>
-              <p class="description">Podrás visualizar o exportar toda la información de los compartidos registrados
-                mediante un reportes.</p>
+              <h4 class="title"><a href="">Estadísticas a un Clic </a></h4>
+              <p class="description">Podrás visualizar o exportar toda la información de los comportamientos registrados
+                mediante un reporte.</p>
             </div>
           </div>
 
@@ -148,7 +148,7 @@
               <div class="icon"><i class="fa fa-bell-o"></i></div>
               <h4 class="title"><a href="">Notificaciones SMS</a></h4>
               <p class="description">Podrás recibir notificaciones mediante mensajes de textos de las novedades de los
-                comportamientos de los usuarios o de las actividades registradas</p>
+                comportamientos de los usuarios o de las actividades registradas.</p>
             </div>
           </div>
 
@@ -164,9 +164,9 @@
           <div class="col-lg-6">
             <div class="box wow fadeInRight" data-wow-delay="0.2s">
               <div class="icon"><i class="fa fa-mobile"></i></div>
-              <h4 class="title"><a href="">Plataforma responsive</a></h4>
+              <h4 class="title"><a href="">Plataforma Responsive</a></h4>
               <p class="description">Podrás usar ToolPsico desde cualquier dispositivo con acceso a un navegador web sin
-                problemas, pues su interfaz se adaptara al dispositivob</p>
+                problemas, pues su interfaz se adaptara al dispositivos</p>
             </div>
           </div>
 
@@ -182,7 +182,7 @@
         <div class="section-header">
           <h2>¿Quiénes somos?</h2>
           <p>Somos estudiantes de ingeniería de sistemas de la Universidad de Córdoba, que junto con el apoyo de todos
-            los profesores del departamento de Ingeniería decidimos darle una herramienta de apoyo a todos las
+            los profesores del departamento de Ingeniería decidimos darle una herramienta de apoyo a todos los psicoorientadores de las 
             instituciones públicas.</p>
         </div>
         <div align="center"> <a href="https://www.unicordoba.edu.co/"><img src="template/img/acreditada.jpg"></a> </div>
@@ -194,7 +194,7 @@
       <section id="contact" class="wow fadeInUp">
         <div class="container">
           <div class="section-header">
-            <h2>Contactanos</h2>
+            <h2>Contáctanos</h2>
             <!--   <p>Sed tamen tempor magna labore dolore dolor sint tempor duis magna elit veniam aliqua esse amet veniam enim export quid quid veniam aliqua eram noster malis nulla duis fugiat culpa esse aute nulla ipsum velit export irure minim illum fore</p>
         </div> -->
 
@@ -203,15 +203,15 @@
               <div class="col-md-4">
                 <div class="contact-address">
                   <i class="ion-ios-location-outline"></i>
-                  <h3>Direccion</h3>
-                  <address>Calle 33 #4-27 - centro, montería - Córdoba, Colombia</address>
+                  <h3>Dirección</h3>
+                  <address>Calle 33 #4-27 - Centro, Montería - Córdoba, Colombia</address>
                 </div>
               </div>
 
               <div class="col-md-4">
                 <div class="contact-phone">
                   <i class="ion-ios-telephone-outline"></i>
-                  <h3>Numeros de celular</h3>
+                  <h3>Números de celular</h3>
                   <p><a href="tel:+573177765722">+57 3177765722</a></p>
                   <p><a href="tel:+573012546886">+57 3012546886</a></p>
                 </div>
@@ -220,7 +220,7 @@
               <div class="col-md-4">
                 <div class="contact-email">
                   <i class="ion-ios-email-outline"></i>
-                  <h3>Correo Electronico</h3>
+                  <h3>Correo Electrónico</h3>
                   <p><a href="mailto:info@example.com">info@toolpsico.com</a></p>
                 </div>
               </div>
@@ -237,10 +237,9 @@
           <div class="row">
             <div class="col-lg-3 col-md-6">
               <div class="member">
-                <div class="pic"><img src="template/img/team-1.jpg" alt=""></div>
                 <div class="details">
                   <h4>Camilo Parra</h4>
-                  <span>Estudiante de ingenieria de sistemas</span>
+                  <span>Estudiante de ingeniería de sistemas</span>
                   <div class="social">
                     <a href=""><i class="fa fa-twitter"></i></a>
                     <a href=""><i class="fa fa-facebook"></i></a>
@@ -253,10 +252,9 @@
 
             <div class="col-lg-3 col-md-6">
               <div class="member">
-                <div class="pic"><img src="template/img/team-2.jpg" alt=""></div>
-                <div class="details">
+                          <div class="details">
                   <h4>Andres Calderon</h4>
-                  <span>Estudiante de ingenieria de sistemas</span>
+                  <span>Estudiante de ingeniería de sistemas</span>
                   <div class="social">
                     <a href=""><i class="fa fa-twitter"></i></a>
                     <a href=""><i class="fa fa-facebook"></i></a>
@@ -269,7 +267,6 @@
 
             <div class="col-lg-3 col-md-6">
               <div class="member">
-                <div class="pic"><img src="template/img/team-3.jpg" alt=""></div>
                 <div class="details">
                   <h4>Santiago Enoc</h4>
                   <span>Estudiante asesor universitario</span>
@@ -285,7 +282,6 @@
 
             <div class="col-lg-3 col-md-6">
               <div class="member">
-                <div class="pic"><img src="template/img/team-4.jpg" alt=""></div>
                 <div class="details">
                   <h4>Daniel Salas</h4>
                   <span>Tutor universitario</span>

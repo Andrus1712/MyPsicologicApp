@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Reporte de comportamientos</title>
+    <title>Reporte de Comportamientos</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Favicons -->
     <link href="../template/img/favicon.png" rel="icon">
@@ -92,7 +92,7 @@
                         <td rowspan="2" align="center" style="width: 15%;">
                             <strong>
                                 <small>
-                                    CARACTERISTICA DEL CASO
+                                    CARACTERÍSTICA DEL CASO
                                 </small>
                             </strong>
                         </td>
@@ -154,8 +154,8 @@
                     @endforeach
 
                 </table>
-                <span>Nota: El estado de la actividad es de tres tipos, CM: cumplida; IC: incumplida; EE: en
-                    espera</span>
+                <span>Nota: El estado de la actividad es de tres tipos, CM: Cumplida; IC: Incumplida; EE: En
+                    Espera</span>
         </div>
 
         <div class="page-break"></div>
@@ -245,7 +245,7 @@
                     <tr>
                         <td align="center" colspan="3">
                             <strong>
-                                <span style="font-size: 0.8em;">REPORTE DE CONDUCTAS POR GENERO</span>
+                                <span style="font-size: 0.8em;">REPORTE DE CONDUCTAS POR GÉNERO</span>
                             </strong>
                         </td>
                     </tr>
@@ -274,7 +274,7 @@
                         <td rowspan="1" align="center" style="width: 30%">
                             <strong>
                                 <small>
-                                    GENERO
+                                    GÉNERO
                                 </small>
                             </strong>
                         </td>
@@ -334,8 +334,8 @@
             <h4>GRÁFICO</h4>
             <br>
             <div class="col-md-12">
-                <img src="./documentosPSI/graph/foto.jpg" width="50%">
-                <span>fig 1. Grafico de casos que afectan la conviviencia escolar</span>
+                <img src="./documentosPSI/graph/grafico.jpg" width="50%">
+                <span>fig 1. Gráfico de casos que afectan la conviviencia escolar</span>
             </div>
         </div>
 

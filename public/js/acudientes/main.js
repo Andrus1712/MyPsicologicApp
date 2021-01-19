@@ -3,32 +3,32 @@ var AllRegister = []
 
 var permisos = []
 
-$(document).ready(function () {
+$(document).ready(function() {
     Reload()
 
-    $('#acudientes-table').on('click', '[id^=Btn_delete_]', function () {
+    $('#acudientes-table').on('click', '[id^=Btn_delete_]', function() {
         var id = $(this).attr('data-id')
 
         swal({
-            title: "¿Realmente deseas eliminar el acudiente?",
-            text: "Ten en cuenta que eliminaras toda su información del sistema",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonClass: "btn-danger",
-            confirmButtonText: "Si, eliminar",
-            closeOnConfirm: false
-        },
-            function () {
+                title: "¿Realmente deseas eliminar el acudiente?",
+                text: "Ten en cuenta que eliminaras toda su información del sistema",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Si, eliminar",
+                closeOnConfirm: false
+            },
+            function() {
                 $.ajax({
-                    url: "/api/acudientes/" + id,
-                    type: "DELETE",
-                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                })
-                    .done(function () {
+                        url: "/api/acudientes/" + id,
+                        type: "DELETE",
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    })
+                    .done(function() {
                         swal("Eliminado!", "Se ha eliminado el acudiente", "success");
                         Reload();
                     })
-                    .fail(function () {
+                    .fail(function() {
                         swal("Error!", "Ha ocurrido un error", "error");
                     });
 
@@ -37,7 +37,7 @@ $(document).ready(function () {
 
     })
 
-    $("#acudientes-table").on('click', '[id^=Btn_Edit_]', function () {
+    $("#acudientes-table").on('click', '[id^=Btn_Edit_]', function() {
         var id = $(this).attr('data-id');
 
         const filtro = AllRegister.filter(f => f.id == id);
@@ -63,7 +63,7 @@ $(document).ready(function () {
             </option>`)
 
 
-            $("#update").on('click', function () {
+            $("#update").on('click', function() {
                 var tipoIdentificacion = $("#tipoIdentificacion").val(),
                     identificacion = $("#identificacion").val(),
                     nombres = $("#nombres").val(),
@@ -77,30 +77,30 @@ $(document).ready(function () {
                     toastr.warning("Complete todos los campos")
                 } else {
                     $.ajax({
-                        url: '/api/acudientes/' + id,
-                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                        type: 'PUT',
-                        data: {
-                            id: id,
-                            tipoIdentificacion: tipoIdentificacion,
-                            identificacion: identificacion,
-                            nombres: nombres,
-                            apellidos: apellidos,
-                            correo: correo,
-                            fechaNacimiento: fechaNacimiento,
-                            telefono: telefono,
-                            direccion: direccion,
-                        },
-                    })
-                        .done(function () {
-                            setTimeout(function () { modal.modal("hide") }, 600);
+                            url: '/api/acudientes/' + id,
+                            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                            type: 'PUT',
+                            data: {
+                                id: id,
+                                tipoIdentificacion: tipoIdentificacion,
+                                identificacion: identificacion,
+                                nombres: nombres,
+                                apellidos: apellidos,
+                                correo: correo,
+                                fechaNacimiento: fechaNacimiento,
+                                telefono: telefono,
+                                direccion: direccion,
+                            },
+                        })
+                        .done(function() {
+                            setTimeout(function() { modal.modal("hide") }, 600);
                             toastr.info("información actualizada");
                             Reload()
                         })
-                        .fail(function () {
+                        .fail(function() {
                             toastr.error("Ha ocurrido un error");
                         })
-                        .always(function () {
+                        .always(function() {
                             $("#update").addClass("disabled");
                         });
                 }
@@ -109,11 +109,11 @@ $(document).ready(function () {
         }
     })
 
-    $("#add-acudiente").on('click', function () {
+    $("#add-acudiente").on('click', function() {
         modal.modal('show');
         Modal()
 
-        $("#save").on('click', function () {
+        $("#save").on('click', function() {
             var tipoIdentificacion = $("#tipoIdentificacion").val(),
                 identificacion = $("#identificacion").val(),
                 nombres = $("#nombres").val(),
@@ -126,27 +126,32 @@ $(document).ready(function () {
             if (tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '' || fechaNacimiento == '' || telefono == '' || direccion == '') {
                 toastr.warning("Complete todos los campos")
             } else {
+                $('#loading-spinner').show();
                 $.ajax({
-                    url: '/api/acudientes',
-                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                    type: 'POST',
-                    data: {
-                        tipoIdentificacion: tipoIdentificacion,
-                        identificacion: identificacion,
-                        nombres: nombres,
-                        apellidos: apellidos,
-                        correo: correo,
-                        fechaNacimiento: fechaNacimiento,
-                        telefono: telefono,
-                        direccion: direccion,
-                    },
-                })
-                    .done(function (response) {
+                        url: '/api/acudientes',
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                        type: 'POST',
+                        data: {
+                            tipoIdentificacion: tipoIdentificacion,
+                            identificacion: identificacion,
+                            nombres: nombres,
+                            apellidos: apellidos,
+                            correo: correo,
+                            fechaNacimiento: fechaNacimiento,
+                            telefono: telefono,
+                            direccion: direccion,
+                        },
+                    })
+                    .done(function(response) {
                         toastr.success("Acudiente agregado");
-                        setTimeout(function () { modal.modal("hide") }, 600);
+                        setTimeout(function() {
+                            $('#loading-spinner').hide();
+                            modal.modal("hide")
+                        }, 600);
                         Reload();
                     })
-                    .fail(function (response) {
+                    .fail(function(response) {
+                        $('#loading-spinner').hide();
                         // console.log(response.responseJSON);
                         if (response.responseJSON.message == "id-registrada") {
                             toastr.warning("La identificacion ya se encuentra registrada");
@@ -154,7 +159,7 @@ $(document).ready(function () {
                             toastr.error("Ha ocurrido un error");
                         }
                     })
-                    .always(function () {
+                    .always(function() {
                         $("#save").addClass("disabled");
                     });
             }
@@ -268,21 +273,21 @@ function Reload() {
         dataType: "JSON",
     })
 
-        .done(function (response) {
-            if (response.length != 0) {
-                AllRegister = response.acudientes;
-                permisos = response.permisos;
-                DataTable(response.acudientes);
-            } else {
-                $('#acudientes-table').dataTable().fnClearTable();
-                $('#acudientes-table').dataTable().fnDestroy();
-                $('#acudientes-table thead').empty()
-            }
-        })
+    .done(function(response) {
+        if (response.length != 0) {
+            AllRegister = response.acudientes;
+            permisos = response.permisos;
+            DataTable(response.acudientes);
+        } else {
+            $('#acudientes-table').dataTable().fnClearTable();
+            $('#acudientes-table').dataTable().fnDestroy();
+            $('#acudientes-table thead').empty()
+        }
+    })
 
-        .fail(function () {
-            console.log("error");
-        });
+    .fail(function() {
+        console.log("error");
+    });
 }
 
 function DataTable(response) {
@@ -292,14 +297,13 @@ function DataTable(response) {
         $('#acudientes-table').dataTable().fnClearTable();
         $('#acudientes-table').dataTable().fnDestroy();
         $('#acudientes-table thead').empty()
-    }
-    else {
+    } else {
         $('#acudientes-table thead').empty()
     }
 
     if (response.length != 0) {
         let my_columns = []
-        $.each(response[0], function (key, value) {
+        $.each(response[0], function(key, value) {
             var my_item = {};
             // my_item.class = "filter_C";
             my_item.data = key;
@@ -307,7 +311,7 @@ function DataTable(response) {
 
                 my_item.title = 'Acción';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     var html = '';
                     for (let i = 0; i < permisos.length; i++) {
 
@@ -335,86 +339,72 @@ function DataTable(response) {
                     my_columns.push(my_item);
                 }
 
-            }
-
-            else if (key == 'id') {
+            } else if (key == 'id') {
 
                 my_item.title = '#';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `  <div'> 
                                 ${row.id}
                             </div>`
                 }
                 my_columns.push(my_item);
 
-            }
-
-            else if (key == 'tipoIdentificacion') {
+            } else if (key == 'tipoIdentificacion') {
 
                 my_item.title = 'Tipo de ID';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `<div>
                                 ${row.tipoIdentificacion} 
                             </div>`
                 }
                 my_columns.push(my_item);
-            }
-
-            else if (key == 'identificacion') {
+            } else if (key == 'identificacion') {
 
                 my_item.title = 'identificacion';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `  <div'> 
                                 ${row.identificacion}
                             </div>`
                 }
                 my_columns.push(my_item);
-            }
-
-            else if (key == 'nombres') {
+            } else if (key == 'nombres') {
 
                 my_item.title = 'Acudiente';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `<div>
                                 ${row.nombres + " " + row.apellidos} 
                             </div>`
                 }
                 my_columns.push(my_item);
-            }
-
-            else if (key == 'correo') {
+            } else if (key == 'correo') {
 
                 my_item.title = 'Email';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `<div>
                                 ${row.correo} 
                             </div>`
                 }
                 my_columns.push(my_item);
-            }
-
-            else if (key == 'telefono') {
+            } else if (key == 'telefono') {
 
                 my_item.title = 'Télefono';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `<div>
                                 ${row.telefono} 
                             </div>`
                 }
                 my_columns.push(my_item);
-            }
-
-            else if (key == 'direccion') {
+            } else if (key == 'direccion') {
 
                 my_item.title = 'Dirección';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `<div>
                                 ${row.direccion} 
                             </div>`

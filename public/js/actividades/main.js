@@ -2,12 +2,12 @@ var modal = $('#modal-actividades');
 var AllRegister = []
 var permisos = []
 
-$(document).ready(function () {
+$(document).ready(function() {
     Reload()
     ReloadCalendario()
 
 
-    $('#act-table').on('click', '[id^=Btn_Edit_]', function () {
+    $('#act-table').on('click', '[id^=Btn_Edit_]', function() {
         var id = $(this).attr('data-id')
         var filtro = AllRegister.filter(f => f.id == id);
 
@@ -30,7 +30,7 @@ $(document).ready(function () {
             $('#estado').val(filtro[0].estado)
             $("#tipo_comportamiento_id").val(filtro[0].tipo_comportamiento_id)
 
-            $('#update').on('click', function () {
+            $('#update').on('click', function() {
                 var comportamiento_id = $("#comportamiento_id").val(),
                     titulo = $("#titulo").val(),
                     descripcion = $("#descripcion").val(),
@@ -40,31 +40,35 @@ $(document).ready(function () {
 
                 if (comportamiento_id == '' || titulo == '' || descripcion == '' || fecha == '' || estado == '' || tipo_comportamiento_id == '') {
                     toastr.warning("Complete todos los campos")
-                }
-                else {
+                } else {
+                    $('#loading-spinner').show();
                     $.ajax({
-                        url: '/api/actividades/' + id,
-                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                        type: 'PUT',
-                        data: {
-                            comportamiento_id: comportamiento_id,
-                            titulo: titulo,
-                            descripcion: descripcion,
-                            fecha: fecha,
-                            estado: estado,
-                            
-                        },
-                    })
-                        .done(function () {
-                            setTimeout(function () { modal.modal("hide") }, 600);
+                            url: '/api/actividades/' + id,
+                            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                            type: 'PUT',
+                            data: {
+                                comportamiento_id: comportamiento_id,
+                                titulo: titulo,
+                                descripcion: descripcion,
+                                fecha: fecha,
+                                estado: estado,
+
+                            },
+                        })
+                        .done(function() {
+                            setTimeout(function() {
+                                $('#loading-spinner').hide();
+                                modal.modal("hide")
+                            }, 600);
                             toastr.info("información actualizada");
                             Reload()
                             ReloadCalendario()
                         })
-                        .fail(function () {
+                        .fail(function() {
+                            $('#loading-spinner').hide();
                             toastr.error("Ha ocurrido un error");
                         })
-                        .always(function () {
+                        .always(function() {
                             $("#update").addClass("disabled");
                         });
                 }
@@ -74,29 +78,29 @@ $(document).ready(function () {
         }
     })
 
-    $('#act-table').on('click', '[id^=Btn_delete_]', function () {
+    $('#act-table').on('click', '[id^=Btn_delete_]', function() {
         var id = $(this).attr('data-id')
 
         swal({
-            title: "¿Realmente deseas eliminar el acudiente?",
-            text: "Ten en cuenta que eliminaras toda su información del sistema",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonClass: "btn-danger",
-            confirmButtonText: "Si, eliminar",
-            closeOnConfirm: false
-        },
-            function () {
+                title: "¿Realmente deseas eliminar el acudiente?",
+                text: "Ten en cuenta que eliminaras toda su información del sistema",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Si, eliminar",
+                closeOnConfirm: false
+            },
+            function() {
                 $.ajax({
-                    url: "/api/actividades/" + id,
-                    type: "DELETE",
-                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                })
-                    .done(function () {
+                        url: "/api/actividades/" + id,
+                        type: "DELETE",
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    })
+                    .done(function() {
                         swal("Eliminado!", "Se ha eliminado el acudiente", "success");
                         Reload();
                     })
-                    .fail(function () {
+                    .fail(function() {
                         swal("Error!", "Ha ocurrido un error", "error");
                     });
 
@@ -105,14 +109,14 @@ $(document).ready(function () {
 
     })
 
-    $('#add-actividades').on('click', function () {
+    $('#add-actividades').on('click', function() {
         modal.modal('show');
         Modal()
         $('#input_actividad').hide()
         LoadComportamientos()
         LoadTiposComportamientos()
 
-        $('#save').on('click', function () {
+        $('#save').on('click', function() {
             var comportamiento_id = $("#comportamiento_id").val(),
                 titulo = $("#titulo").val(),
                 descripcion = $("#descripcion").val(),
@@ -123,29 +127,34 @@ $(document).ready(function () {
             if (comportamiento_id == '' || titulo == '' || descripcion == '' || fecha == '' || tipo_comportamiento_id == '') {
                 toastr.warning("Complete todos los campos")
             } else {
+                $('#loading-spinner').show();
                 $.ajax({
-                    url: '/add_actividades',
-                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                    type: 'POST',
-                    data: {
-                        comportamiento_id: comportamiento_id,
-                        titulo: titulo,
-                        descripcion: descripcion,
-                        fecha: fecha,
-                        estado: estado,
-                        tipo_comportamiento_id: tipo_comportamiento_id,
-                    },
-                })
-                    .done(function () {
-                        setTimeout(function () { modal.modal("hide") }, 600);
+                        url: '/add_actividades',
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                        type: 'POST',
+                        data: {
+                            comportamiento_id: comportamiento_id,
+                            titulo: titulo,
+                            descripcion: descripcion,
+                            fecha: fecha,
+                            estado: estado,
+                            tipo_comportamiento_id: tipo_comportamiento_id,
+                        },
+                    })
+                    .done(function() {
+                        setTimeout(function() {
+                            $('#loading-spinner').hide();
+                            modal.modal("hide")
+                        }, 600);
                         toastr.success("Actividad creada");
                         Reload()
                         ReloadCalendario()
                     })
-                    .fail(function () {
+                    .fail(function() {
+                        $('#loading-spinner').hide();
                         toastr.error("Ha ocurrido un error");
                     })
-                    .always(function () {
+                    .always(function() {
                         $("#save").addClass("disabled");
                     });
             }
@@ -153,89 +162,94 @@ $(document).ready(function () {
         })
     })
 
-    $('#reprogramar').on('click', function () {
+    $('#reprogramar').on('click', function() {
         modal.modal('show');
         ModalReprogramar();
         LoadActividades();
 
-        $('#save').on('click', function () {
+        $('#save').on('click', function() {
             fecha = $("#fecha").val()
             var id = $("#actividad_id").val();
             var fechaReprogramar = $('#fechaReprogramar').val();
             var descripcion_historial = $('#descripcion_historial').val();
+            $('#loading-spinner').show();
             $.ajax({
-                url: '/api/actividades/' + id,
-                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                type: 'PUT',
-                data: {
-                    fecha: fechaReprogramar,
-                    descripcion_historial: descripcion_historial,
-                    method: "reprogramar",
-                },
-            })
-                .done(function () {
-                    setTimeout(function () { modal.modal('hide') }, 600);
+                    url: '/api/actividades/' + id,
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    type: 'PUT',
+                    data: {
+                        fecha: fechaReprogramar,
+                        descripcion_historial: descripcion_historial,
+                        method: "reprogramar",
+                    },
+                })
+                .done(function() {
+                    setTimeout(function() {
+                        $('#loading-spinner').hide();
+                        modal.modal('hide')
+                    }, 600);
                     toastr.info("Actividad reprogramada");
                     Reload()
                     ReloadCalendario()
                 })
-                .fail(function () {
+                .fail(function() {
+                    $('#loading-spinner').hide();
                     toastr.error("Ha ocurrido un error");
                 })
-                .always(function () {
+                .always(function() {
                     $('#save').addClass("disabled");
                 });
         });
     });
 
     // Check estatus
-    $('#act-table').on('click', '[id^=btn_cumplido_]', function () {
+    $('#act-table').on('click', '[id^=btn_cumplido_]', function() {
         var id = $(this).attr('data-id')
         $.ajax({
-            url: '/api/actividades/' + id,
-            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-            type: 'PUT',
-            data: {
-                estado: 1
-            },
-        })
-            .done(function () {
+                url: '/api/actividades/' + id,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                type: 'PUT',
+                data: {
+                    estado: 1
+                },
+            })
+            .done(function() {
                 toastr.success("Actividad marcada como cumplida");
                 Reload()
                 ReloadCalendario()
             })
-            .fail(function () {
+            .fail(function() {
                 toastr.error("Ha ocurrido un error");
             })
-            .always(function () {
+            .always(function() {
                 $('#btn_cumplido_' + id).addClass("disabled");
             });
     })
 
-    $('#act-table').on('click', '[id^=btn_incumplido_]', function () {
+    $('#act-table').on('click', '[id^=btn_incumplido_]', function() {
         var id = $(this).attr('data-id')
         $.ajax({
-            url: '/api/actividades/' + id,
-            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-            type: 'PUT',
-            data: {
-                estado: 2
-            },
-        })
-            .done(function () {
+                url: '/api/actividades/' + id,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                type: 'PUT',
+                data: {
+                    estado: 2
+                },
+            })
+            .done(function() {
                 toastr.error("Actividad marcada como icumplida");
                 Reload()
                 ReloadCalendario()
             })
-            .fail(function () {
+            .fail(function() {
                 toastr.error("Ha ocurrido un error");
             })
-            .always(function () {
+            .always(function() {
                 $('#btn_incumplido_' + id).addClass("disabled");
             });
     })
 
-    $('#act-table').on('click', '[id^=Btn_info_]', function () {
+    $('#act-table').on('click', '[id^=Btn_info_]', function() {
         modal.modal('show')
         var id = $(this).attr('data-id')
         var filtro = AllRegister.filter(f => f.id == id);
@@ -254,33 +268,33 @@ $(document).ready(function () {
             `)
     })
 
-    $('#act-table').on('click', '[id^=Btn_show_]', function () {
+    $('#act-table').on('click', '[id^=Btn_show_]', function() {
         var id = $(this).attr('data-id');
 
         const filtro = AllRegister.filter(f => f.id == id);
 
 
         if (filtro.length != 0) {
-            if(filtro[0].titulo_tipo_comportamiento==null){
+            if (filtro[0].titulo_tipo_comportamiento == null) {
                 modal.modal('show');
                 ModalShowEst(filtro);
-            }else {
+            } else {
                 modal.modal('show');
                 ModalShow(filtro);
             }
         }
     });
 
-    $('#act-table').on('click', '[id^=Btn_historial_]', function () {
+    $('#act-table').on('click', '[id^=Btn_historial_]', function() {
         var id = $(this).attr('data-id');
         console.log(id);
         $.ajax({
-            url: "/get_historial/" + id,
-            type: "GET",
-            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-            dataType: "JSON",
-        })
-            .done(function (response) {
+                url: "/get_historial/" + id,
+                type: "GET",
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                dataType: "JSON",
+            })
+            .done(function(response) {
                 if (response != 0) {
                     historial = response;
                     modal.modal('show');
@@ -289,7 +303,7 @@ $(document).ready(function () {
                     toastr.warning('No existe historial actualmente')
                 }
             })
-            .fail(function () {
+            .fail(function() {
                 console.log("error");
             });
     });
@@ -304,9 +318,9 @@ function LoadActividades() {
     });
 
     $.ajax({
-        url: '/api/actividades',
-    })
-        .done(function (response) {
+            url: '/api/actividades',
+        })
+        .done(function(response) {
             for (var i in response.data) {
 
                 $("#actividad_id").append(`<option name="${response.data[i].fecha}" value='${response.data[i].id}'>ATC-${response.data[i].id} | ${response.data[i].titulo} | ${response.data[i].nombre_estudiante} ${response.data[i].apellido_estudiante} | ${response.data[i].fecha}</option>`)
@@ -314,7 +328,7 @@ function LoadActividades() {
             // $('#fecha').val(response.data[i].fecha);
 
         })
-        .fail(function () {
+        .fail(function() {
             console.log("error");
         })
 }
@@ -340,15 +354,15 @@ function LoadTiposComportamientos() {
     });
 
     $.ajax({
-        url: '/api/tipo_comportamientos',
-    })
-        .done(function (response) {
+            url: '/api/tipo_comportamientos',
+        })
+        .done(function(response) {
             for (var i in response.data) {
                 $("#tipo_comportamiento_id").append(`<option value='${response.data[i].id}'>${response.data[i].titulo}</option>`)
             }
 
         })
-        .fail(function () {
+        .fail(function() {
             console.log("error");
         })
 }
@@ -362,15 +376,15 @@ function LoadComportamientos() {
     });
 
     $.ajax({
-        url: '/api/comportamientos',
-    })
-        .done(function (response) {
+            url: '/api/comportamientos',
+        })
+        .done(function(response) {
             for (var i in response.data) {
                 $("#comportamiento_id").append(`<option value='${response.data[i].id}'>${response.data[i].titulo} | ${response.data[i].nombres}  ${response.data[i].apellidos} | CMP${response.data[i].id} </option>`)
             }
 
         })
-        .fail(function () {
+        .fail(function() {
             console.log("error");
         })
 }

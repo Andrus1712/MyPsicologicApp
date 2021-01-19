@@ -1,11 +1,11 @@
 <li class="{{ Request::is('home*') ? 'active' : '' }}">
-    <a href="/home"><i class="fa fa-home"></i><span>Home</span></a>
+    <a href="/home"><i class="fa fa-home"></i><span>Inicio</span></a>
 </li>
 
 {{-- <li class="treeview">
     <a href="#">
         <i class="fa fa-users"></i>
-        <span>Grestion de usuarios</span>
+        <span>Gestión de usuarios</span>
         <span class="pull-right-container">
             <i class="fa fa-angle-left pull-right"></i>
         </span>
@@ -21,15 +21,14 @@
     <a href="{{ route('acudientes.index') }}"><i class="fa fa-user"></i><span>Acudientes</span></a>
 </li>
 <li class="{{ Request::is('psicologos*') ? 'active' : '' }}">
-    <a href="{{ route('psicologos.index') }}"><i class="fa fa-user-md"></i><span>Psicologos</span></a>
+    <a href="{{ route('psicologos.index') }}"><i class="fa fa-user-md"></i><span>Psicoorientador</span></a>
 </li>
 </ul>
 </li> --}}
-
 {{-- <li class="treeview">
     <a href="#">
         <i class="fa fa-cubes"></i>
-        <span>Grestion de datos</span>
+        <span>Gestión de datos</span>
         <span class="pull-right-container">
             <i class="fa fa-angle-left pull-right"></i>
         </span>
@@ -40,8 +39,8 @@
 </li>
 
 <li class="{{ Request::is('tipoComportamientos*') ? 'active' : '' }}">
-    <a href="{{ route('tipoComportamientos.index') }}"><i class="fa fa-book-open"></i><span>Tipo
-            Comportamientos</span></a>
+    <a href="{{ route('tipoComportamientos.index') }}"><i class="fa fa-book-open"></i><span>Tipo de
+            Comportamiento</span></a>
 </li>
 
 <li class="{{ Request::is('actividades*') ? 'active' : '' }}">
@@ -57,7 +56,6 @@
 
 
 @if (Auth()->user()->havePermission('show.cursos'))
-<li class="header">Modulo Intitucional</li>
 <li class="{{ Request::is('grupos*') ? 'active' : '' }}">
     <a href="{{ route('grupos.index') }}"><i class="fa fa-school"></i><span>Cursos</span></a>
 </li>
@@ -68,29 +66,43 @@
 <li class="header">General</li>
 @endif
 
-@if (Auth()->user()->havePermission('show.estudiantes'))
-<li class="{{ Request::is('estudiantes*') ? 'active' : '' }}">
-    <a href="{{ route('estudiantes.index') }}"><i class="fa fa-user-graduate"></i><span>Estudiantes</span></a>
-</li>
-@endif
 
-@if (Auth()->user()->havePermission('show.docentes'))
-<li class="{{ Request::is('docentes*') ? 'active' : '' }}">
-    <a href="{{ route('docentes.index') }}"><i class="fa fa-chalkboard-teacher"></i><span>Docentes</span></a>
-</li>
-@endif
+<li class="treeview " style="height: auto;">
+    <a href="#">
+      <i class="fa fa-user"></i> <span>Usuarios</span>
+      <span class="pull-right-container">
+        <i class="fa fa-angle-left pull-right"></i>
+      </span>
+    </a>
+    <ul class="treeview-menu" style="display: none;">
+      
+      @if (Auth()->user()->havePermission('show.estudiantes'))
+      <li class="{{ Request::is('estudiantes*') ? 'active' : '' }}">
+      <a href="{{ route('estudiantes.index') }}"><i class="fa fa-chalkboard-teacher"></i>Estudiantes</a>
+      </li>
+      @endif
+      
+      @if (Auth()->user()->havePermission('show.docentes'))
+      <li class="{{ Request::is('docentes*') ? 'active' : '' }}">
+          <a href="{{ route('docentes.index') }}"><i class="fa fa-chalkboard-teacher"></i>Docentes</a>
+      </li>
+      @endif
 
-@if (Auth()->user()->havePermission('show.acudientes'))
-<li class="{{ Request::is('acudientes*') ? 'active' : '' }}">
-    <a href="{{ route('acudientes.index') }}"><i class="fa fa-user-friends"></i><span>Acudientes</span></a>
-</li>
-@endif
-
-@if (Auth()->user()->havePermission('show.psicologos'))
-<li class="{{ Request::is('psicologos*') ? 'active' : '' }}">
-    <a href="{{ route('psicologos.index') }}"><i class="fa fa-user-md"></i><span>Psicoorientador</span></a>
-</li>
-@endif
+      @if (Auth()->user()->havePermission('show.acudientes'))
+      <li class="{{ Request::is('acudientes*') ? 'active' : '' }}">
+          <a href="{{ route('acudientes.index') }}"><i class="fa fa-user-friends"></i>Acudientes</a>
+      </li>
+      @endif
+      
+      @if (Auth()->user()->havePermission('show.psicologos'))
+      <li class="{{ Request::is('piscologos*') ? 'active' : '' }}">
+          <a href="{{ route('psicologos.index') }}"><i class="fa fa-user-md"></i>Psicoorientador</a>
+      </li>
+      @endif
+      
+      
+    </ul>
+  </li>
 
 @if (Auth()->user()->havePermission('show.user'))
 <li class="{{ Request::is('usuarios*') ? 'active' : '' }}">

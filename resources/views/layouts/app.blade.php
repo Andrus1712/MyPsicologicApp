@@ -73,6 +73,7 @@
 
 
     <link rel="stylesheet" href="../css/loading-spinner.css">
+
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
 
@@ -81,10 +82,12 @@
 
 <body class="skin-purple-light sidebar-mini">
 
+
     @if (!Auth::guest())
         <div class="wrapper">
 
             <div class="loading" id="loading-spinner" style="display: none;">Loading&#8230;</div>
+            {{-- <div class="loader"  id="loading-spinner" style="display: block"></div> --}}
             <!-- Main Header -->
             <header class="main-header">
 

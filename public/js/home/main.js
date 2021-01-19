@@ -1,7 +1,7 @@
 var modal = $('#modal-home');
 var AllRegister = []
 
-$(document).ready(function () {
+$(document).ready(function() {
     ReloadCalendario()
     Reload()
 })
@@ -23,7 +23,7 @@ function ReloadCalendario() {
         weekNumbers: true,
         dayMaxEvents: true, // allow "more" link when too many events
         events: [{}],
-        eventClick: function (info) {
+        eventClick: function(info) {
 
             var actividadFilter = JSON.parse(info.event.groupId);
 
@@ -49,14 +49,14 @@ function ReloadCalendario() {
         dataType: "JSON",
     })
 
-        .done(function (response) {
+    .done(function(response) {
             if (response.actividades.length != 0) {
 
                 for (var i = 0; i < response.actividades.length; i++) {
                     calendar.addEvent({
                         id: response.actividades[i].id,
                         groupId: JSON.stringify(response.actividades[i]),
-                        title: response.actividades[i].titulo+' | '+'CMP'+response.actividades[i].id_comportamiento,
+                        title: response.actividades[i].titulo + ' | ' + 'CMP' + response.actividades[i].id_comportamiento,
                         start: response.actividades[i].fecha,
                         backgroundColor: response.actividades[i].estado == 0 ? '#F4A460' : response.actividades[i].estado == 1 ? '#3CB371' : '#FF6347',
                         borderColor: "gray",
@@ -66,7 +66,7 @@ function ReloadCalendario() {
                 console.log("Sin actividades")
             }
         })
-        .fail(function () {
+        .fail(function() {
             console.log("error");
         });
 }
@@ -85,7 +85,7 @@ function ModalEst(actividadFilter, event, options) {
 
                 <div class="box box-widget">
                     <div class="box-header">
-                        <h3 class="box-title">Informacion de la actividad</h3>
+                        <h3 class="box-title">Información de la Actividad</h3>
                     </div>
                     <div class="box-body">
                         <div class="form-group">
@@ -112,7 +112,7 @@ function ModalEst(actividadFilter, event, options) {
                     </div>
                     <div class="box-body">
                         <div class="form-group">
-                            <label>Titulo de comportamiento</label>
+                            <label>Titulo de Comportamiento</label>
                             <p>${actividadFilter.titulo_comportamiento}</p>
                         </div>
                         <div class="form-group">
@@ -154,12 +154,12 @@ function ModalPsico(actividadFilter, event, options) {
 
                         <div class="box box-widget">
                             <div class="box-header">
-                                <h3 class="box-title">Informacion de la actividad</h3>
+                                <h3 class="box-title">Informacion de la Actividad</h3>
                             </div>
                             <div class="box-body">
                                 <div class="form-group">
                                     <label>Estado</label>
-                                    <p>${actividadFilter.estado == 0 ? "En espera" : actividadFilter.estado == 1 ? "Cumplida" : "Inclumplida"} </p>
+                                    <p>${actividadFilter.estado == 0 ? "En Espera" : actividadFilter.estado == 1 ? "Cumplida" : "Inclumplida"} </p>
                                 </div>
                                 <div class="form-group">
                                     <label>Fecha</label>
@@ -182,15 +182,15 @@ function ModalPsico(actividadFilter, event, options) {
                             </div>
                             <div class="box-body">
                                 <div class="form-group">
-                                    <label>Titulo de comportamiento</label>
+                                    <label>Título de Comportamiento</label>
                                     <p>CMP${actividadFilter.id_comportamiento} | ${actividadFilter.titulo_comportamiento}</p>
                                 </div>
                                 <div class="form-group">
-                                    <label>Titulo de comportamiento</label>
+                                    <label>Título de Comportamiento</label>
                                     <p>${actividadFilter.descripcion_comportamiento}</p>
                                 </div>
                                 <div class="form-group">
-                                    <label>Tipo de comportamiento</label>
+                                    <label>Típo de comportamiento</label>
                                     <p>${actividadFilter.titulo_tipo_comportamiento}</p>
                                 </div>
                             </div>
@@ -260,38 +260,38 @@ function Reload() {
         dataType: "JSON",
     })
 
-        .done(function (response) {
-            if (response.actividades.length != 0) {
-                var contC = 0;
-                var contI = 0;
-                var contE = 0;
-                AllRegister = response.actividades;
+    .done(function(response) {
+        if (response.actividades.length != 0) {
+            var contC = 0;
+            var contI = 0;
+            var contE = 0;
+            AllRegister = response.actividades;
 
-                for (var i = 0; i < response.actividades.length; i++) {
-                    if (response.actividades[i].estado == 0) {
-                        contE++;
-                    } else if (response.actividades[i].estado == 1) {
-                        contC++;
-                    } else {
-                        contI++;
-                    }
+            for (var i = 0; i < response.actividades.length; i++) {
+                if (response.actividades[i].estado == 0) {
+                    contE++;
+                } else if (response.actividades[i].estado == 1) {
+                    contC++;
+                } else {
+                    contI++;
                 }
-
-                $('#act-total').html("" + response.actividades.length);
-                $('#act-cumplidas').html("" + contC);
-                $('#act-espera').html("" + contE);
-                $('#act-incumplidas').html("" + contI);
-
-            } else {
-                $('#act-total').html("" + 0);
-                $('#act-cumplidas').html("" + 0);
-                $('#act-espera').html("" + 0);
-                $('#act-incumplidas').html("" + 0);
-
             }
-        })
 
-        .fail(function () {
-            console.log("error");
-        });
+            $('#act-total').html("" + response.actividades.length);
+            $('#act-cumplidas').html("" + contC);
+            $('#act-espera').html("" + contE);
+            $('#act-incumplidas').html("" + contI);
+
+        } else {
+            $('#act-total').html("" + 0);
+            $('#act-cumplidas').html("" + 0);
+            $('#act-espera').html("" + 0);
+            $('#act-incumplidas').html("" + 0);
+
+        }
+    })
+
+    .fail(function() {
+        console.log("error");
+    });
 }

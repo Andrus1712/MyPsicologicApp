@@ -2,10 +2,10 @@ var modal = $('#modal-tipo_c')
 var filtro = []
 
 
-$(document).ready(function(){
+$(document).ready(function() {
     Reload()
 
-    $("#tipoComportamientos-table").on('click', '[id^=Btn_Edit_]', function () {
+    $("#tipoComportamientos-table").on('click', '[id^=Btn_Edit_]', function() {
         var id = $(this).attr('data-id')
         var filtro = AllRegister.filter(f => f.id == id);
 
@@ -20,35 +20,33 @@ $(document).ready(function(){
             $("#titulo").val(filtro[0].titulo)
             $("#descripcion").val(filtro[0].descripcion)
 
-            $('#update').on('click', function(){
-                var titulo    = $("#titulo").val(),
+            $('#update').on('click', function() {
+                var titulo = $("#titulo").val(),
                     descripcion = $("#descripcion").val();
-    
-                if(titulo == '' || descripcion == '' )
-                {
-                        toastr.warning("Complete todos los campos")
-                } else 
-                {
+
+                if (titulo == '' || descripcion == '') {
+                    toastr.warning("Complete todos los campos")
+                } else {
                     $.ajax({
-                        url: '/api/tipo_comportamientos/'+id,
-                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        type: 'PUT',
-                        data: {
-                            titulo    : titulo,
-                            descripcion : descripcion
-                        },
-                      })
-                      .done(function() {
-                        setTimeout(function(){ modal.modal("hide")}, 600);
-                        toastr.info("información actualizada");
-                        Reload()
-                      })
-                      .fail(function() {
-                        toastr.error("Ha ocurrido un error");
-                      })
-                      .always(function() {
-                        $("#update").addClass("disabled");
-                      });
+                            url: '/api/tipo_comportamientos/' + id,
+                            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                            type: 'PUT',
+                            data: {
+                                titulo: titulo,
+                                descripcion: descripcion
+                            },
+                        })
+                        .done(function() {
+                            setTimeout(function() { modal.modal("hide") }, 600);
+                            toastr.info("información actualizada");
+                            Reload()
+                        })
+                        .fail(function() {
+                            toastr.error("Ha ocurrido un error");
+                        })
+                        .always(function() {
+                            $("#update").addClass("disabled");
+                        });
                 }
             })
 
@@ -56,69 +54,71 @@ $(document).ready(function(){
         }
     })
 
-    $('#tipoComportamientos-table').on('click','[id^=Btn_delete_]', function()
-    {
+    $('#tipoComportamientos-table').on('click', '[id^=Btn_delete_]', function() {
         var id = $(this).attr('data-id')
-        
+
         swal({
-        title: "¿Realmente deseas eliminar el acudiente?",
-        text: "Ten en cuenta que eliminaras toda su información del sistema",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonClass: "btn-danger",
-        confirmButtonText: "Si, eliminar",
-        closeOnConfirm: false
-        },
-        function(){
-            $.ajax({
-                url: "/api/tipo_comportamientos/" + id,
-                type: "DELETE",
-                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            })
-                .done(function () {
-                    swal("Eliminado!", "Se ha eliminado el acudiente", "success");
-                    Reload();
-                })
-                .fail(function () {
-                    swal("Error!", "Ha ocurrido un error", "error");
-                });        
-        
-        });  
-        
+                title: "¿Realmente deseas eliminar el acudiente?",
+                text: "Ten en cuenta que eliminaras toda su información del sistema",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Si, eliminar",
+                closeOnConfirm: false
+            },
+            function() {
+                $.ajax({
+                        url: "/api/tipo_comportamientos/" + id,
+                        type: "DELETE",
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    })
+                    .done(function() {
+                        swal("Eliminado!", "Se ha eliminado el acudiente", "success");
+                        Reload();
+                    })
+                    .fail(function() {
+                        swal("Error!", "Ha ocurrido un error", "error");
+                    });
+
+            });
+
     })
 
-    $('#add-tipo_c').on('click', function(){
+    $('#add-tipo_c').on('click', function() {
         modal.modal('show');
         Modal()
 
-        $('#save').on('click', function(){
-            var titulo    = $("#titulo").val(),
+        $('#save').on('click', function() {
+            var titulo = $("#titulo").val(),
                 descripcion = $("#descripcion").val();
 
-            if(titulo == '' || descripcion == '' )
-            {
-                    toastr.warning("Complete todos los campos")
-            } else 
-            {
+            if (titulo == '' || descripcion == '') {
+                toastr.warning("Complete todos los campos")
+            } else {
+                $('#loading-spinner').show();
                 $.ajax({
-                    url: '/api/tipo_comportamientos',
-                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                    type: 'POST',
-                    data: {
-                        titulo    : titulo,
-                        descripcion : descripcion
-                    },
-                  })
-                  .done(function() {
-                    setTimeout(function(){ modal.modal("hide")}, 600);
-                    Reload()
-                  })
-                  .fail(function() {
-                    toastr.error("Ha ocurrido un error");
-                  })
-                  .always(function() {
-                    $("#save").addClass("disabled");
-                  });
+                        url: '/api/tipo_comportamientos',
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                        type: 'POST',
+                        data: {
+                            titulo: titulo,
+                            descripcion: descripcion
+                        },
+                    })
+                    .done(function() {
+                        setTimeout(function() {
+                            $('#loading-spinner').hide();
+                            modal.modal("hide")
+                        }, 600);
+                        Reload()
+                    })
+                    .fail(function() {
+                        $('#loading-spinner').hide();
+                        toastr.error("Ha ocurrido un error");
+                    })
+                    .always(function() {
+                        $("#save").addClass("disabled");
+                    });
             }
         })
     })
@@ -158,65 +158,54 @@ function Modal() {
     `)
 }
 
-function Reload()
-{
+function Reload() {
     $.ajax({
         url: "/api/tipo_comportamientos",
         type: "GET",
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         dataType: "JSON",
     })
 
-    .done(function (response) 
-    {
+    .done(function(response) {
         if (response.length != 0) {
             AllRegister = response.data;
 
             DataTable(response.data);
-        }else
-        {
+        } else {
             $('#tipoComportamientos-table').dataTable().fnClearTable();
             $('#tipoComportamientos-table').dataTable().fnDestroy();
             $('#tipoComportamientos-table thead').empty()
         }
     })
 
-    .fail(function () {
+    .fail(function() {
         console.log("error");
     });
 }
 
-function DataTable(response)
-{ 
+function DataTable(response) {
 
     console.log(response)
-    if ($.fn.DataTable.isDataTable('#tipoComportamientos-table'))
-    {
+    if ($.fn.DataTable.isDataTable('#tipoComportamientos-table')) {
         $('#tipoComportamientos-table').dataTable().fnClearTable();
         $('#tipoComportamientos-table').dataTable().fnDestroy();
         $('#tipoComportamientos-table thead').empty()
-    }
-    else
-    {
+    } else {
         $('#tipoComportamientos-table thead').empty()
     }
 
-    
-    if(response.length != 0)
-    {
-        let my_columns=[]
-        $.each(response[0], function(key, value) 
-        {
+
+    if (response.length != 0) {
+        let my_columns = []
+        $.each(response[0], function(key, value) {
             var my_item = {};
             // my_item.class = "filter_C";
             my_item.data = key;
-            if(key =='created_at')
-            {
-            
+            if (key == 'created_at') {
+
                 my_item.title = 'Acción';
 
-                my_item.render = function(data, type, row)
-                {
+                my_item.render = function(data, type, row) {
                     return `<div align="center">
 
                                 <div class="btn-group btn-group-circle btn-group-solid" align="center">
@@ -231,50 +220,38 @@ function DataTable(response)
                                 </div>
                             </div>`
                 }
-                my_columns.push(my_item);  
+                my_columns.push(my_item);
 
-            }
-            
-            else if(key =='id')
-            {
-            
+            } else if (key == 'id') {
+
                 my_item.title = '#';
 
-                my_item.render = function(data, type, row)
-                {
-                  return `  <div'> 
+                my_item.render = function(data, type, row) {
+                    return `  <div'> 
                                 ${row.id}
                             </div>`
                 }
-                my_columns.push(my_item);            
-            }
+                my_columns.push(my_item);
+            } else if (key == 'titulo') {
 
-            else if(key =='titulo')
-            {
-            
                 my_item.title = 'Conducta';
 
-                my_item.render = function(data, type, row)
-                {
+                my_item.render = function(data, type, row) {
                     return `<div>
                                 ${row.titulo} 
-                            </div>`    
+                            </div>`
                 }
-                my_columns.push(my_item);            
-            }
+                my_columns.push(my_item);
+            } else if (key == 'descripcion') {
 
-            else if(key =='descripcion')
-            {
-            
                 my_item.title = 'Descripcion';
 
-                my_item.render = function(data, type, row)
-                {
+                my_item.render = function(data, type, row) {
                     return `<div>
                                 ${row.descripcion} 
-                            </div>`    
+                            </div>`
                 }
-                my_columns.push(my_item);            
+                my_columns.push(my_item);
             }
 
         })
@@ -312,7 +289,7 @@ function DataTable(response)
 
             "lengthMenu": [
                 [10, 15, 20, -1],
-                [10, 15, 20, "Todos"] 
+                [10, 15, 20, "Todos"]
             ]
         });
     }

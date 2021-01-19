@@ -58,7 +58,7 @@ class avancesController extends AppBaseController
                 $avances = DB::table(DB::raw('avances av'))->where(DB::raw('av.deleted_at', '=', 'NULL'))
                     ->join(DB::raw('actividades ac'), 'av.actividad_id', '=', 'ac.id')
                     ->join(DB::raw('comportamientos cp'), 'ac.comportamiento_id', '=', 'cp.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'cp.tipo_comportamiento_id', '=', 'tc.id')
                     ->join(DB::raw('estudiantes e'), 'cp.estudiante_id', '=', 'e.id')
                     ->select(
                         'av.id',
@@ -81,7 +81,7 @@ class avancesController extends AppBaseController
                 $avances = DB::table(DB::raw('avances av'))->where(DB::raw('av.deleted_at', '=', 'NULL'))
                     ->join(DB::raw('actividades ac'), 'av.actividad_id', '=', 'ac.id')
                     ->join(DB::raw('comportamientos cp'), 'ac.comportamiento_id', '=', 'cp.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'cp.tipo_comportamiento_id', '=', 'tc.id')
                     ->join(DB::raw('estudiantes e'), 'cp.estudiante_id', '=', 'e.id')
                     ->where(DB::raw('e.correo'), '=', $user->email)
                     ->select(
@@ -105,7 +105,7 @@ class avancesController extends AppBaseController
                 $avances = DB::table(DB::raw('avances av'))->where(DB::raw('av.deleted_at', '=', 'NULL'))
                     ->join(DB::raw('actividades ac'), 'av.actividad_id', '=', 'ac.id')
                     ->join(DB::raw('comportamientos cp'), 'ac.comportamiento_id', '=', 'cp.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'cp.tipo_comportamiento_id', '=', 'tc.id')
                     ->join(DB::raw('estudiantes e'), 'cp.estudiante_id', '=', 'e.id')
                     ->where(DB::raw('e.id'), '=', DB::raw('cp.estudiante_id'))
                     ->select(
@@ -129,7 +129,7 @@ class avancesController extends AppBaseController
                 $avances = DB::table(DB::raw('avances av'))->where(DB::raw('av.deleted_at', '=', 'NULL'))
                     ->join(DB::raw('actividades ac'), 'av.actividad_id', '=', 'ac.id')
                     ->join(DB::raw('comportamientos cp'), 'ac.comportamiento_id', '=', 'cp.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'cp.tipo_comportamiento_id', '=', 'tc.id')
                     ->join(DB::raw('estudiantes e'), 'cp.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
                     ->where(DB::raw('a.correo'), '=', $user->email)
@@ -154,7 +154,7 @@ class avancesController extends AppBaseController
                 $avances = DB::table(DB::raw('avances av'))->where(DB::raw('av.deleted_at', '=', 'NULL'))
                     ->join(DB::raw('actividades ac'), 'av.actividad_id', '=', 'ac.id')
                     ->join(DB::raw('comportamientos cp'), 'ac.comportamiento_id', '=', 'cp.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'cp.tipo_comportamiento_id', '=', 'tc.id')
                     ->join(DB::raw('estudiantes e'), 'cp.estudiante_id', '=', 'e.id')
                     ->select(
                         'av.id',

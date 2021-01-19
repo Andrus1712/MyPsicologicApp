@@ -72,6 +72,7 @@ $(document).ready(function() {
                 if (name == '') {
                     toastr.warning("Complete todos los campos")
                 } else {
+                    $('#loading-spinner').show();
                     $.ajax({
                             url: '/api/roles',
                             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
@@ -84,10 +85,14 @@ $(document).ready(function() {
                             }
                         })
                         .done(function() {
-                            setTimeout(function() { modal.modal("hide") }, 600);
+                            setTimeout(function() {
+                                $('#loading-spinner').hide();
+                                modal.modal("hide")
+                            }, 600);
                             Reload()
                         })
                         .fail(function() {
+                            $('#loading-spinner').hide();
                             toastr.error("Ha ocurrido un error");
                         })
                         .always(function() {

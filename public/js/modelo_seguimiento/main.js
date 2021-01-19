@@ -3,44 +3,44 @@ var AllRegister = []
 
 var permisos = []
 
-$(document).ready(function () {
+$(document).ready(function() {
     Reload()
     LoadChartEstado();
     LoadCharClasificacion();
 
 
-    $('#modelo-table').on('click', '[id^=Btn_delete_]', function () {
+    $('#modelo-table').on('click', '[id^=Btn_delete_]', function() {
         var id = $(this).attr('data-id')
 
         swal({
-            title: "¿Realmente deseas eliminar el acudiente?",
-            text: "Ten en cuenta que eliminaras toda su información del sistema",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonClass: "btn-danger",
-            confirmButtonText: "Si, eliminar",
-            closeOnConfirm: false
-        },
-            function () {
+                title: "¿Realmente deseas eliminar el acudiente?",
+                text: "Ten en cuenta que eliminaras toda su información del sistema",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Si, eliminar",
+                closeOnConfirm: false
+            },
+            function() {
                 $.ajax({
-                    url: "/api/modelo_seguimientos/" + id,
-                    type: "DELETE",
-                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                })
-                    .done(function () {
+                        url: "/api/modelo_seguimientos/" + id,
+                        type: "DELETE",
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    })
+                    .done(function() {
                         swal("Eliminado!", "Se ha eliminado el acudiente", "success");
                         Reload()
                         LoadChartEstado();
                         LoadCharClasificacion();
                     })
-                    .fail(function () {
+                    .fail(function() {
                         swal("Error!", "Ha ocurrido un error", "error");
                     });
 
             });
     })
 
-    $("#modelo-table").on('click', '[id^=Btn_Edit_]', function () {
+    $("#modelo-table").on('click', '[id^=Btn_Edit_]', function() {
 
         var id = $(this).attr('data-id')
         var filtro = AllRegister.filter(f => f.id == id);
@@ -62,7 +62,7 @@ $(document).ready(function () {
             $("#solucion").val(filtro[0].solucion)
             $('#estado').val(filtro[0].estado)
 
-            $('#update').on('click', function () {
+            $('#update').on('click', function() {
                 var fecha = $('#fecha').val(),
                     nombre = $('#nombres').val(),
                     estamento = $('#estamento').val(),
@@ -75,35 +75,34 @@ $(document).ready(function () {
 
                 if (fecha == '' || nombre == '' || estamento == '' || descripcion == '' || medio_comunicacion == '' || clasificacion_caso_presentado == '' || solucion == '' || estado == '') {
                     toastr.warning("Complete todos los campos")
-                }
-                else {
+                } else {
                     $.ajax({
-                        url: '/api/modelo_seguimientos/' + id,
-                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                        type: 'PUT',
-                        data: {
-                            fecha: fecha,
-                            nombre: nombre,
-                            estamento: estamento,
-                            descripcion: descripcion,
-                            remitido: remitido,
-                            medio_comunicacion: medio_comunicacion,
-                            clasificacion_caso_presentado: clasificacion_caso_presentado,
-                            solucion: solucion,
-                            estado: estado
-                        },
-                    })
-                        .done(function () {
-                            setTimeout(function () { modal.modal("hide") }, 600);
+                            url: '/api/modelo_seguimientos/' + id,
+                            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                            type: 'PUT',
+                            data: {
+                                fecha: fecha,
+                                nombre: nombre,
+                                estamento: estamento,
+                                descripcion: descripcion,
+                                remitido: remitido,
+                                medio_comunicacion: medio_comunicacion,
+                                clasificacion_caso_presentado: clasificacion_caso_presentado,
+                                solucion: solucion,
+                                estado: estado
+                            },
+                        })
+                        .done(function() {
+                            setTimeout(function() { modal.modal("hide") }, 600);
                             toastr.info("información actualizada");
                             Reload()
                             LoadChartEstado();
                             LoadCharClasificacion();
                         })
-                        .fail(function () {
+                        .fail(function() {
                             toastr.error("Ha ocurrido un error");
                         })
-                        .always(function () {
+                        .always(function() {
                             $("#update").addClass("disabled");
                         });
                 }
@@ -113,11 +112,11 @@ $(document).ready(function () {
         }
     })
 
-    $('#add-seguiento').on('click', function () {
+    $('#add-seguiento').on('click', function() {
         modal.modal('show')
         Modal()
 
-        $('#save').on('click', function () {
+        $('#save').on('click', function() {
             var fecha = $('#fecha').val(),
                 nombre = $('#nombres').val(),
                 estamento = $('#estamento').val(),
@@ -131,33 +130,38 @@ $(document).ready(function () {
             if (fecha == '' || nombre == '' || estamento == '' || descripcion == '' || medio == '' || clasificacion == '' || solucion == '' || estado == '') {
                 toastr.warning("Complete todos los campos")
             } else {
+                $('#loading-spinner').show();
                 $.ajax({
-                    url: '/api/modelo_seguimientos',
-                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                    type: 'POST',
-                    data: {
-                        fecha: fecha,
-                        nombre: nombre,
-                        estamento: estamento,
-                        medio_comunicacion: medio_comunicacion,
-                        clasificacion_caso_presentado: clasificacion_caso_presentado,
-                        descripcion: descripcion,
-                        solucion: solucion,
-                        remitido: remitido,
-                        estado: estado
-                    },
-                })
-                    .done(function () {
+                        url: '/api/modelo_seguimientos',
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                        type: 'POST',
+                        data: {
+                            fecha: fecha,
+                            nombre: nombre,
+                            estamento: estamento,
+                            medio_comunicacion: medio_comunicacion,
+                            clasificacion_caso_presentado: clasificacion_caso_presentado,
+                            descripcion: descripcion,
+                            solucion: solucion,
+                            remitido: remitido,
+                            estado: estado
+                        },
+                    })
+                    .done(function() {
                         toastr.success("Datos guardados");
-                        setTimeout(function () { modal.modal("hide") }, 600);
+                        setTimeout(function() {
+                            $('#loading-spinner').hide();
+                            modal.modal("hide")
+                        }, 600);
                         Reload()
                         LoadChartEstado();
                         LoadCharClasificacion();
                     })
-                    .fail(function () {
+                    .fail(function() {
+                        $('#loading-spinner').hide();
                         toastr.error("Ha ocurrido un error");
                     })
-                    .always(function () {
+                    .always(function() {
                         $("#save").addClass("disabled");
                     });
             }
@@ -381,6 +385,7 @@ function LoadChartEstado(params) {
 
     var fi;
     var ff;
+
     function cb(start, end) {
         $('#reportrange1 span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
         fi = start.format('YYYY-MM-DD');
@@ -390,13 +395,13 @@ function LoadChartEstado(params) {
         var cat = []
         let arreglo = [];
         $.ajax({
-            url: "/api/getEstados",
-            type: "POST",
-            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-            dataType: "JSON",
-            data: { fechaInicial: fi, fechaFinal: ff }
-        })
-            .done(function (response) {
+                url: "/api/getEstados",
+                type: "POST",
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                dataType: "JSON",
+                data: { fechaInicial: fi, fechaFinal: ff }
+            })
+            .done(function(response) {
                 pieDataResponse = []
                 cat = []
                 for (var i = 0; i < response.length; i++) {
@@ -432,7 +437,7 @@ function LoadChartEstado(params) {
                     vR.push(contR)
                     vE.push(contE)
                     vS.push(contS)
-                    //console.log(contR + " | " + contE + " | " + contS)
+                        //console.log(contR + " | " + contE + " | " + contS)
 
                     contR = 0;
                     contE = 0;
@@ -480,8 +485,7 @@ function LoadChartEstado(params) {
                         verticalAlign: 'top',
                         y: 25,
                         floating: true,
-                        backgroundColor:
-                            Highcharts.defaultOptions.legend.backgroundColor || 'white',
+                        backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || 'white',
                         borderColor: '#CCC',
                         borderWidth: 1,
                         shadow: false
@@ -499,17 +503,18 @@ function LoadChartEstado(params) {
                         }
                     },
                     series: [{
-                        name: "Incumplidp",
-                        data: vR
-                    },
-                    {
-                        name: "En espera",
-                        data: vE
-                    },
-                    {
-                        name: "Solucionado",
-                        data: vS
-                    }]
+                            name: "Incumplidp",
+                            data: vR
+                        },
+                        {
+                            name: "En espera",
+                            data: vE
+                        },
+                        {
+                            name: "Solucionado",
+                            data: vS
+                        }
+                    ]
                 });
 
 
@@ -526,9 +531,9 @@ function LoadChartEstado(params) {
 
             })
 
-            .fail(function () {
-                toastr.error("No se han podido cargar los datos")
-            });
+        .fail(function() {
+            toastr.error("No se han podido cargar los datos")
+        });
 
     }
 
@@ -557,6 +562,7 @@ function LoadCharClasificacion(data) {
 
     var fi;
     var ff;
+
     function cb(start, end) {
         $('#reportrange2 span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
         fi = start.format('YYYY-MM-DD');
@@ -564,21 +570,19 @@ function LoadCharClasificacion(data) {
 
         var pieDataResponse = []
         $.ajax({
-            url: "/api/getClasificacion",
-            type: "POST",
-            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-            dataType: "JSON",
-            data: { fechaInicial: fi, fechaFinal: ff }
-        })
-            .done(function (response) {
+                url: "/api/getClasificacion",
+                type: "POST",
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                dataType: "JSON",
+                data: { fechaInicial: fi, fechaFinal: ff }
+            })
+            .done(function(response) {
                 pieDataResponse = []
                 for (var i = 0; i < response.length; i++) {
-                    pieDataResponse.push(
-                        {
-                            name: response[i].clasificacion,
-                            y: response[i].cantidad
-                        }
-                    )
+                    pieDataResponse.push({
+                        name: response[i].clasificacion,
+                        y: response[i].cantidad
+                    })
                 }
 
                 Highcharts.chart('chartClasificacion', {
@@ -631,9 +635,9 @@ function LoadCharClasificacion(data) {
 
             })
 
-            .fail(function () {
-                toastr.error("No se han podido cargar los datos")
-            });
+        .fail(function() {
+            toastr.error("No se han podido cargar los datos")
+        });
     }
 
 
@@ -792,21 +796,21 @@ function Reload() {
         dataType: "JSON",
     })
 
-        .done(function (response) {
-            if (response.length != 0) {
-                AllRegister = response.modeloSeguimiento;
-                permisos = response.permisos;
-                DataTable(response.modeloSeguimiento);
-            } else {
-                $('#modelo-table').dataTable().fnClearTable();
-                $('#modelo-table').dataTable().fnDestroy();
-                $('#modelo-table thead').empty()
-            }
-        })
+    .done(function(response) {
+        if (response.length != 0) {
+            AllRegister = response.modeloSeguimiento;
+            permisos = response.permisos;
+            DataTable(response.modeloSeguimiento);
+        } else {
+            $('#modelo-table').dataTable().fnClearTable();
+            $('#modelo-table').dataTable().fnDestroy();
+            $('#modelo-table thead').empty()
+        }
+    })
 
-        .fail(function () {
-            console.log("error");
-        });
+    .fail(function() {
+        console.log("error");
+    });
 }
 
 function DataTable(response) {
@@ -814,23 +818,22 @@ function DataTable(response) {
         $('#modelo-table').dataTable().fnClearTable();
         $('#modelo-table').dataTable().fnDestroy();
         $('#modelo-table thead').empty()
-    }
-    else {
+    } else {
         $('#modelo-table thead').empty()
     }
 
     if (response.length != 0) {
         let my_columns = []
-        $.each(response[0], function (key, value) {
-            var my_item = {};
-            // my_item.class = "filter_C";
-            my_item.data = key;
-            if (key == 'created_at') {
+        $.each(response[0], function(key, value) {
+                    var my_item = {};
+                    // my_item.class = "filter_C";
+                    my_item.data = key;
+                    if (key == 'created_at') {
 
-                my_item.title = 'Acción';
+                        my_item.title = 'Acción';
 
-                my_item.render = function (data, type, row) {
-                    return `<div align="center">
+                        my_item.render = function(data, type, row) {
+                            return `<div align="center">
 
                                 <div class="btn-group btn-group-circle btn-group-solid" align="center">
 
@@ -843,114 +846,97 @@ function DataTable(response) {
                                     </a> 
                                 </div>
                             </div>`
-                }
-                my_columns.push(my_item);
+                        }
+                        my_columns.push(my_item);
 
-            }
-            else if (key == 'id') {
+                    } else if (key == 'id') {
 
-                my_item.title = '#';
+                        my_item.title = '#';
 
-                my_item.render = function (data, type, row) {
-                    return `  <div> 
+                        my_item.render = function(data, type, row) {
+                            return `  <div> 
                                 ${row.id}
                             </div>`
-                }
-                my_columns.push(my_item);
+                        }
+                        my_columns.push(my_item);
 
 
-            }
+                    } else if (key == 'fecha') {
 
-            else if (key == 'fecha') {
+                        my_item.title = 'Fecha';
 
-                my_item.title = 'Fecha';
-
-                my_item.render = function (data, type, row) {
-                    return `  <div> 
+                        my_item.render = function(data, type, row) {
+                            return `  <div> 
                                 ${row.fecha}
                             </div>`
-                }
-                my_columns.push(my_item);
-            }
+                        }
+                        my_columns.push(my_item);
+                    } else if (key == 'nombre') {
 
-            else if (key == 'nombre') {
+                        my_item.title = 'Nombre';
 
-                my_item.title = 'Nombre';
-
-                my_item.render = function (data, type, row) {
-                    return `<div>
+                        my_item.render = function(data, type, row) {
+                            return `<div>
                                 ${row.nombre} 
                             </div>`
-                }
-                my_columns.push(my_item);
-            }
+                        }
+                        my_columns.push(my_item);
+                    } else if (key == 'estamento') {
 
-            else if (key == 'estamento') {
+                        my_item.title = 'Estamento';
 
-                my_item.title = 'Estamento';
-
-                my_item.render = function (data, type, row) {
-                    return `<div>
+                        my_item.render = function(data, type, row) {
+                            return `<div>
                                 ${row.estamento} 
                             </div>`
-                }
-                my_columns.push(my_item);
-            }
+                        }
+                        my_columns.push(my_item);
+                    } else if (key == 'medio_comunicacion') {
 
-            else if (key == 'medio_comunicacion') {
+                        my_item.title = 'Medio de comunicacion';
 
-                my_item.title = 'Medio de comunicacion';
-
-                my_item.render = function (data, type, row) {
-                    return `<div>
+                        my_item.render = function(data, type, row) {
+                            return `<div>
                                 ${row.medio_comunicacion} 
                             </div>`
-                }
-                my_columns.push(my_item);
-            }
+                        }
+                        my_columns.push(my_item);
+                    } else if (key == 'clasificacion_caso_presentado') {
 
-            else if (key == 'clasificacion_caso_presentado') {
+                        my_item.title = 'Clasificacion del caso presentado';
 
-                my_item.title = 'Clasificacion del caso presentado';
-
-                my_item.render = function (data, type, row) {
-                    return `<div>
+                        my_item.render = function(data, type, row) {
+                            return `<div>
                                 ${row.clasificacion_caso_presentado} 
                             </div>`
-                }
-                my_columns.push(my_item);
-            }
+                        }
+                        my_columns.push(my_item);
+                    } else if (key == 'descripcion') {
 
-            else if (key == 'descripcion') {
+                        my_item.title = 'Descripcion';
 
-                my_item.title = 'Descripcion';
-
-                my_item.render = function (data, type, row) {
-                    return `<div>
+                        my_item.render = function(data, type, row) {
+                            return `<div>
                                 ${row.descripcion} 
                             </div>`
-                }
-                my_columns.push(my_item);
-            }
+                        }
+                        my_columns.push(my_item);
+                    } else if (key == 'solucion') {
 
-            else if (key == 'solucion') {
+                        my_item.title = 'Solucion';
 
-                my_item.title = 'Solucion';
-
-                my_item.render = function (data, type, row) {
-                    return `<div>
+                        my_item.render = function(data, type, row) {
+                            return `<div>
                                 ${row.solucion} 
                             </div>`
-                }
-                my_columns.push(my_item);
-            }
+                        }
+                        my_columns.push(my_item);
+                    } else if (key == 'remitido') {
 
-            else if (key == 'remitido') {
+                        my_item.title = 'Remitido';
 
-                my_item.title = 'Remitido';
-
-                my_item.render = function (data, type, row) {
-                    return `<div>
+                        my_item.render = function(data, type, row) {
+                                return `<div>
                                 ${row.remitido == null? `Sin remitir` : row.remitido}
                             </div>`
                 }

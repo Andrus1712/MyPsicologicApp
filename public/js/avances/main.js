@@ -3,16 +3,16 @@ var AllRegister = []
 
 var permisos = []
 
-$(document).ready(function () {
+$(document).ready(function() {
     Reload()
 
-    $('#add-avance').on('click', function () {
+    $('#add-avance').on('click', function() {
         modal.modal('show')
         Modal()
         LoadActividad()
         establecer_fecha()
 
-        $('#save').on('click', function () {
+        $('#save').on('click', function() {
             var actividad_id = $('#actividad_id').val(),
                 descripcion = $('#descripcion').val(),
                 fecha = $('#fecha').val(),
@@ -20,11 +20,10 @@ $(document).ready(function () {
 
             if (actividad_id == '' || descripcion == '' || fecha == '') {
                 toastr.warning("Complete todos los campos")
-            }
-            else {
+            } else {
                 var form = new FormData();
                 var archivos = 0;
-                jQuery.each(jQuery('#evidencias')[0].files, function (i, file) {
+                jQuery.each(jQuery('#evidencias')[0].files, function(i, file) {
                     form.append('file' + i, file);
                     archivos++;
                 });
@@ -33,32 +32,36 @@ $(document).ready(function () {
                 form.append('actividad_id', actividad_id)
                 form.append('descripcion', descripcion)
                 form.append('fecha_avance', fecha)
-                // form.append('evidencias', evidencias)               
-
+                    // form.append('evidencias', evidencias)               
+                $('#loading-spinner').show();
                 $.ajax({
-                    url: '/api/avances',
-                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                    type: 'POST',
-                    processData: false,
-                    contentType: false,
-                    data: form,
-                })
-                    .done(function () {
+                        url: '/api/avances',
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                        type: 'POST',
+                        processData: false,
+                        contentType: false,
+                        data: form,
+                    })
+                    .done(function() {
                         toastr.success("Avance registrado");
-                        setTimeout(function () { modal.modal("hide") }, 600);
+                        setTimeout(function() {
+                            $('#loading-spinner').hide();
+                            modal.modal("hide")
+                        }, 600);
                         Reload()
                     })
-                    .fail(function () {
+                    .fail(function() {
+                        $('#loading-spinner').hide();
                         toastr.error("Ha ocurrido un error");
                     })
-                    .always(function () {
+                    .always(function() {
                         $("#save").addClass("disabled");
                     });
             }
         })
     })
 
-    $('#avances-table').on('click', '[id^=Btn_Edit_]', function () {
+    $('#avances-table').on('click', '[id^=Btn_Edit_]', function() {
         var id = $(this).attr('data-id');
 
         const filtro = AllRegister.filter(f => f.id == id);
@@ -80,7 +83,7 @@ $(document).ready(function () {
             // $('#rutaFile').attr('target', '_blank')
             // $("#rutaFile").text('Ver documento')
 
-            $("#update").on('click', function () {
+            $("#update").on('click', function() {
                 var actividad_id = $("#actividad_id").val(),
                     descripcion = $("#descripcion").val(),
                     fecha_avance = $("#fecha").val();
@@ -88,15 +91,14 @@ $(document).ready(function () {
 
                 if (actividad_id == '' || descripcion == '' || fecha_avance == '') {
                     toastr.warning("Complete todos los campos")
-                }
-                else {
+                } else {
 
                     var form = new FormData();
 
                     var archivos = 0;
                     form.append('tempMultimedia', filtro[0].evidencias)
 
-                    jQuery.each(jQuery('#evidencias')[0].files, function (i, file) {
+                    jQuery.each(jQuery('#evidencias')[0].files, function(i, file) {
                         form.append('file' + i, file);
                         archivos++;
                     });
@@ -105,33 +107,37 @@ $(document).ready(function () {
                     form.append('actividad_id', actividad_id)
                     form.append('descripcion', descripcion)
                     form.append('fecha_avance', fecha_avance)
-                    // form.append('evidencias', evidencias)
+                        // form.append('evidencias', evidencias)
                     form.append('id', id)
                     form.append('method', 'update')
 
 
-
+                    $('#loading-spinner').hide();
                     $.ajax({
-                        url: '/api/avances',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                            'X-Requested-With': 'XMLHttpRequest',
-                        },
-                        type: 'POST',
-                        processData: false,
-                        contentType: false,
-                        data: form,
+                            url: '/api/avances',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                            type: 'POST',
+                            processData: false,
+                            contentType: false,
+                            data: form,
 
-                    })
-                        .done(function () {
-                            setTimeout(function () { modal.modal("hide") }, 600);
+                        })
+                        .done(function() {
+                            setTimeout(function() {
+                                $('#loading-spinner').hide();
+                                modal.modal("hide")
+                            }, 600);
                             toastr.info("información actualizada");
                             Reload()
                         })
-                        .fail(function (errorM) {
+                        .fail(function(errorM) {
+                            $('#loading-spinner').hide();
                             toastr.error(errorM.responseJSON.message == undefined ? 'Ha ocurrido un error' : errorM.responseJSON.message);
                         })
-                        .always(function () {
+                        .always(function() {
                             $("#update").addClass("disabled");
                         });
                 }
@@ -139,29 +145,29 @@ $(document).ready(function () {
         }
     })
 
-    $('#avances-table').on('click', '[id^=Btn_delete_]', function () {
+    $('#avances-table').on('click', '[id^=Btn_delete_]', function() {
         var id = $(this).attr('data-id')
 
         swal({
-            title: "¿Realmente deseas eliminar el avance?",
-            text: "Ten en cuenta que eliminaras toda su información del sistema",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonClass: "btn-danger",
-            confirmButtonText: "Si, eliminar",
-            closeOnConfirm: false
-        },
-            function () {
+                title: "¿Realmente deseas eliminar el avance?",
+                text: "Ten en cuenta que eliminaras toda su información del sistema",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Si, eliminar",
+                closeOnConfirm: false
+            },
+            function() {
                 $.ajax({
-                    url: "/api/avances/" + id,
-                    type: "DELETE",
-                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                })
-                    .done(function () {
+                        url: "/api/avances/" + id,
+                        type: "DELETE",
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    })
+                    .done(function() {
                         swal("Eliminado!", "Se ha eliminado el avance", "success");
                         Reload();
                     })
-                    .fail(function () {
+                    .fail(function() {
                         swal("Error!", "Ha ocurrido un error", "error");
                     });
 
@@ -171,7 +177,7 @@ $(document).ready(function () {
     })
 
 
-    $('#avances-table').on('click', '[id^=Btn_file_]', function () {
+    $('#avances-table').on('click', '[id^=Btn_file_]', function() {
         modal.modal('show')
         var id = $(this).attr('data-id');
 
@@ -277,15 +283,15 @@ function LoadActividad() {
     });
 
     $.ajax({
-        url: '/api/actividades',
-    })
-        .done(function (response) {
+            url: '/api/actividades',
+        })
+        .done(function(response) {
             for (var i in response.data) {
                 $("#actividad_id").append(`<option value='${response.data[i].id}'>${response.data[i].titulo} | ${response.data[i].titulo_comportamiento} | ${response.data[i].nombre_estudiante} ${response.data[i].apellido_estudiante}</option>`)
             }
 
         })
-        .fail(function () {
+        .fail(function() {
             console.log("error");
         })
 }
@@ -355,21 +361,21 @@ function Reload() {
         dataType: "JSON",
     })
 
-        .done(function (response) {
-            if (response.length != 0) {
-                AllRegister = response.avances;
-                permisos = response.permisos;
-                DataTable(response.avances);
-            } else {
-                $('#avances-table').dataTable().fnClearTable();
-                $('#avances-table').dataTable().fnDestroy();
-                $('#avances-table thead').empty()
-            }
-        })
+    .done(function(response) {
+        if (response.length != 0) {
+            AllRegister = response.avances;
+            permisos = response.permisos;
+            DataTable(response.avances);
+        } else {
+            $('#avances-table').dataTable().fnClearTable();
+            $('#avances-table').dataTable().fnDestroy();
+            $('#avances-table thead').empty()
+        }
+    })
 
-        .fail(function () {
-            console.log("error");
-        });
+    .fail(function() {
+        console.log("error");
+    });
 }
 
 function DataTable(response) {
@@ -379,15 +385,14 @@ function DataTable(response) {
         $('#avances-table').dataTable().fnClearTable();
         $('#avances-table').dataTable().fnDestroy();
         $('#avances-table thead').empty()
-    }
-    else {
+    } else {
         $('#avances-table thead').empty()
     }
 
 
     if (response.length != 0) {
         let my_columns = []
-        $.each(response[0], function (key, value) {
+        $.each(response[0], function(key, value) {
             var my_item = {};
             // my_item.class = "filter_C";
             my_item.data = key;
@@ -395,7 +400,7 @@ function DataTable(response) {
 
                 my_item.title = 'Acción';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     var html = '';
                     for (let i = 0; i < permisos.length; i++) {
 
@@ -423,95 +428,82 @@ function DataTable(response) {
                     my_columns.push(my_item);
                 }
 
-            }
-
-            else if (key == 'id') {
+            } else if (key == 'id') {
 
                 my_item.title = '#';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `  <div'> 
                                 ${row.id}
                             </div>`
                 }
                 my_columns.push(my_item);
 
-            }
-
-            else if (key == 'avance') {
+            } else if (key == 'avance') {
 
                 my_item.title = 'Avance';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `  <div'> 
                                 ${row.avance}
                             </div>`
                 }
                 my_columns.push(my_item);
-            }
-
-            else if (key == 'titulo_actividad') {
+            } else if (key == 'titulo_actividad') {
 
                 my_item.title = 'Actividad';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `<div>
                                 ${row.titulo_actividad} 
                             </div>`
                 }
                 my_columns.push(my_item);
-            }
-            else if (key == 'descripcion_actividad') {
+            } else if (key == 'descripcion_actividad') {
 
                 my_item.title = 'Descripcion de la actividad';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `<div>
                                 ${row.descripcion_actividad} 
                             </div>`
                 }
                 my_columns.push(my_item);
-            }
-            else if (key == 'comportamiento_registrado') {
+            } else if (key == 'comportamiento_registrado') {
 
                 my_item.title = 'Comportamiento';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `<div>
                                 ${row.comportamiento_registrado} 
                             </div>`
                 }
                 my_columns.push(my_item);
-            }
-
-            else if (key == 'titulo_tipo_comportamiento') {
+            } else if (key == 'titulo_tipo_comportamiento') {
 
                 my_item.title = 'Tipo de comportamiento';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `<div>
                                 ${row.titulo_tipo_comportamiento} 
                             </div>`
                 }
                 my_columns.push(my_item);
-            }
-
-            else if (key == 'nombre_estudiante') {
+            } else if (key == 'nombre_estudiante') {
 
                 my_item.title = 'Estudiante';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `<div>
                                 ${row.nombre_estudiante + " " + row.apellido_estudiante} 
                             </div>`
                 }
                 my_columns.push(my_item);
-            }
-            else if (key == 'evidencias') {
+            } else if (key == 'evidencias') {
 
                 my_item.title = 'Evidencias';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `<div align="center">
                                 <a class="btn btn-default ${row.evidencias == 'undefined' || row.evidencias == null ? 'disabled' : ''}" id="Btn_file_${row.id}" data-id=${row.id} >
                                     <i class="fa fa-file"></i>
@@ -553,7 +545,7 @@ function DataTable(response) {
                 { "width": "20%", "targets": 1 },
                 { "width": "20%", "targets": 2 },
                 { "width": "20%", "targets": 4 },
-                
+
             ],
 
             "lengthMenu": [

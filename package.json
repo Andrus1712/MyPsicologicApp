@@ -1,4 +1,5 @@
 {
+
     "private": true,
     "scripts": {
         "dev": "npm run development",
@@ -21,4 +22,5 @@
     "dependencies": {
         "@ttskch/select2-bootstrap4-theme": "^1.3.4"
     }
+
 }

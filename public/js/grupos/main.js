@@ -4,10 +4,10 @@ var AllRegister = []
 var permisos = []
 
 
-$(document).ready(function () {
+$(document).ready(function() {
     Reload()
 
-    $("#grupos-table").on('click', '[id^=Btn_Edit_]', function () {
+    $("#grupos-table").on('click', '[id^=Btn_Edit_]', function() {
 
         var id = $(this).attr('data-id')
         var filtro = AllRegister.filter(f => f.id == id);
@@ -25,7 +25,7 @@ $(document).ready(function () {
             $("#curso").val(filtro[0].curso)
             $("#docente_id").val(filtro[0].docente_id)
 
-            $('#update').on('click', function () {
+            $('#update').on('click', function() {
                 var grado = $("#grado").val(),
                     curso = $("#curso").val(),
                     docente_id = $("#docente_id").val();
@@ -34,24 +34,24 @@ $(document).ready(function () {
                     toastr.warning("Complete todos los campos")
                 } else {
                     $.ajax({
-                        url: '/api/grupos/' + id,
-                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                        type: 'PUT',
-                        data: {
-                            grado: grado,
-                            curso: curso,
-                            docente_id: docente_id
-                        },
-                    })
-                        .done(function () {
-                            setTimeout(function () { modal.modal("hide") }, 600);
+                            url: '/api/grupos/' + id,
+                            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                            type: 'PUT',
+                            data: {
+                                grado: grado,
+                                curso: curso,
+                                docente_id: docente_id
+                            },
+                        })
+                        .done(function() {
+                            setTimeout(function() { modal.modal("hide") }, 600);
                             toastr.info("información actualizada");
                             Reload()
                         })
-                        .fail(function () {
+                        .fail(function() {
                             toastr.error("Ha ocurrido un error");
                         })
-                        .always(function () {
+                        .always(function() {
                             $("#update").addClass("disabled");
                         });
                 }
@@ -61,29 +61,29 @@ $(document).ready(function () {
         }
     })
 
-    $('#grupos-table').on('click', '[id^=Btn_delete_]', function () {
+    $('#grupos-table').on('click', '[id^=Btn_delete_]', function() {
         var id = $(this).attr('data-id')
 
         swal({
-            title: "¿Realmente deseas eliminar el acudiente?",
-            text: "Ten en cuenta que eliminaras toda su información del sistema",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonClass: "btn-danger",
-            confirmButtonText: "Si, eliminar",
-            closeOnConfirm: false
-        },
-            function () {
+                title: "¿Realmente deseas eliminar el acudiente?",
+                text: "Ten en cuenta que eliminaras toda su información del sistema",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Si, eliminar",
+                closeOnConfirm: false
+            },
+            function() {
                 $.ajax({
-                    url: "/api/grupos/" + id,
-                    type: "DELETE",
-                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                })
-                    .done(function () {
+                        url: "/api/grupos/" + id,
+                        type: "DELETE",
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    })
+                    .done(function() {
                         swal("Eliminado!", "Se ha eliminado el acudiente", "success");
                         Reload();
                     })
-                    .fail(function () {
+                    .fail(function() {
                         swal("Error!", "Ha ocurrido un error", "error");
                     });
 
@@ -92,12 +92,12 @@ $(document).ready(function () {
 
     })
 
-    $('#add-grupo').on('click', function () {
+    $('#add-grupo').on('click', function() {
         modal.modal('show')
         Modal()
         LoadDocente()
 
-        $('#save').on('click', function () {
+        $('#save').on('click', function() {
             var grado = $("#grado").val(),
                 curso = $("#curso").val(),
                 docente_id = $("#docente_id").val();
@@ -105,24 +105,29 @@ $(document).ready(function () {
             if (grado == '' || curso == '' || docente_id == '') {
                 toastr.warning("Complete todos los campos")
             } else {
+                $('#loading-spinner').show();
                 $.ajax({
-                    url: '/api/grupos',
-                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                    type: 'POST',
-                    data: {
-                        grado: grado,
-                        curso: curso,
-                        docente_id: docente_id
-                    },
-                })
-                    .done(function () {
-                        setTimeout(function () { modal.modal("hide") }, 600);
+                        url: '/api/grupos',
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                        type: 'POST',
+                        data: {
+                            grado: grado,
+                            curso: curso,
+                            docente_id: docente_id
+                        },
+                    })
+                    .done(function() {
+                        setTimeout(function() {
+                            $('#loading-spinner').hide();
+                            modal.modal("hide")
+                        }, 600);
                         Reload()
                     })
-                    .fail(function () {
+                    .fail(function() {
+                        $('#loading-spinner').hide();
                         toastr.error("Ha ocurrido un error");
                     })
-                    .always(function () {
+                    .always(function() {
                         $("#save").addClass("disabled");
                     });
             }
@@ -189,15 +194,15 @@ function LoadDocente() {
     });
 
     $.ajax({
-        url: '/api/docentes',
-    })
-        .done(function (response) {
+            url: '/api/docentes',
+        })
+        .done(function(response) {
             for (var i in response.data) {
                 $("#docente_id").append(`<option value='${response.data[i].id}'>${response.data[i].nombres} ${response.data[i].apellidos}</option>`)
             }
 
         })
-        .fail(function () {
+        .fail(function() {
             console.log("error");
         })
 }
@@ -210,23 +215,23 @@ function Reload() {
         dataType: "JSON",
     })
 
-        .done(function (response) {
-            if (response.length != 0) {
-                AllRegister = response.cursos;
+    .done(function(response) {
+        if (response.length != 0) {
+            AllRegister = response.cursos;
 
-                permisos = response.permisos;
+            permisos = response.permisos;
 
-                DataTable(response.cursos);
-            } else {
-                $('#grupos-table').dataTable().fnClearTable();
-                $('#grupos-table').dataTable().fnDestroy();
-                $('#grupos-table thead').empty()
-            }
-        })
+            DataTable(response.cursos);
+        } else {
+            $('#grupos-table').dataTable().fnClearTable();
+            $('#grupos-table').dataTable().fnDestroy();
+            $('#grupos-table thead').empty()
+        }
+    })
 
-        .fail(function () {
-            console.log("error");
-        });
+    .fail(function() {
+        console.log("error");
+    });
 }
 
 function DataTable(response) {
@@ -236,15 +241,14 @@ function DataTable(response) {
         $('#grupos-table').dataTable().fnClearTable();
         $('#grupos-table').dataTable().fnDestroy();
         $('#grupos-table thead').empty()
-    }
-    else {
+    } else {
         $('#grupos-table thead').empty()
     }
 
 
     if (response.length != 0) {
         let my_columns = []
-        $.each(response[0], function (key, value) {
+        $.each(response[0], function(key, value) {
             var my_item = {};
             // my_item.class = "filter_C";
             my_item.data = key;
@@ -252,7 +256,7 @@ function DataTable(response) {
 
                 my_item.title = 'Acción';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     var html = '';
                     for (let i = 0; i < permisos.length; i++) {
                         if (permisos[i] == "delete.cursos") {
@@ -279,13 +283,11 @@ function DataTable(response) {
                     my_columns.push(my_item);
                 }
 
-            }
-
-            else if (key == 'id') {
+            } else if (key == 'id') {
 
                 my_item.title = '#';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `  <div'> 
                                 ${row.id}
                             </div>`
@@ -293,25 +295,21 @@ function DataTable(response) {
                 my_columns.push(my_item);
 
 
-            }
-
-            else if (key == 'grado') {
+            } else if (key == 'grado') {
 
                 my_item.title = 'Curso';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `  <div'> 
                                 ${row.grado + "-" + row.curso}
                             </div>`
                 }
                 my_columns.push(my_item);
-            }
-
-            else if (key == 'docente') {
+            } else if (key == 'docente') {
 
                 my_item.title = 'Director de curso';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `  <div'> 
                                 ${row.docente}
                             </div>`
