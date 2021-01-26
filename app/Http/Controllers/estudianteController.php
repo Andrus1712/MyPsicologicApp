@@ -161,9 +161,9 @@ class estudianteController extends AppBaseController
                     )->get();
             } else {
                 $estudiantes = DB::table(DB::raw('estudiantes e'))->where(DB::raw('e.deleted_at', '=', 'NULL'))
-                    ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
-                    ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                    ->leftjoin(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
+                    ->leftjoin(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
+                    ->leftjoin(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
                     ->select(
                         'e.id',
                         'e.tipoIdentificacion',

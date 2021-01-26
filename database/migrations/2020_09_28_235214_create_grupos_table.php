@@ -17,7 +17,7 @@ class CreateGruposTable extends Migration
             $table->increments('id');
             $table->string('grado')->unique(); 
             $table->string('curso')->unique();
-            $table->integer('docente_id')->unsigned()->unique();
+            $table->integer('docente_id')->unsigned()->unique()->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('docente_id')->references('id')->on('docentes');

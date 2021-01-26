@@ -15,8 +15,8 @@ class CreateTipoComportamientosTable extends Migration
     {
         Schema::create('tipo_comportamientos', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('titulo');
-            $table->string('descripcion');
+            $table->string('titulo')->nullable();
+            $table->string('descripcion')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

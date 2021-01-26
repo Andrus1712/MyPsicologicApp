@@ -10,6 +10,7 @@ use App\Models\acudiente;
 use Illuminate\Http\Request;
 use App\Models\comportamiento;
 use App\Models\psicologo;
+use App\Models\estudiante;
 use App\Models\tipoComportamiento;
 use App\Notifications\NuevoComportamiento;
 use App\Role;
@@ -109,17 +110,20 @@ class comportamientoController extends AppBaseController
                 $labels = "[";
                 $data_url = "[";
                 foreach ($conteo as $value) {
-                    $labels .= "'$value->titulo',";
+                    //Eliminamos los espacios en blanco por %20 (Espacio de la api)
+                    $titulo_ = str_replace(' ', '%20', $value->titulo);
+                    $labels .= "'$titulo_',";
                     $data_url .= "'$value->cantidad',";
                 }
                 $labels .= "]";
                 $data_url .= "]";
 
-            //Importar imagen 
-            // $img_url = "https://quickchart.io/chart?c={type:'doughnut',data:{labels:$labels,datasets:[{data:$data_url}]},options:{plugins:{doughnutlabel:{labels:[{text:'$cont',font:{size:20}},{text:'total'}]}}}}";
-            // $content = file_get_contents($img_url);
+            // Importar imagen 
+            $img_url = "https://quickchart.io/chart?c={type:'doughnut',data:{labels:$labels,datasets:[{data:$data_url}]},options:{plugins:{doughnutlabel:{labels:[{text:'$cont',font:{size:20}},{text:'total'}]}}}}";
+            // $img_url = "https://quickchart.io/chart?c={type:%27doughnut%27,data:{labels:[%27Agresividad%27,%27Baja%20autoestima%27,%27Bajos%20animos%27,%27Depresion%27,],datasets:[{data:[%272%27,%271%27,%271%27,%273%27,]}]},options:{plugins:{doughnutlabel:{labels:[{text:%277%27,font:{size:20}},{text:%27total%27}]}}}}";
+            $content = file_get_contents($img_url);
 
-            // file_put_contents("./documentosPSI/graph/grafico.jpg", $content);
+            file_put_contents("./documentosPSI/graph/grafico.jpg", $content);
 
             $data = [
                 'consulta' => $consulta,
@@ -132,9 +136,9 @@ class comportamientoController extends AppBaseController
             $pdf = PDF::loadView('pdf_view', $data)
                 ->setPaper('a4', 'landscape');
 
-            return view('pdf_view')->with($data);
+            // return view('pdf_view')->with($data);
             // return $consulta;
-            // return $pdf->stream('report.pdf');
+            return $pdf->stream('report.pdf');
         } else {
             return redirect('/home');
         }
@@ -146,12 +150,12 @@ class comportamientoController extends AppBaseController
 
             $r = $request->all();
 
-            $edad = explode(",", $r['edades']);
-            $conducta = explode(",", $r['conductas_id']);
-            $genero = explode(",", $r['generos']);
-            $grupo = explode(",", $r['grupos_id']);
+            // $edad = explode(",", $r['edades']);
+            // $conducta = explode(",", $r['conductas_id']);
+            // $genero = explode(",", $r['generos']);
+            // $grupo = explode(",", $r['grupos_id']);
             
-                $consulta = DB::table(DB::raw('tipo_comportamientos tc'))
+            $consulta = DB::table(DB::raw('tipo_comportamientos tc'))
                 ->leftjoin(DB::raw('comportamientos c'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                 ->leftjoin(DB::raw('actividades ac'), 'ac.comportamiento_id', '=', 'c.id')
                 ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
@@ -159,13 +163,22 @@ class comportamientoController extends AppBaseController
                 ->where(DB::raw('tc.deleted_at'), '=', NULL)
                 ->where(DB::raw('c.deleted_at'), '=', NULL)
                 ->whereBetween(DB::raw('c.fecha'), [$r['fecha_i'], $r['fecha_f']])
-                ->when(!empty($edad), function($query, $edad){
-                    return $query->whereBetween(DB::raw('e.edad'), [$edad[0], $edad[1]]);
+                ->when($r['edades'], function($query, $edades){
+                    $e = explode(",", $edades);
+                    return $query->whereBetween(DB::raw('e.edad'), [$e[0], $e[1]]);
                 })
-                // ->whereBetween(DB::raw('e.edad'), [$edad[0], $edad[1]])
-                ->whereIn(DB::raw('tc.id'), $conducta)
-                ->whereIn(DB::raw('e.sexo'), $genero)
-                ->whereIn(DB::raw('e.grupo_id'), $grupo)
+                ->when($r['conductas_id'], function ($query, $conducta) {
+                    $c = explode(",", $conducta);
+                    return $query->whereIn(DB::raw('tc.id'), $c);
+                })
+                ->when($r['generos'], function ($query, $genero) {
+                    $g = explode(",", $genero);
+                    return $query->whereIn(DB::raw('e.sexo'), $g);
+                })
+                ->when($r['grupos_id'], function ($query, $grupo) {
+                    $gr = explode(",", $grupo);
+                    return $query->whereIn(DB::raw('e.grupo_id'), $gr);
+                })
                 ->select(
                     DB::raw('c.id'),
                     DB::raw('c.fecha'),
@@ -201,10 +214,22 @@ class comportamientoController extends AppBaseController
                 ->where(DB::raw('tc.deleted_at'), '=', NULL)
                 ->where(DB::raw('c.deleted_at'), '=', NULL)
                 ->whereBetween(DB::raw('c.fecha'), [$r['fecha_i'], $r['fecha_f']])
-                ->whereBetween(DB::raw('e.edad'), [$edad[0], $edad[1]])
-                ->whereIn(DB::raw('tc.id'), $conducta)
-                ->whereIn(DB::raw('e.sexo'), $genero)
-                ->whereIn(DB::raw('e.grupo_id'), $grupo)
+                ->when($r['edades'], function($query, $edades){
+                    $e = explode(",", $edades);
+                    return $query->whereBetween(DB::raw('e.edad'), [$e[0], $e[1]]);
+                })
+                ->when($r['conductas_id'], function ($query, $conducta) {
+                    $c = explode(",", $conducta);
+                    return $query->whereIn(DB::raw('tc.id'), $c);
+                })
+                ->when($r['generos'], function ($query, $genero) {
+                    $g = explode(",", $genero);
+                    return $query->whereIn(DB::raw('e.sexo'), $g);
+                })
+                ->when($r['grupos_id'], function ($query, $grupo) {
+                    $gr = explode(",", $grupo);
+                    return $query->whereIn(DB::raw('e.grupo_id'), $gr);
+                })
                 ->selectRaw("tc.titulo,
                     SUM(CASE WHEN e.sexo = 'M' THEN 1 ELSE 0 END) AS Masculino,
                     SUM(CASE when e.sexo = 'F' THEN 1 ELSE 0 END) AS Femenino,
@@ -222,9 +247,22 @@ class comportamientoController extends AppBaseController
                 ->where(DB::raw('tc.deleted_at'), '=', NULL)
                 ->where(DB::raw('c.deleted_at'), '=', NULL)
                 ->whereBetween(DB::raw('c.fecha'), [$r['fecha_i'], $r['fecha_f']])
-                ->whereIn(DB::raw('tc.id'), $conducta)
-                ->whereIn(DB::raw('e.sexo'), $genero)
-                ->whereIn(DB::raw('e.grupo_id'), $grupo)
+                ->when($r['edades'], function($query, $edades){
+                    $e = explode(",", $edades);
+                    return $query->whereBetween(DB::raw('e.edad'), [$e[0], $e[1]]);
+                })
+                ->when($r['conductas_id'], function ($query, $conducta) {
+                    $c = explode(",", $conducta);
+                    return $query->whereIn(DB::raw('tc.id'), $c);
+                })
+                ->when($r['generos'], function ($query, $genero) {
+                    $g = explode(",", $genero);
+                    return $query->whereIn(DB::raw('e.sexo'), $g);
+                })
+                ->when($r['grupos_id'], function ($query, $grupo) {
+                    $gr = explode(",", $grupo);
+                    return $query->whereIn(DB::raw('e.grupo_id'), $gr);
+                })
                 ->select(
                     DB::raw('tc.titulo'),
                     DB::raw('COUNT(tc.titulo)  AS cantidad'),
@@ -242,7 +280,9 @@ class comportamientoController extends AppBaseController
                 $labels = "[";
                 $data_url = "[";
                 foreach ($conteo as $value) {
-                    $labels .= "'$value->titulo',";
+                    //Eliminamos los espacios en blanco por %20 (Espacio de la api)
+                    $titulo_ = str_replace(' ', '%20', $value->titulo);
+                    $labels .= "'$titulo_',";
                     $data_url .= "'$value->cantidad',";
                 }
                 $labels .= "]";
@@ -252,7 +292,7 @@ class comportamientoController extends AppBaseController
             $img_url = "https://quickchart.io/chart?c={type:'doughnut',data:{labels:$labels,datasets:[{data:$data_url}]},options:{plugins:{doughnutlabel:{labels:[{text:'$cont',font:{size:20}},{text:'total'}]}}}}";
             $content = file_get_contents($img_url);
 
-            file_put_contents("./documentosPSI/graph/foto.jpg", $content);
+            file_put_contents("./documentosPSI/graph/grafico.jpg", $content);
 
             $data = [
                 'consulta' => $consulta,
@@ -262,11 +302,11 @@ class comportamientoController extends AppBaseController
                 'fecha_hoy' => Carbon::now()->format('d-m-Y'),
             ];
 
-            // $pdf = PDF::loadView('pdf_view', $data)
-            //     ->setPaper('a4', 'landscape');
+            $pdf = PDF::loadView('pdf_view', $data)
+                ->setPaper('a4', 'landscape');
 
-            // return view('pdf_view')->with($data);
-            return $consulta;
+            return view('pdf_view')->with($data);
+            // return $data_url;
             // return $pdf->stream('report.pdf');
         } else {
             return redirect('/home');
@@ -275,15 +315,42 @@ class comportamientoController extends AppBaseController
 
 
     public function guardar_xlsx (Request $request){
-        $json = $request->all();
+        $datosPost = $request['datos'];
+        $array = json_decode($datosPost, true);
 
-        $array = [];
-        foreach ($json as $key => $value) {
-            array_push($array, $value['Titulo']);
+        $array_titulo = [];
+        foreach ($array as $value) {
+            $nombre = explode(' ', $value['Estudiante']);
+            
+            $estudiante = estudiante::create([
+                'nombres' => $nombre[0],
+                'apellidos' => $nombre[1],
+            ]);
+
+            $est_id = estudiante::where('nombres', $nombre[0])->where('apellidos', $nombre[1])->first();
+
+            $tc_ = tipoComportamiento::where('titulo', $value['Tipo de conducta'])->first();
+
+            if($tc_ == null){
+                $tipoComportamiento = tipoComportamiento::create([
+                    'titulo' => $value['Tipo de conducta']
+                ]);
+            }
+
+
+            $newDate = date("YYYY-mm-dd", strtotime($value['Fecha']));
+
+            $comportamiento = comportamiento::create([
+                'estudiante_id' => $est_id['id'],
+                'tipo_comportamiento_id' => isset($tipoComportamiento['id']) ? $tipoComportamiento['id'] : $tc_,
+                'titulo' => $value['Titulo del comportamiento'],
+                'descripcion' => isset($value['Descripcion del caso']) ? $value['Descripcion del caso'] : NULL,
+                'emisor' => $value['Emisor'],
+            ]);
+            
         }
-        
-
-        return $array;
+        // return $array_titulo;
+        return response()->json(['status' => 'Comportamiento saved successfully.']);
     }
 
     public function import_xlsx (Request $request) {
@@ -350,10 +417,12 @@ class comportamientoController extends AppBaseController
                     ->select(
                         'c.id',
                         DB::raw('tc.titulo as titulo_tc'),
+                        DB::raw('tc.id as id_tc'),
                         'c.titulo',
                         'c.descripcion',
                         'c.fecha',
                         'c.emisor',
+                        DB::raw('e.id as id_estudiante'),
                         'e.nombres',
                         'e.apellidos',
                         DB::raw('a.nombres as nombre_acudiente'),
@@ -409,6 +478,7 @@ class comportamientoController extends AppBaseController
                         'c.descripcion',
                         'c.fecha',
                         DB::raw('c.emisor as emis0r'),
+                        DB::raw('e.id as id_estudiante'),
                         'e.nombres',
                         'e.apellidos',
                         DB::raw('a.nombres as nombre_acudiente'),
@@ -436,6 +506,7 @@ class comportamientoController extends AppBaseController
                         'c.titulo',
                         'c.descripcion',
                         'c.fecha',
+                        DB::raw('e.id as id_estudiante'),
                         'e.nombres',
                         'e.apellidos',
                         DB::raw('a.nombres as nombre_acudiente'),
@@ -451,10 +522,10 @@ class comportamientoController extends AppBaseController
                     )->get();
             } else {
                 $comportamientos = DB::table(DB::raw('comportamientos c'))->where(DB::raw('c.deleted_at'), '=', NULL)
-                    ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
-                    ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
-                    ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                    ->leftjoin(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+                    ->leftjoin(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
+                    ->leftjoin(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
+                    ->leftjoin(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
                     ->leftjoin(DB::raw('actividades ac'), 'ac.comportamiento_id', '=', 'c.id')
                     ->leftjoin(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->where(DB::raw('c.deleted_at', '!=', 'date()'))
@@ -463,8 +534,10 @@ class comportamientoController extends AppBaseController
                         'c.titulo',
                         'c.descripcion',
                         DB::raw('tc.titulo as titulo_tc'),
+                        DB::raw('tc.id as id_tc'),
                         'c.fecha',
                         'c.emisor',
+                        DB::raw('e.id as id_estudiante'),
                         'e.nombres',
                         'e.apellidos',
                         DB::raw('a.nombres as nombre_acudiente'),

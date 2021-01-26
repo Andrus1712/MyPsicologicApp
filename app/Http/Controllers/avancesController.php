@@ -56,21 +56,21 @@ class avancesController extends AppBaseController
         if (count($queryUsers) != 0) {
             if ($queryUsers[0]->role_id == 1) {
                 $avances = DB::table(DB::raw('avances av'))->where(DB::raw('av.deleted_at', '=', 'NULL'))
-                    ->join(DB::raw('actividades ac'), 'av.actividad_id', '=', 'ac.id')
-                    ->join(DB::raw('comportamientos cp'), 'ac.comportamiento_id', '=', 'cp.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'cp.tipo_comportamiento_id', '=', 'tc.id')
+                    ->join(DB::raw('actividades a'), 'av.actividad_id', '=', 'a.id')
+                    ->join(DB::raw('comportamientos c'), 'a.comportamiento_id', '=', 'c.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->join(DB::raw('estudiantes e'), 'cp.estudiante_id', '=', 'e.id')
                     ->select(
                         'av.id',
                         DB::raw('av.descripcion as avance'),
                         'av.fecha_avance',
-                        DB::raw('ac.id as id_actividad'),
-                        DB::raw('ac.estado as estado_actividad'),
-                        DB::raw('ac.titulo as titulo_actividad'),
-                        DB::raw('ac.descripcion as descripcion_actividad'),
-                        DB::raw('ac.fecha as fecha_actividad'),
-                        DB::raw('cp.titulo as comportamiento_registrado'),
-                        DB::raw('tc.titulo as titulo_tipo_comportamiento'),
+                        DB::raw('a.id as id_actividad'),
+                        DB::raw('a.estado as estado_actividad'),
+                        DB::raw('a.titulo as titulo_actividad'),
+                        DB::raw('a.descripcion as descripcion_actividad'),
+                        DB::raw('a.fecha as fecha_actividad'),
+                        DB::raw('c.titulo as comportamiento_registrado'),
+                        DB::raw('t.titulo as titulo_tipo_comportamiento'),
                         DB::raw('e.nombres as nombre_estudiante'),
                         DB::raw('e.apellidos as apellido_estudiante'),
                         'av.evidencias',
@@ -79,21 +79,21 @@ class avancesController extends AppBaseController
                     ->get();
             } else if ($queryUsers[0]->role_id == 2) {
                 $avances = DB::table(DB::raw('avances av'))->where(DB::raw('av.deleted_at', '=', 'NULL'))
-                    ->join(DB::raw('actividades ac'), 'av.actividad_id', '=', 'ac.id')
-                    ->join(DB::raw('comportamientos cp'), 'ac.comportamiento_id', '=', 'cp.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'cp.tipo_comportamiento_id', '=', 'tc.id')
-                    ->join(DB::raw('estudiantes e'), 'cp.estudiante_id', '=', 'e.id')
+                    ->join(DB::raw('actividades a'), 'av.actividad_id', '=', 'a.id')
+                    ->join(DB::raw('comportamientos c'), 'a.comportamiento_id', '=', 'c.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                    ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->where(DB::raw('e.correo'), '=', $user->email)
                     ->select(
                         'av.id',
                         DB::raw('av.descripcion as avance'),
                         'av.fecha_avance',
-                        DB::raw('ac.id as id_actividad'),
-                        DB::raw('ac.estado as estado_actividad'),
-                        DB::raw('ac.titulo as titulo_actividad'),
-                        DB::raw('ac.descripcion as descripcion_actividad'),
-                        DB::raw('ac.fecha as fecha_actividad'),
-                        DB::raw('cp.titulo as comportamiento_registrado'),
+                        DB::raw('a.id as id_actividad'),
+                        DB::raw('a.estado as estado_actividad'),
+                        DB::raw('a.titulo as titulo_actividad'),
+                        DB::raw('a.descripcion as descripcion_actividad'),
+                        DB::raw('a.fecha as fecha_actividad'),
+                        DB::raw('c.titulo as comportamiento_registrado'),
                         // DB::raw('tc.titulo as titulo_tipo_comportamiento'),
                         // DB::raw('e.nombres as nombre_estudiante'),
                         // DB::raw('e.apellidos as apellido_estudiante'),
@@ -103,21 +103,21 @@ class avancesController extends AppBaseController
                     ->get();
             } else if ($queryUsers[0]->role_id == 3) {
                 $avances = DB::table(DB::raw('avances av'))->where(DB::raw('av.deleted_at', '=', 'NULL'))
-                    ->join(DB::raw('actividades ac'), 'av.actividad_id', '=', 'ac.id')
-                    ->join(DB::raw('comportamientos cp'), 'ac.comportamiento_id', '=', 'cp.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'cp.tipo_comportamiento_id', '=', 'tc.id')
-                    ->join(DB::raw('estudiantes e'), 'cp.estudiante_id', '=', 'e.id')
-                    ->where(DB::raw('e.id'), '=', DB::raw('cp.estudiante_id'))
+                    ->join(DB::raw('actividades a'), 'av.actividad_id', '=', 'a.id')
+                    ->join(DB::raw('comportamientos c'), 'a.comportamiento_id', '=', 'c.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                    ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+                    ->where(DB::raw('e.id'), '=', DB::raw('c.estudiante_id'))
                     ->select(
                         'av.id',
                         DB::raw('av.descripcion as avance'),
                         'av.fecha_avance',
-                        DB::raw('ac.id as id_actividad'),
-                        DB::raw('ac.estado as estado_actividad'),
-                        DB::raw('ac.titulo as titulo_actividad'),
-                        DB::raw('ac.descripcion as descripcion_actividad'),
-                        DB::raw('ac.fecha as fecha_actividad'),
-                        DB::raw('cp.titulo as comportamiento_registrado'),
+                        DB::raw('a.id as id_actividad'),
+                        DB::raw('a.estado as estado_actividad'),
+                        DB::raw('a.titulo as titulo_actividad'),
+                        DB::raw('a.descripcion as descripcion_actividad'),
+                        DB::raw('a.fecha as fecha_actividad'),
+                        DB::raw('c.titulo as comportamiento_registrado'),
                         DB::raw('tc.titulo as titulo_tipo_comportamiento'),
                         DB::raw('e.nombres as nombre_estudiante'),
                         DB::raw('e.apellidos as apellido_estudiante'),
@@ -127,22 +127,22 @@ class avancesController extends AppBaseController
                     ->get();
             } else if ($queryUsers[0]->role_id == 4) {
                 $avances = DB::table(DB::raw('avances av'))->where(DB::raw('av.deleted_at', '=', 'NULL'))
-                    ->join(DB::raw('actividades ac'), 'av.actividad_id', '=', 'ac.id')
-                    ->join(DB::raw('comportamientos cp'), 'ac.comportamiento_id', '=', 'cp.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'cp.tipo_comportamiento_id', '=', 'tc.id')
-                    ->join(DB::raw('estudiantes e'), 'cp.estudiante_id', '=', 'e.id')
+                    ->join(DB::raw('actividades a'), 'av.actividad_id', '=', 'a.id')
+                    ->join(DB::raw('comportamientos c'), 'a.comportamiento_id', '=', 'c.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                    ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
                     ->where(DB::raw('a.correo'), '=', $user->email)
                     ->select(
                         'av.id',
                         DB::raw('av.descripcion as avance'),
                         'av.fecha_avance',
-                        DB::raw('ac.id as id_actividad'),
-                        DB::raw('ac.estado as estado_actividad'),
-                        DB::raw('ac.titulo as titulo_actividad'),
-                        DB::raw('ac.descripcion as descripcion_actividad'),
-                        DB::raw('ac.fecha as fecha_actividad'),
-                        DB::raw('cp.titulo as comportamiento_registrado'),
+                        DB::raw('a.id as id_actividad'),
+                        DB::raw('a.estado as estado_actividad'),
+                        DB::raw('a.titulo as titulo_actividad'),
+                        DB::raw('a.descripcion as descripcion_actividad'),
+                        DB::raw('a.fecha as fecha_actividad'),
+                        DB::raw('c.titulo as comportamiento_registrado'),
                         DB::raw('tc.titulo as titulo_tipo_comportamiento'),
                         DB::raw('e.nombres as nombre_estudiante'),
                         DB::raw('e.apellidos as apellido_estudiante'),
@@ -152,20 +152,20 @@ class avancesController extends AppBaseController
                     ->get();
             } else {
                 $avances = DB::table(DB::raw('avances av'))->where(DB::raw('av.deleted_at', '=', 'NULL'))
-                    ->join(DB::raw('actividades ac'), 'av.actividad_id', '=', 'ac.id')
-                    ->join(DB::raw('comportamientos cp'), 'ac.comportamiento_id', '=', 'cp.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'cp.tipo_comportamiento_id', '=', 'tc.id')
-                    ->join(DB::raw('estudiantes e'), 'cp.estudiante_id', '=', 'e.id')
+                    ->join(DB::raw('actividades a'), 'av.actividad_id', '=', 'a.id')
+                    ->join(DB::raw('comportamientos c'), 'a.comportamiento_id', '=', 'c.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                    ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->select(
                         'av.id',
                         DB::raw('av.descripcion as avance'),
                         'av.fecha_avance',
-                        DB::raw('ac.id as id_actividad'),
-                        DB::raw('ac.estado as estado_actividad'),
-                        DB::raw('ac.titulo as titulo_actividad'),
-                        DB::raw('ac.descripcion as descripcion_actividad'),
-                        DB::raw('ac.fecha as fecha_actividad'),
-                        DB::raw('cp.titulo as comportamiento_registrado'),
+                        DB::raw('a.id as id_actividad'),
+                        DB::raw('a.estado as estado_actividad'),
+                        DB::raw('a.titulo as titulo_actividad'),
+                        DB::raw('a.descripcion as descripcion_actividad'),
+                        DB::raw('a.fecha as fecha_actividad'),
+                        DB::raw('c.titulo as comportamiento_registrado'),
                         DB::raw('tc.titulo as titulo_tipo_comportamiento'),
                         DB::raw('e.nombres as nombre_estudiante'),
                         DB::raw('e.apellidos as apellido_estudiante'),

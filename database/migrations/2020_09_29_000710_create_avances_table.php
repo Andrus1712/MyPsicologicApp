@@ -16,8 +16,8 @@ class CreateAvancesTable extends Migration
         Schema::create('avances', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('actividad_id')->unsigned();
-            $table->string('descripcion');
-            $table->date('fecha_avance');
+            $table->string('descripcion')->nullable();
+            $table->date('fecha_avance')->nullable();
             $table->string('evidencias')->nullable();
             $table->timestamps();
             $table->softDeletes();

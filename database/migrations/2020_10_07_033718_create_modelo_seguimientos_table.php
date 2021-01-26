@@ -15,15 +15,15 @@ class CreateModeloSeguimientosTable extends Migration
     {
         Schema::create('modelo_seguimientos', function (Blueprint $table) {
             $table->increments('id');
-            $table->date('fecha');
-            $table->string('nombre');
-            $table->string('estamento');
-            $table->string('medio_comunicacion');
-            $table->string('clasificacion_caso_presentado');
-            $table->string('descripcion');
-            $table->string('solucion');
-            $table->string('remitido');
-            $table->string('estado');
+            $table->date('fecha')->nullable();
+            $table->string('nombre')->nullable();
+            $table->string('estamento')->nullable();
+            $table->string('medio_comunicacion')->nullable();
+            $table->string('clasificacion_caso_presentado')->nullable();
+            $table->string('descripcion')->nullable();
+            $table->string('solucion')->nullable();
+            $table->string('remitido')->nullable();
+            $table->string('estado')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

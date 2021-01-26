@@ -180,7 +180,15 @@ class comportamientoAPIController extends AppBaseController
         /** @var comportamiento $comportamiento */
         $comportamiento = comportamiento::find($id);
 
-        //Buscamos las actividades de este comportamiento
+        $array_multimedia = explode("PSIAPP", $comportamiento->multimedia);
+
+        for ($i=0; $i < count($array_multimedia); $i++) { 
+            if (file_exists($array_multimedia[$i])) {
+                unlink($array_multimedia[$i]);
+            }
+        }
+
+        // Buscamos las actividades de este comportamiento
         actividades::where('comportamiento_id', $comportamiento->id)
             ->each(function ($actividad, $key) {
                 $actividad->delete();

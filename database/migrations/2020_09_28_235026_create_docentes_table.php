@@ -15,14 +15,14 @@ class CreateDocentesTable extends Migration
     {
         Schema::create('docentes', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('tipoIdentificacion');
-            $table->string('identificacion');
-            $table->string('nombres');
-            $table->string('apellidos');
-            $table->string('correo');
-            $table->date('fechaNacimiento');
-            $table->string('telefono');
-            $table->string('direccion');
+            $table->string('tipoIdentificacion')->nullable();
+            $table->string('identificacion')->nullable();
+            $table->string('nombres')->nullable();
+            $table->string('apellidos')->nullable();
+            $table->string('correo')->nullable();
+            $table->date('fechaNacimiento')->nullable();
+            $table->string('telefono')->nullable();
+            $table->string('direccion')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
