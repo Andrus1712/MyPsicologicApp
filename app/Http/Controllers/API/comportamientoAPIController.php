@@ -9,6 +9,7 @@ use App\Repositories\comportamientoRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
 use App\Models\actividades;
+use App\Models\avances;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Response;
@@ -191,8 +192,24 @@ class comportamientoAPIController extends AppBaseController
         // Buscamos las actividades de este comportamiento
         actividades::where('comportamiento_id', $comportamiento->id)
             ->each(function ($actividad, $key) {
+
+                avances::where('actividad_id', $actividad->id)
+                    ->each(function ($avances, $key){
+
+                        $array_evidencia = explode("PSIAPP", $avances->evidencias);
+                            for ($i=0; $i < count($array_evidencia); $i++) { 
+                                if (file_exists($array_evidencia[$i])) {
+                                    unlink($array_evidencia[$i]);
+                                }
+                            }
+
+                        $avances->delete();
+                    });
+
                 $actividad->delete();
             });
+
+        
 
         $comportamiento->delete();
 

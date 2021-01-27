@@ -211,6 +211,14 @@ class avancesAPIController extends AppBaseController
         /** @var avances $avances */
         $avances = avances::find($id);
 
+        $array_multimedia = explode("PSIAPP", $avances->evidencias);
+
+        for ($i=0; $i < count($array_multimedia); $i++) { 
+            if (file_exists($array_multimedia[$i])) {
+                unlink($array_multimedia[$i]);
+            }
+        }
+
         $avances->delete();
 
         return response()->json(['status' => 'Actividades deleted successfully']);

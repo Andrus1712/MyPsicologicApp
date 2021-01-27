@@ -264,6 +264,60 @@ $(document).ready(function() {
         }
     });
 
+    // Check estatus
+    $('#avances-table').on('click', '[id^=btn_cumplido_]', function() {
+        var id = $(this).attr('data-id');
+
+        const filtro = AllRegister.filter(f => f.id == id);
+
+        var id_act = filtro[0].id_actividad;
+
+        $.ajax({
+                url: '/api/actividades/' + id_act,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                type: 'PUT',
+                data: {
+                    estado: 1
+                },
+            })
+            .done(function() {
+                toastr.success("Actividad marcada como cumplida");
+                Reload();
+            })
+            .fail(function() {
+                toastr.error("Ha ocurrido un error");
+            })
+            .always(function() {
+                $('#btn_cumplido_' + id).addClass("disabled");
+            });
+    });
+
+    $('#act-table').on('click', '[id^=btn_incumplido_]', function() {
+        var id = $(this).attr('data-id');
+
+        const filtro = AllRegister.filter(f => f.id == id);
+
+        var id_act = filtro[0].id_actividad;
+
+        $.ajax({
+                url: '/api/actividades/' + id_act,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                type: 'PUT',
+                data: {
+                    estado: 2
+                },
+            })
+            .done(function() {
+                toastr.error("Actividad marcada como icumplida");
+                Reload()
+            })
+            .fail(function() {
+                toastr.error("Ha ocurrido un error");
+            })
+            .always(function() {
+                $('#btn_incumplido_' + id).addClass("disabled");
+            });
+    });
 
 });
 
@@ -396,7 +450,39 @@ function DataTable(response) {
             var my_item = {};
             // my_item.class = "filter_C";
             my_item.data = key;
-            if (key == 'created_at') {
+
+            if (key == 'id_actividad') {
+
+                // my_item.title = 'Culminación';
+
+                // my_item.render = function (data, type, row) {
+                //         var html2 = '';
+                //     // for (let i = 0; i < permisos.length; i++) {
+
+                //         if (permisos.includes("edit.actividades")) {
+                //             html2 += `
+                //                     <a data-id=${row.id} id="btn_cumplido_${row.id}" class="btn btn-circle btn-sm btn-success ">
+                //                         <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                //                     </a>
+
+                //                     <a data-id=${row.id} id="btn_incumplido_${row.id}" class="btn btn-circle btn-sm btn-danger ">
+                //                         <i class="fa fa-thumbs-down" aria-hidden="true"></i>
+                //                     </a>`;
+                //         }
+
+                //     // }
+                //     return `<div align="center">
+                //                     <div class="btn-group btn-group-circle btn-group-solid" align="center">
+                //                         ${html2}
+                //                     </div>
+                //                 </div>`;
+                // }
+
+                // if (permisos.length != 0 && permisos.includes('edit.actividades')) {
+                //     my_columns.push(my_item);
+                // }
+            }
+            else if (key == 'created_at') {
 
                 my_item.title = 'Acción';
 
@@ -424,7 +510,7 @@ function DataTable(response) {
                             </div>`
 
                 }
-                if (permisos.length != 0) {
+                if (permisos.length != 0 && permisos.includes('edit.avances', 'delete.avances')) {
                     my_columns.push(my_item);
                 }
 

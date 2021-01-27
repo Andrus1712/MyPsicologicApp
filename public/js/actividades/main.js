@@ -1,14 +1,17 @@
 var modal = $('#modal-actividades');
-var AllRegister = []
-var permisos = []
+var AllRegister = [];
+var AllAvances = [];
+var permisos = [];
+var AvancesElement = [];
 
-$(document).ready(function() {
-    Reload()
-    ReloadCalendario()
+$(document).ready(function () {
+    Reload();
+    ReloadCalendario();
 
 
-    $('#act-table').on('click', '[id^=Btn_Edit_]', function() {
+    $('#act-table').on('click', '[id^=Btn_Edit_]', function () {
         var id = $(this).attr('data-id')
+        console.log(id);
         var filtro = AllRegister.filter(f => f.id == id);
 
         if (filtro.length != 0) {
@@ -30,7 +33,7 @@ $(document).ready(function() {
             $('#estado').val(filtro[0].estado)
             $("#tipo_comportamiento_id").val(filtro[0].tipo_comportamiento_id)
 
-            $('#update').on('click', function() {
+            $('#update').on('click', function () {
                 var comportamiento_id = $("#comportamiento_id").val(),
                     titulo = $("#titulo").val(),
                     descripcion = $("#descripcion").val(),
@@ -43,20 +46,20 @@ $(document).ready(function() {
                 } else {
                     $('#loading-spinner').show();
                     $.ajax({
-                            url: '/api/actividades/' + id,
-                            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                            type: 'PUT',
-                            data: {
-                                comportamiento_id: comportamiento_id,
-                                titulo: titulo,
-                                descripcion: descripcion,
-                                fecha: fecha,
-                                estado: estado,
+                        url: '/api/actividades/' + id,
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                        type: 'PUT',
+                        data: {
+                            comportamiento_id: comportamiento_id,
+                            titulo: titulo,
+                            descripcion: descripcion,
+                            fecha: fecha,
+                            estado: estado,
 
-                            },
-                        })
-                        .done(function() {
-                            setTimeout(function() {
+                        },
+                    })
+                        .done(function () {
+                            setTimeout(function () {
                                 $('#loading-spinner').hide();
                                 modal.modal("hide")
                             }, 600);
@@ -64,11 +67,11 @@ $(document).ready(function() {
                             Reload()
                             ReloadCalendario()
                         })
-                        .fail(function() {
+                        .fail(function () {
                             $('#loading-spinner').hide();
                             toastr.error("Ha ocurrido un error");
                         })
-                        .always(function() {
+                        .always(function () {
                             $("#update").addClass("disabled");
                         });
                 }
@@ -78,29 +81,29 @@ $(document).ready(function() {
         }
     })
 
-    $('#act-table').on('click', '[id^=Btn_delete_]', function() {
+    $('#act-table').on('click', '[id^=Btn_delete_]', function () {
         var id = $(this).attr('data-id')
 
         swal({
-                title: "¿Realmente deseas eliminar el acudiente?",
-                text: "Ten en cuenta que eliminaras toda su información del sistema",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonClass: "btn-danger",
-                confirmButtonText: "Si, eliminar",
-                closeOnConfirm: false
-            },
-            function() {
+            title: "¿Realmente deseas eliminar el acudiente?",
+            text: "Ten en cuenta que eliminaras toda su información del sistema",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Si, eliminar",
+            closeOnConfirm: false
+        },
+            function () {
                 $.ajax({
-                        url: "/api/actividades/" + id,
-                        type: "DELETE",
-                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                    })
-                    .done(function() {
+                    url: "/api/actividades/" + id,
+                    type: "DELETE",
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                })
+                    .done(function () {
                         swal("Eliminado!", "Se ha eliminado el acudiente", "success");
                         Reload();
                     })
-                    .fail(function() {
+                    .fail(function () {
                         swal("Error!", "Ha ocurrido un error", "error");
                     });
 
@@ -109,14 +112,14 @@ $(document).ready(function() {
 
     })
 
-    $('#add-actividades').on('click', function() {
+    $('#add-actividades').on('click', function () {
         modal.modal('show');
         Modal()
         $('#input_actividad').hide()
         LoadComportamientos()
         LoadTiposComportamientos()
 
-        $('#save').on('click', function() {
+        $('#save').on('click', function () {
             var comportamiento_id = $("#comportamiento_id").val(),
                 titulo = $("#titulo").val(),
                 descripcion = $("#descripcion").val(),
@@ -129,20 +132,20 @@ $(document).ready(function() {
             } else {
                 $('#loading-spinner').show();
                 $.ajax({
-                        url: '/add_actividades',
-                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                        type: 'POST',
-                        data: {
-                            comportamiento_id: comportamiento_id,
-                            titulo: titulo,
-                            descripcion: descripcion,
-                            fecha: fecha,
-                            estado: estado,
-                            tipo_comportamiento_id: tipo_comportamiento_id,
-                        },
-                    })
-                    .done(function() {
-                        setTimeout(function() {
+                    url: '/add_actividades',
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    type: 'POST',
+                    data: {
+                        comportamiento_id: comportamiento_id,
+                        titulo: titulo,
+                        descripcion: descripcion,
+                        fecha: fecha,
+                        estado: estado,
+                        tipo_comportamiento_id: tipo_comportamiento_id,
+                    },
+                })
+                    .done(function () {
+                        setTimeout(function () {
                             $('#loading-spinner').hide();
                             modal.modal("hide")
                         }, 600);
@@ -150,41 +153,41 @@ $(document).ready(function() {
                         Reload()
                         ReloadCalendario()
                     })
-                    .fail(function() {
+                    .fail(function () {
                         $('#loading-spinner').hide();
                         toastr.error("Ha ocurrido un error");
                     })
-                    .always(function() {
+                    .always(function () {
                         $("#save").addClass("disabled");
                     });
             }
 
         })
-    })
+    });
 
-    $('#reprogramar').on('click', function() {
+    $('#reprogramar').on('click', function () {
         modal.modal('show');
         ModalReprogramar();
         LoadActividades();
 
-        $('#save').on('click', function() {
+        $('#save').on('click', function () {
             fecha = $("#fecha").val()
             var id = $("#actividad_id").val();
             var fechaReprogramar = $('#fechaReprogramar').val();
             var descripcion_historial = $('#descripcion_historial').val();
             $('#loading-spinner').show();
             $.ajax({
-                    url: '/api/actividades/' + id,
-                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                    type: 'PUT',
-                    data: {
-                        fecha: fechaReprogramar,
-                        descripcion_historial: descripcion_historial,
-                        method: "reprogramar",
-                    },
-                })
-                .done(function() {
-                    setTimeout(function() {
+                url: '/api/actividades/' + id,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                type: 'PUT',
+                data: {
+                    fecha: fechaReprogramar,
+                    descripcion_historial: descripcion_historial,
+                    method: "reprogramar",
+                },
+            })
+                .done(function () {
+                    setTimeout(function () {
                         $('#loading-spinner').hide();
                         modal.modal('hide')
                     }, 600);
@@ -192,64 +195,64 @@ $(document).ready(function() {
                     Reload()
                     ReloadCalendario()
                 })
-                .fail(function() {
+                .fail(function () {
                     $('#loading-spinner').hide();
                     toastr.error("Ha ocurrido un error");
                 })
-                .always(function() {
+                .always(function () {
                     $('#save').addClass("disabled");
                 });
         });
     });
 
     // Check estatus
-    $('#act-table').on('click', '[id^=btn_cumplido_]', function() {
+    $('#act-table').on('click', '[id^=btn_cumplido_]', function () {
         var id = $(this).attr('data-id')
         $.ajax({
-                url: '/api/actividades/' + id,
-                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                type: 'PUT',
-                data: {
-                    estado: 1
-                },
-            })
-            .done(function() {
+            url: '/api/actividades/' + id,
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            type: 'PUT',
+            data: {
+                estado: 1
+            },
+        })
+            .done(function () {
                 toastr.success("Actividad marcada como cumplida");
                 Reload()
                 ReloadCalendario()
             })
-            .fail(function() {
+            .fail(function () {
                 toastr.error("Ha ocurrido un error");
             })
-            .always(function() {
+            .always(function () {
                 $('#btn_cumplido_' + id).addClass("disabled");
             });
-    })
+    });
 
-    $('#act-table').on('click', '[id^=btn_incumplido_]', function() {
+    $('#act-table').on('click', '[id^=btn_incumplido_]', function () {
         var id = $(this).attr('data-id')
         $.ajax({
-                url: '/api/actividades/' + id,
-                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                type: 'PUT',
-                data: {
-                    estado: 2
-                },
-            })
-            .done(function() {
+            url: '/api/actividades/' + id,
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            type: 'PUT',
+            data: {
+                estado: 2
+            },
+        })
+            .done(function () {
                 toastr.error("Actividad marcada como icumplida");
                 Reload()
                 ReloadCalendario()
             })
-            .fail(function() {
+            .fail(function () {
                 toastr.error("Ha ocurrido un error");
             })
-            .always(function() {
+            .always(function () {
                 $('#btn_incumplido_' + id).addClass("disabled");
             });
-    })
+    });
 
-    $('#act-table').on('click', '[id^=Btn_info_]', function() {
+    $('#act-table').on('click', '[id^=Btn_info_]', function () {
         modal.modal('show')
         var id = $(this).attr('data-id')
         var filtro = AllRegister.filter(f => f.id == id);
@@ -268,7 +271,7 @@ $(document).ready(function() {
             `)
     })
 
-    $('#act-table').on('click', '[id^=Btn_show_]', function() {
+    $('#act-table').on('click', '[id^=Btn_show_]', function () {
         var id = $(this).attr('data-id');
 
         const filtro = AllRegister.filter(f => f.id == id);
@@ -278,23 +281,131 @@ $(document).ready(function() {
             if (filtro[0].titulo_tipo_comportamiento == null) {
                 modal.modal('show');
                 ModalShowEst(filtro);
+                $('#avances').on('click', function () {
+                    modal.modal('hide');
+                    $('#modal-avances').modal('show');
+                    ModalCrearAvances();
+                    LoadActividad(filtro[0].id);
+                    establecer_fecha();
+                    $('#save').on('click', function () {
+                        var actividad_id = $('#actividad_id').val(),
+                            descripcion = $('#descripcion').val(),
+                            fecha = $('#fecha').val(),
+                            evidencias = $('#evidencias')[0].files;
+
+                        if (actividad_id == '' || descripcion == '' || fecha == '') {
+                            toastr.warning("Complete todos los campos")
+                        } else {
+                            var form = new FormData();
+                            var archivos = 0;
+                            jQuery.each(jQuery('#evidencias')[0].files, function (i, file) {
+                                form.append('file' + i, file);
+                                archivos++;
+                            });
+                            form.append('archivos', archivos);
+
+                            form.append('actividad_id', actividad_id)
+                            form.append('descripcion', descripcion)
+                            form.append('fecha_avance', fecha)
+                            // form.append('evidencias', evidencias)               
+                            $('#loading-spinner').show();
+                            $.ajax({
+                                url: '/api/avances',
+                                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                                type: 'POST',
+                                processData: false,
+                                contentType: false,
+                                data: form,
+                            })
+                                .done(function () {
+                                    toastr.success("Avance registrado");
+                                    setTimeout(function () {
+                                        $('#loading-spinner').hide();
+                                        $('#modal-avances').modal("hide");
+                                    }, 600);
+                                    Reload();
+                                })
+                                .fail(function () {
+                                    $('#loading-spinner').hide();
+                                    toastr.error("Ha ocurrido un error");
+                                })
+                                .always(function () {
+                                    $("#save").addClass("disabled");
+                                });
+                        }
+                    });
+                });
             } else {
                 modal.modal('show');
                 ModalShow(filtro);
+                $('#avances').on('click', function () {
+                    modal.modal('hide');
+                    $('#modal-avances').modal('show');
+                    ModalCrearAvances();
+                    LoadActividad(filtro[0].id);
+                    establecer_fecha();
+                    $('#save').on('click', function () {
+                        var actividad_id = $('#actividad_id').val(),
+                            descripcion = $('#descripcion').val(),
+                            fecha = $('#fecha').val(),
+                            evidencias = $('#evidencias')[0].files;
+
+                        if (actividad_id == '' || descripcion == '' || fecha == '') {
+                            toastr.warning("Complete todos los campos")
+                        } else {
+                            var form = new FormData();
+                            var archivos = 0;
+                            jQuery.each(jQuery('#evidencias')[0].files, function (i, file) {
+                                form.append('file' + i, file);
+                                archivos++;
+                            });
+                            form.append('archivos', archivos);
+
+                            form.append('actividad_id', actividad_id)
+                            form.append('descripcion', descripcion)
+                            form.append('fecha_avance', fecha)
+                            // form.append('evidencias', evidencias)               
+                            $('#loading-spinner').show();
+                            $.ajax({
+                                url: '/api/avances',
+                                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                                type: 'POST',
+                                processData: false,
+                                contentType: false,
+                                data: form,
+                            })
+                                .done(function () {
+                                    toastr.success("Avance registrado");
+                                    setTimeout(function () {
+                                        $('#loading-spinner').hide();
+                                        $('#modal-avances').modal("hide");
+                                    }, 600);
+                                    Reload();
+                                })
+                                .fail(function () {
+                                    $('#loading-spinner').hide();
+                                    toastr.error("Ha ocurrido un error");
+                                })
+                                .always(function () {
+                                    $("#save").addClass("disabled");
+                                });
+                        }
+                    });
+                });
             }
         }
     });
 
-    $('#act-table').on('click', '[id^=Btn_historial_]', function() {
+    $('#act-table').on('click', '[id^=Btn_historial_]', function () {
         var id = $(this).attr('data-id');
         console.log(id);
         $.ajax({
-                url: "/get_historial/" + id,
-                type: "GET",
-                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                dataType: "JSON",
-            })
-            .done(function(response) {
+            url: "/get_historial/" + id,
+            type: "GET",
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            dataType: "JSON",
+        })
+            .done(function (response) {
                 if (response != 0) {
                     historial = response;
                     modal.modal('show');
@@ -303,9 +414,110 @@ $(document).ready(function() {
                     toastr.warning('No existe historial actualmente')
                 }
             })
-            .fail(function() {
+            .fail(function () {
                 console.log("error");
             });
+    });
+
+    $('#act-table').on('click', '[id^=ver-avances]', function () {
+        var id = $(this).attr('data-id');
+
+        console.log(id);
+        var filtro = AllAvances.filter(f => f.id_actividad == id);
+
+        console.log(filtro);
+
+        modal.modal('show');
+        ModalAvances(filtro[0].titulo_actividad);
+
+        var fecha_anterior = '';
+        for (let i = 0; i < filtro.length; i++) {
+            var fecha_actual = filtro[i].fecha_avance;
+            var fecha = new Date(fecha_actual);
+            var options = { year: 'numeric', month: 'long', day: 'numeric' };
+
+            if (fecha_anterior != fecha_actual) {
+                $('#timeline_avances').append(`
+                    <li class="time-label">
+                        <span class="bg-purple">
+                            ${fecha.toLocaleDateString("es-ES", options)}
+                        </span>
+                    </li>
+                `);
+                fecha_anterior = fecha_actual;
+            }
+
+            var html = '';
+            if (filtro[i].evidencias != "null") {
+                var json = filtro[i].evidencias.split('PSIAPP');
+                var a = 0;
+                console.log(json);
+                for (var i2 = 0; i2 < json.length; i2++) {
+                    if (json[i2] != '') {
+                        var icon = 'fa fa-file';
+
+                        var extension = json[i2].split('.')[2];
+
+                        switch (extension) {
+                            case 'doc':
+                                icon = 'fa-file-word-o';
+                                break;
+                            case 'docx':
+                                icon = 'fa-file-word-o';
+                                break;
+                            case 'xlsx':
+                                icon = 'fa-file-excel-o bg-success bg-green';
+                                break;
+                            case 'pdf':
+                                icon = 'fa-file-pdf bg-danger bg-red';
+                                break;
+                            case 'txt':
+                                icon = 'fa-file-text';
+                                break;
+                            case 'jpeg':
+                                icon = 'fa-file-image-o';
+                                break;
+                            case 'png':
+                                icon = 'fa-file-image-o';
+                                break;
+                            case 'jpg':
+                                icon = 'fa-file-image-o';
+                                break;
+                            case 'mp3':
+                                icon = 'fa-file-audio-o bg-secondary';
+                                break;
+                            case 'mp4':
+                                icon = 'fa-file-movie-o bg-secondary';
+                                break;
+                        }
+
+                        html += `<a target="_blank" href="${json[i2]}" type="button" style="font-size: 3em;" class="btn-link margin">
+                                        <i class="fa ${icon}"></i>
+                                    </a>`
+                        a++;
+                    }
+                }
+            } else {
+                html = null;
+            }
+            $('#timeline_avances').append(`
+                <li>
+                    <i class="fa fa-exclamation bg-blue"></i>
+                    <div class="timeline-item">
+                        <span class="time"><i class="fa fa-clock-o"></i>${moment(filtro[i].created_at).fromNow()}</span>
+
+                        <h3 class="timeline-header"><a href="#">Avance ${filtro[i].id}</a></h3>
+
+                        <div class="timeline-body">
+                            ${filtro[i].avance}
+                        </div>
+                        <div class="timeline-footer">
+                            ${html != null ? html : ''}
+                        </div>
+                    </div>
+                </li>
+            `);
+        }
     });
 });
 
@@ -318,9 +530,9 @@ function LoadActividades() {
     });
 
     $.ajax({
-            url: '/api/actividades',
-        })
-        .done(function(response) {
+        url: '/api/actividades',
+    })
+        .done(function (response) {
             for (var i in response.data) {
 
                 $("#actividad_id").append(`<option name="${response.data[i].fecha}" value='${response.data[i].id}'>ATC-${response.data[i].id} | ${response.data[i].titulo} | ${response.data[i].nombre_estudiante} ${response.data[i].apellido_estudiante} | ${response.data[i].fecha}</option>`)
@@ -328,7 +540,7 @@ function LoadActividades() {
             // $('#fecha').val(response.data[i].fecha);
 
         })
-        .fail(function() {
+        .fail(function () {
             console.log("error");
         })
 }
@@ -354,15 +566,15 @@ function LoadTiposComportamientos() {
     });
 
     $.ajax({
-            url: '/api/tipo_comportamientos',
-        })
-        .done(function(response) {
+        url: '/api/tipo_comportamientos',
+    })
+        .done(function (response) {
             for (var i in response.data) {
                 $("#tipo_comportamiento_id").append(`<option value='${response.data[i].id}'>${response.data[i].titulo}</option>`)
             }
 
         })
-        .fail(function() {
+        .fail(function () {
             console.log("error");
         })
 }
@@ -376,17 +588,96 @@ function LoadComportamientos() {
     });
 
     $.ajax({
-            url: '/api/comportamientos',
-        })
-        .done(function(response) {
+        url: '/api/comportamientos',
+    })
+        .done(function (response) {
             for (var i in response.data) {
                 $("#comportamiento_id").append(`<option value='${response.data[i].id}'>${response.data[i].titulo} | ${response.data[i].nombres}  ${response.data[i].apellidos} | CMP${response.data[i].id} </option>`)
             }
 
         })
-        .fail(function() {
+        .fail(function () {
             console.log("error");
         })
+}
+
+function ModalAvances(titulo) {
+    modal.find('.modal-content').empty().append(`
+    <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Avances de la actividad | ${titulo}</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="timeline" id="timeline_avances">
+                    
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success" data-dismiss="modal">Definir estado</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        </div>
+    `);
+}
+
+function ModalCrearAvances() {
+    $('#modal-avances').find('.modal-content').empty().append(`
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Registar Avances de Actividades</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-6">
+
+                    <div class="form-group">
+                        <label>Actividad: </label>
+                        <select class="form-control" id="actividad_id" style="width: 100%;">
+
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Descripcion del avance: </label>
+                        <textarea id="descripcion" class="form-control" style="resize: vertical;" rows="3" placeholder="Escriba aqui la descripcion del avance ..."></textarea>
+                    </div>
+
+                </div>
+                <div class="col-md-6">
+
+                    <div class="form-group">
+                        <label>Fecha del Avance: </label>
+                        <div class="input-group date" id="timepicker">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <input type="text" class="form-control pull-right" id="fecha" disabled>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <a class="btn btn-secondary hide" id="rutaFile"></a>
+                        <br>
+                        <label>Evidencias: </label>
+                        <input type="file" name="files[]" id="evidencias" multiple>
+                        
+                        <p class="help-block">Suba archivo que evdencie el avance.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="save">Guardar</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        </div>
+    `)
+    $("#timepicker").datetimepicker({
+        format: "YYYY-MM-DD"
+    });
 }
 
 function ModalInfo() {
@@ -618,9 +909,117 @@ function ReloadCalendario() {
                 if (actividadFilter.titulo_tipo_comportamiento == null) {
                     modal.modal('show')
                     ModalEst(actividadFilter, event, options);
+                    $('#avances').on('click', function () {
+                        modal.modal('hide');
+                        $('#modal-avances').modal('show');
+                        ModalCrearAvances();
+                        LoadActividad(actividadFilter.id);
+                        establecer_fecha();
+                        $('#save').on('click', function () {
+                            var actividad_id = $('#actividad_id').val(),
+                                descripcion = $('#descripcion').val(),
+                                fecha = $('#fecha').val(),
+                                evidencias = $('#evidencias')[0].files;
+
+                            if (actividad_id == '' || descripcion == '' || fecha == '') {
+                                toastr.warning("Complete todos los campos")
+                            } else {
+                                var form = new FormData();
+                                var archivos = 0;
+                                jQuery.each(jQuery('#evidencias')[0].files, function (i, file) {
+                                    form.append('file' + i, file);
+                                    archivos++;
+                                });
+                                form.append('archivos', archivos);
+
+                                form.append('actividad_id', actividad_id)
+                                form.append('descripcion', descripcion)
+                                form.append('fecha_avance', fecha)
+                                // form.append('evidencias', evidencias)               
+                                $('#loading-spinner').show();
+                                $.ajax({
+                                    url: '/api/avances',
+                                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                                    type: 'POST',
+                                    processData: false,
+                                    contentType: false,
+                                    data: form,
+                                })
+                                    .done(function () {
+                                        toastr.success("Avance registrado");
+                                        setTimeout(function () {
+                                            $('#loading-spinner').hide();
+                                            $('#modal-avances').modal("hide");
+                                        }, 600);
+                                        Reload();
+                                    })
+                                    .fail(function () {
+                                        $('#loading-spinner').hide();
+                                        toastr.error("Ha ocurrido un error");
+                                    })
+                                    .always(function () {
+                                        $("#save").addClass("disabled");
+                                    });
+                            }
+                        });
+                    });
                 } else {
                     modal.modal('show')
                     ModalPsico(actividadFilter, event, options);
+                    $('#avances').on('click', function () {
+                        modal.modal('hide');
+                        $('#modal-avances').modal('show');
+                        ModalCrearAvances();
+                        LoadActividad(actividadFilter.id);
+                        establecer_fecha();
+                        $('#save').on('click', function () {
+                            var actividad_id = $('#actividad_id').val(),
+                                descripcion = $('#descripcion').val(),
+                                fecha = $('#fecha').val(),
+                                evidencias = $('#evidencias')[0].files;
+
+                            if (actividad_id == '' || descripcion == '' || fecha == '') {
+                                toastr.warning("Complete todos los campos")
+                            } else {
+                                var form = new FormData();
+                                var archivos = 0;
+                                jQuery.each(jQuery('#evidencias')[0].files, function (i, file) {
+                                    form.append('file' + i, file);
+                                    archivos++;
+                                });
+                                form.append('archivos', archivos);
+
+                                form.append('actividad_id', actividad_id)
+                                form.append('descripcion', descripcion)
+                                form.append('fecha_avance', fecha)
+                                // form.append('evidencias', evidencias)               
+                                $('#loading-spinner').show();
+                                $.ajax({
+                                    url: '/api/avances',
+                                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                                    type: 'POST',
+                                    processData: false,
+                                    contentType: false,
+                                    data: form,
+                                })
+                                    .done(function () {
+                                        toastr.success("Avance registrado");
+                                        setTimeout(function () {
+                                            $('#loading-spinner').hide();
+                                            $('#modal-avances').modal("hide");
+                                        }, 600);
+                                        Reload();
+                                    })
+                                    .fail(function () {
+                                        $('#loading-spinner').hide();
+                                        toastr.error("Ha ocurrido un error");
+                                    })
+                                    .always(function () {
+                                        $("#save").addClass("disabled");
+                                    });
+                            }
+                        });
+                    });
                 }
             }
 
@@ -642,7 +1041,7 @@ function ReloadCalendario() {
                     calendar.addEvent({
                         id: response.actividades[i].id,
                         groupId: JSON.stringify(response.actividades[i]),
-                        title: response.actividades[i].titulo+' | '+'CMP'+response.actividades[i].id_comportamiento,
+                        title: response.actividades[i].titulo + ' | ' + 'CMP' + response.actividades[i].id_comportamiento,
                         start: response.actividades[i].fecha,
                         backgroundColor: response.actividades[i].estado == 3 ? '#F4A460' : response.actividades[i].estado == 1 ? '#3CB371' : '#FF6347',
                         borderColor: "gray",
@@ -655,6 +1054,13 @@ function ReloadCalendario() {
         .fail(function () {
             console.log("error");
         });
+}
+
+function establecer_fecha() {
+    var hoy = new Date();
+    hoy.setMinutes(hoy.getMinutes() - hoy.getTimezoneOffset());
+    hoy = hoy.toJSON().slice(0, 10);
+    $("#fecha").val(hoy);
 }
 
 function ModalShow(filtro) {
@@ -676,7 +1082,7 @@ function ModalShow(filtro) {
                             <div class="box-body">
                                 <div class="form-group">
                                     <label>Estado</label>
-                                    <p>${filtro[0].estado == 3 ? "En espera" : filtro[0].estado == 1 ? "Cumplida" : "Inclumplida"} </p>
+                                    <p>${filtro[0].estado == 3 ? `<i class="fa  fa-exclamation-triangle" style="color: orange;" ></i> En espera` : filtro[0].estado == 1 ? `<i class="fa fa-check-circle" style="color: green;"></i> Cumplida` : `<i class="fa fa-exclamation-circle" style="color: red;"></i> Incumplida`} </p>
                                 </div>
                                 <div class="form-group">
                                     <label>Fecha</label>
@@ -764,6 +1170,7 @@ function ModalShow(filtro) {
             </div>
 
             <div class="modal-footer">
+                ${permisos.includes('create.avances') ? `<button type="button" id="avances" class="btn btn-primary">Subir avances</button>` : ``}
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
             </div>
             `)
@@ -779,7 +1186,7 @@ function ModalShowEst(filtro) {
 
                 <div class="row">
 
-                    <div class="col-md-6">
+                    <div class="col-md-12">
 
                         <div class="box box-widget">
                             <div class="box-header">
@@ -788,7 +1195,7 @@ function ModalShowEst(filtro) {
                             <div class="box-body">
                                 <div class="form-group">
                                     <label>Estado</label>
-                                    <p>${filtro[0].estado == 3 ? "En espera" : filtro[0].estado == 1 ? "Cumplida" : "Inclumplida"} </p>
+                                    <p>${filtro[0].estado == 3 ? `<i class="fa  fa-exclamation-triangle" style="color: orange;" ></i> En espera` : filtro[0].estado == 1 ? `<i class="fa fa-check-circle" style="color: green;"></i> Cumplida` : `<i class="fa fa-exclamation-circle" style="color: red;"></i> Incumplida`} </p>
                                 </div>
                                 <div class="form-group">
                                     <label>Fecha</label>
@@ -804,30 +1211,12 @@ function ModalShowEst(filtro) {
                         
                     </div>
 
-                    <div class="col-md-6">
-                        <div class="box box-widget">
-                            <div class="box-header with-border">
-                                <h3 class="box-title">Datos del Comportamiento</h3>
-                            </div>
-                            <div class="box-body">
-                                <div class="form-group">
-                                    <label>Titulo de comportamiento</label>
-                                    <p>CMP${filtro[0].id_comportamiento} | ${filtro[0].titulo_comportamiento}</p>
-                                </div>
-                                <div class="form-group">
-                                    <label>Descripcion del comportamiento</label>
-                                    <p>${filtro[0].descripcion_comportamiento}</p>
-                                </div>
-
-                            </div>
-                        </div>
-                       
-                    </div>
                 </div>
                 
             </div>
 
             <div class="modal-footer">
+                ${permisos.includes('create.avances') ? `<button type="button" id="avances" class="btn btn-primary">Subir avances</button>` : ``}
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
             </div>
             `)
@@ -843,7 +1232,7 @@ function ModalEst(actividadFilter, event, options) {
 
                 <div class="row">
 
-                    <div class="col-md-6">
+                    <div class="col-md-12">
 
                         <div class="box box-widget">
                             <div class="box-header">
@@ -852,7 +1241,7 @@ function ModalEst(actividadFilter, event, options) {
                             <div class="box-body">
                                 <div class="form-group">
                                     <label>Estado</label>
-                                    <p>${actividadFilter.estado == 3 ? "En espera" : actividadFilter.estado == 1 ? "Cumplida" : "Inclumplida"} </p>
+                                    <p>${actividadFilter.estado == 3 ? `<i class="fa  fa-exclamation-triangle" style="color: orange;" ></i> En espera` : actividadFilter.estado == 1 ? `<i class="fa fa-check-circle" style="color: green;"></i> Cumplida` : `<i class="fa fa-exclamation-circle" style="color: red;"></i> Incumplida` } </p>
                                 </div>
                                 <div class="form-group">
                                     <label>Fecha</label>
@@ -867,31 +1256,12 @@ function ModalEst(actividadFilter, event, options) {
                         
                         
                     </div>
-
-                    <div class="col-md-6">
-                        <div class="box box-widget">
-                            <div class="box-header with-border">
-                                <h3 class="box-title">Datos del Comportamiento</h3>
-                            </div>
-                            <div class="box-body">
-                                <div class="form-group">
-                                    <label>Titulo de comportamiento</label>
-                                    <p>CMP${actividadFilter.id_comportamiento} | ${actividadFilter.titulo_comportamiento}</p>
-                                </div>
-                                <div class="form-group">
-                                    <label>Descripcion del comportamiento</label>
-                                    <p>${actividadFilter.descripcion_comportamiento}</p>
-                                </div>
-
-                            </div>
-                        </div>
-                       
-                    </div>
                 </div>
                 
             </div>
 
             <div class="modal-footer">
+                ${permisos.includes('create.avances') ? `<button type="button" id="avances" class="btn btn-primary">Subir avances</button>` : ``}
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
             </div>
             `)
@@ -917,7 +1287,7 @@ function ModalPsico(actividadFilter, event, options) {
                             <div class="box-body">
                                 <div class="form-group">
                                     <label>Estado</label>
-                                    <p>${actividadFilter.estado == 3 ? "En espera" : actividadFilter.estado == 1 ? "Cumplida" : "Inclumplida"} </p>
+                                    <p>${actividadFilter.estado == 3 ? `<i class="fa  fa-exclamation-triangle" style="color: orange;" ></i> En espera` : actividadFilter.estado == 1 ? `<i class="fa fa-check-circle" style="color: green;"></i> Cumplida` : `<i class="fa fa-exclamation-circle" style="color: red;"></i> Incumplida` } </p>
                                 </div>
                                 <div class="form-group">
                                     <label>Fecha</label>
@@ -1005,6 +1375,7 @@ function ModalPsico(actividadFilter, event, options) {
             </div>
 
             <div class="modal-footer">
+                ${permisos.includes('create.avances') ? `<button type="button" id="avances" class="btn btn-primary">Subir avances</button>` : ``}
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
             </div>
             `)
@@ -1021,9 +1392,13 @@ function Reload() {
         .done(function (response) {
             if (response.length != 0) {
                 AllRegister = response.actividades;
+                response.avances.forEach(element => {
+                    AvancesElement.push(element.id_actividad);
+                });
+                console.log(AvancesElement);
+                AllAvances = response.avances;
                 permisos = response.permisos;
                 DataTable(response.actividades);
-
 
             } else {
                 $('#actividades-table').dataTable().fnClearTable();
@@ -1035,6 +1410,30 @@ function Reload() {
         .fail(function () {
             console.log("error");
         });
+}
+
+function LoadActividad(id) {
+    $("#actividad_id").select2({
+        placeholder: 'Seleccionela actividad',
+        allowClear: false,
+        dropdownParent: $('#modal-avances'),
+        width: 'resolve'
+    });
+
+    $.ajax({
+        url: '/api/actividades',
+    })
+        .done(function (response) {
+            for (var i in response.data) {
+                if (response.data[i].id == id) {
+                    $("#actividad_id").append(`<option value='${response.data[i].id}'>${response.data[i].titulo} | ${response.data[i].titulo_comportamiento} | ${response.data[i].nombre_estudiante} ${response.data[i].apellido_estudiante}</option>`)
+                }
+            }
+
+        })
+        .fail(function () {
+            console.log("error");
+        })
 }
 
 function DataTable(response) {
@@ -1057,39 +1456,32 @@ function DataTable(response) {
             // my_item.class = "filter_C";
             my_item.data = key;
 
+
             if (key == 'created_at') {
 
-                my_item.title = 'Culminación';
+                my_item.title = 'Avances';
 
                 my_item.render = function (data, type, row) {
-                        var html2 = '';
+                    var html2 = '';
                     // for (let i = 0; i < permisos.length; i++) {
 
-                        if (permisos.includes("edit.actividades")) {
-                            html2 += `
-                                    <a data-id=${row.id} id="btn_cumplido_${row.id}" class="btn btn-circle btn-sm btn-success ">
-                                        <i class="fa fa-thumbs-up" aria-hidden="true"></i>
-                                    </a>
 
-                                    <a data-id=${row.id} id="btn_incumplido_${row.id}" class="btn btn-circle btn-sm btn-danger ">
-                                        <i class="fa fa-thumbs-down" aria-hidden="true"></i>
-                                    </a>`;
-                        }
+                    if (permisos.includes("show.avances")) {
+                        html2 += `<button data-id=${row.id} id="ver-avances">Ver avances</button>`;
+                    }
 
                     // }
-                    return `<div align="center">
-                                    <div class="btn-group btn-group-circle btn-group-solid" align="center">
+                    return `<div id="campo_avace_${row.id}" align="center">
                                         ${html2}
-                                    </div>
                                 </div>`;
                 }
 
-                if (permisos.length != 0 && permisos.includes('edit.actividades')) {
+                if (permisos.length != 0 && permisos.includes('show.avances')) {
                     my_columns.push(my_item);
                 }
             }
 
-            else if (key == 'deleted_at') {
+            if (key == 'deleted_at') {
 
                 my_item.title = 'Actividades';
 
@@ -1120,7 +1512,7 @@ function DataTable(response) {
                             </div>`;
 
                 }
-                if (permisos.length != 0) {
+                if (permisos.length != 0 && permisos.includes('show.actividades', 'edit.actividades', 'delete.actividades')) {
                     my_columns.push(my_item);
                 }
 
@@ -1250,9 +1642,9 @@ function DataTable(response) {
         })
 
 
-        $('#act-table').DataTable({
+        var table = $('#act-table').DataTable({
             'responsive': true,
-            'scrollX': my_columns.length >= 8 ? true : false,
+            'scrollX': my_columns.length >= 6 ? true : false,
             "destroy": true,
             data: response,
             "columns": my_columns,
@@ -1305,5 +1697,17 @@ function DataTable(response) {
         // $('thead > tr> th:nth-child(8)').css({ 'min-width': '140px', 'max-width': '140px' });
         // $('thead > tr> th:nth-child(10)').css({ 'min-width': '140px', 'max-width': '140px' });
         // $('thead > tr> th:nth-child(10)').css({ 'min-width': '140px', 'max-width': '140px' });
+
+        var rows = table.rows().data();
+        var ide;
+
+        for (let index = 0; index < rows.length; index++) {
+            ide = rows[index].id;
+            console.log(ide);
+            if (!AvancesElement.includes(ide)) {
+                $('#campo_avace_' + ide + '').empty();
+                $('#campo_avace_' + ide + '').append(`<p>Sin avance</p>`);
+            }
+        }
     }
 }

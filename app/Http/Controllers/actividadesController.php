@@ -68,7 +68,7 @@ class actividadesController extends AppBaseController
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    // ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->select(
                         'ac.id',
                         'ac.titulo',
@@ -86,18 +86,19 @@ class actividadesController extends AppBaseController
                         DB::raw('a.apellidos as apellido_acudiente'),
                         DB::raw('a.telefono as telefono_acudiente'),
                         DB::raw('a.correo as correo_acudiente'),
-                        // DB::raw('tc.titulo as titulo_tipo_comportamiento'),
-                        // DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
+                        DB::raw('tc.titulo as titulo_tipo_comportamiento'),
+                        DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
                         'ac.created_at',
                         'ac.deleted_at'
                     )
                     ->get();
+
             } else if ($queryUsers[0]->role_id == 2) {
                 $actividades = DB::table(DB::raw('actividades ac'))->where(DB::raw('ac.deleted_at', '=', NULL))
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    // ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->where(DB::raw('e.correo'), '=', Auth()->user()->email)
                     ->select(
                         'ac.id',
@@ -105,19 +106,21 @@ class actividadesController extends AppBaseController
                         'ac.fecha',
                         'ac.descripcion',
                         'ac.estado',
-                        DB::raw('c.id as id_comportamiento'),
-                        DB::raw('c.titulo as titulo_comportamiento'),
-                        DB::raw('c.descripcion as descripcion_comportamiento'),
+                        'e.correo',
+                        // DB::raw('c.id as id_comportamiento'),
+                        // DB::raw('c.titulo as titulo_comportamiento'),
+                        // DB::raw('c.descripcion as descripcion_comportamiento'),
                         'ac.created_at',
                         'ac.deleted_at'
                     )
                     ->get();
+
             } else if ($queryUsers[0]->role_id == 3) {
                 $actividades = DB::table(DB::raw('actividades ac'))->where(DB::raw('ac.deleted_at', '=', NULL))
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    // ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->select(
                         'ac.id',
                         'ac.titulo',
@@ -135,18 +138,19 @@ class actividadesController extends AppBaseController
                         DB::raw('a.apellidos as apellido_acudiente'),
                         DB::raw('a.telefono as telefono_acudiente'),
                         DB::raw('a.correo as correo_acudiente'),
-                        // DB::raw('tc.titulo as titulo_tipo_comportamiento'),
-                        // DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
+                        DB::raw('tc.titulo as titulo_tipo_comportamiento'),
+                        DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
                         'ac.created_at',
                         'ac.deleted_at'
                     )
                     ->get();
+
             } else if ($queryUsers[0]->role_id == 4) {
                 $actividades = DB::table(DB::raw('actividades ac'))->where(DB::raw('ac.deleted_at', '=', NULL))
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    // ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->select(
                         'ac.id',
                         'ac.titulo',
@@ -164,8 +168,8 @@ class actividadesController extends AppBaseController
                         DB::raw('a.apellidos as apellido_acudiente'),
                         DB::raw('a.telefono as telefono_acudiente'),
                         DB::raw('a.correo as correo_acudiente'),
-                        // DB::raw('tc.titulo as titulo_tipo_comportamiento'),
-                        // DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
+                        DB::raw('tc.titulo as titulo_tipo_comportamiento'),
+                        DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
                         'ac.created_at',
                         'ac.deleted_at'
                     )
@@ -176,9 +180,12 @@ class actividadesController extends AppBaseController
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    // ->join(DB::raw('tipo_comportamientos tc'), 'ac.tipo_comportamiento_id', '=', 'tc.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                    ->leftjoin(DB::raw('avances av'), 'av.actividad_id', '=', 'a.id')
+                    ->distinct()
                     ->select(
                         'ac.id',
+                        DB::raw('av.id as id_avance'),
                         'ac.titulo',
                         'ac.fecha',
                         'ac.descripcion',
@@ -194,8 +201,8 @@ class actividadesController extends AppBaseController
                         DB::raw('a.apellidos as apellido_acudiente'),
                         DB::raw('a.telefono as telefono_acudiente'),
                         DB::raw('a.correo as correo_acudiente'),
-                        // DB::raw('tc.titulo as titulo_tipo_comportamiento'),
-                        // DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
+                        DB::raw('tc.titulo as titulo_tipo_comportamiento'),
+                        DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
                         'ac.created_at',
                         'ac.deleted_at'
                     )
@@ -205,8 +212,33 @@ class actividadesController extends AppBaseController
         //Permisos que tiene el usuario
         $permisos = [];
 
+        $avances = [];
+
         if ($user->havePermission('show.actividades')) {
             array_push($permisos, "show.actividades");
+            $avances = DB::table(DB::raw('avances av'))->where(DB::raw('av.deleted_at', '=', 'NULL'))
+                    ->join(DB::raw('actividades a'), 'av.actividad_id', '=', 'a.id')
+                    ->join(DB::raw('comportamientos c'), 'a.comportamiento_id', '=', 'c.id')
+                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                    ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+                    ->select(
+                        'av.id',
+                        DB::raw('av.descripcion as avance'),
+                        'av.fecha_avance',
+                        DB::raw('a.estado as estado_actividad'),
+                        DB::raw('a.titulo as titulo_actividad'),
+                        DB::raw('a.descripcion as descripcion_actividad'),
+                        DB::raw('a.fecha as fecha_actividad'),
+                        DB::raw('c.titulo as comportamiento_registrado'),
+                        DB::raw('tc.titulo as titulo_tipo_comportamiento'),
+                        DB::raw('e.nombres as nombre_estudiante'),
+                        DB::raw('e.apellidos as apellido_estudiante'),
+                        'av.evidencias',
+                        DB::raw('a.id as id_actividad'),
+                        'av.created_at'
+                    )
+                    ->orderBy('av.created_at', 'desc')
+                    ->get();
         }
 
         if ($user->havePermission('edit.actividades')) {
@@ -221,8 +253,25 @@ class actividadesController extends AppBaseController
             array_push($permisos, "create.actividades");
         }
 
+        if ($user->havePermission('show.avances')) {
+            array_push($permisos, "show.avances");
+        }
+
+        if ($user->havePermission('edit.avances')) {
+            array_push($permisos, "edit.avances");
+        }
+
+        if ($user->havePermission('delete.avances')) {
+            array_push($permisos, "delete.avances");
+        }
+
+        if ($user->havePermission('create.avances')) {
+            array_push($permisos, "create.avances");
+        }
+
         $datos = [
             'actividades' => $actividades,
+            'avances' => $avances,
             'rol' => $rol,
             'permisos' => $permisos
         ];

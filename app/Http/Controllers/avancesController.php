@@ -64,7 +64,6 @@ class avancesController extends AppBaseController
                         'av.id',
                         DB::raw('av.descripcion as avance'),
                         'av.fecha_avance',
-                        DB::raw('a.id as id_actividad'),
                         DB::raw('a.estado as estado_actividad'),
                         DB::raw('a.titulo as titulo_actividad'),
                         DB::raw('a.descripcion as descripcion_actividad'),
@@ -74,6 +73,7 @@ class avancesController extends AppBaseController
                         DB::raw('e.nombres as nombre_estudiante'),
                         DB::raw('e.apellidos as apellido_estudiante'),
                         'av.evidencias',
+                        DB::raw('a.id as id_actividad'),
                         'av.created_at'
                     )
                     ->get();
@@ -88,7 +88,7 @@ class avancesController extends AppBaseController
                         'av.id',
                         DB::raw('av.descripcion as avance'),
                         'av.fecha_avance',
-                        DB::raw('a.id as id_actividad'),
+                        // DB::raw('a.id as id_actividad'),
                         DB::raw('a.estado as estado_actividad'),
                         DB::raw('a.titulo as titulo_actividad'),
                         DB::raw('a.descripcion as descripcion_actividad'),
@@ -112,7 +112,7 @@ class avancesController extends AppBaseController
                         'av.id',
                         DB::raw('av.descripcion as avance'),
                         'av.fecha_avance',
-                        DB::raw('a.id as id_actividad'),
+                        // DB::raw('a.id as id_actividad'),
                         DB::raw('a.estado as estado_actividad'),
                         DB::raw('a.titulo as titulo_actividad'),
                         DB::raw('a.descripcion as descripcion_actividad'),
@@ -137,7 +137,7 @@ class avancesController extends AppBaseController
                         'av.id',
                         DB::raw('av.descripcion as avance'),
                         'av.fecha_avance',
-                        DB::raw('a.id as id_actividad'),
+                        // DB::raw('a.id as id_actividad'),
                         DB::raw('a.estado as estado_actividad'),
                         DB::raw('a.titulo as titulo_actividad'),
                         DB::raw('a.descripcion as descripcion_actividad'),
@@ -160,7 +160,6 @@ class avancesController extends AppBaseController
                         'av.id',
                         DB::raw('av.descripcion as avance'),
                         'av.fecha_avance',
-                        DB::raw('a.id as id_actividad'),
                         DB::raw('a.estado as estado_actividad'),
                         DB::raw('a.titulo as titulo_actividad'),
                         DB::raw('a.descripcion as descripcion_actividad'),
@@ -170,6 +169,7 @@ class avancesController extends AppBaseController
                         DB::raw('e.nombres as nombre_estudiante'),
                         DB::raw('e.apellidos as apellido_estudiante'),
                         'av.evidencias',
+                        DB::raw('a.id as id_actividad'),
                         'av.created_at'
                     )
                     ->get();
@@ -177,6 +177,22 @@ class avancesController extends AppBaseController
         }
         //Permisos que tiene el usuario
         $permisos = [];
+
+        if ($user->havePermission('show.actividades')) {
+            array_push($permisos, "show.actividades");
+        }
+
+        if ($user->havePermission('edit.actividades')) {
+            array_push($permisos, "edit.actividades");
+        }
+
+        if ($user->havePermission('delete.actividades')) {
+            array_push($permisos, "delete.actividades");
+        }
+
+        if ($user->havePermission('create.actividades')) {
+            array_push($permisos, "create.actividades");
+        }
 
         if ($user->havePermission('edit.avances')) {
             array_push($permisos, "edit.avances");
