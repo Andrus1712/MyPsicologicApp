@@ -5,308 +5,308 @@ var permisos = [];
 
 var rol;
 
-$(document).ready(function() {
-        Reload()
+$(document).ready(function () {
+    Reload()
 
-        $('#add-roles').on('click', function() {
-            modal.modal('show');
-            Modal();
+    $('#add-roles').on('click', function () {
+        modal.modal('show');
+        Modal();
+        var ArrayPermisos = [];
+
+        $('#ver_all').on('click', function () {
+            var checked = this.checked;
+            $('input[name="ver"]').each(function () {
+                this.checked = checked;
+            });
+        });
+        $('#editar_all').on('click', function () {
+            var checked = this.checked;
+            $('input[name="editar"]').each(function () {
+                this.checked = checked;
+            });
+        });
+        $('#sistema_all').on('click', function () {
+            var checked = this.checked;
+            $('input[name="sistema"]').each(function () {
+                this.checked = checked;
+            });
+        });
+        $('#especial_all').on('click', function () {
+            var checked = this.checked;
+            $('input[name="especial"]').each(function () {
+                this.checked = checked;
+            });
+        });
+        $('#crear_all').on('click', function () {
+            var checked = this.checked;
+            $('input[name="crear"]').each(function () {
+                this.checked = checked;
+            });
+        });
+        $('#eliminar_all').on('click', function () {
+            var checked = this.checked;
+            $('input[name="eliminar"]').each(function () {
+                this.checked = checked;
+            });
+        });
+
+        $('#save').on('click', function () {
+
+            var name = $('#name').val(),
+                descripcion = $('#descripcion').val();
+
+            var substr = name.substr(0, 3);
+            var slug = substr.concat("-user");
+
+            $("input:checkbox:checked").each(
+                function () {
+                    if ($(this).val() != 'on') {
+                        ArrayPermisos.push($(this).val());
+                        // alert("El checkbox con valor " + $(this).val() + " está seleccionado");
+                    }
+                }
+            );
+
+            //console.table(ArrayPermisos);
+
+            if (name == '') {
+                toastr.warning("Complete todos los campos")
+            } else {
+                $('#loading-spinner').show();
+                $.ajax({
+                    url: '/api/roles',
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    type: 'POST',
+                    data: {
+                        name: name,
+                        slug: slug,
+                        descripcion: descripcion,
+                        permission: ArrayPermisos,
+                    }
+                })
+                    .done(function () {
+                        setTimeout(function () {
+                            $('#loading-spinner').hide();
+                            modal.modal("hide")
+                        }, 600);
+                        Reload()
+                    })
+                    .fail(function () {
+                        $('#loading-spinner').hide();
+                        toastr.error("Ha ocurrido un error");
+                    })
+                    .always(function () {
+                        $("#save").addClass("disabled");
+                    });
+            }
+        })
+    })
+
+    $('#roles-table').on('click', '[id^=Btn_Edit_]', function () {
+        var id = $(this).attr('data-id');
+        const filtro = AllRegister.filter(f => f.id == id);
+
+        if (filtro != 0) {
+            modal.modal('show')
+            Modal()
+
             var ArrayPermisos = [];
 
-            $('#ver_all').on('click', function() {
+            $('#ver_all').on('click', function () {
                 var checked = this.checked;
-                $('input[name="ver"]').each(function() {
+                $('input[name="ver"]').each(function () {
                     this.checked = checked;
                 });
             });
-            $('#editar_all').on('click', function() {
+            $('#editar_all').on('click', function () {
                 var checked = this.checked;
-                $('input[name="editar"]').each(function() {
+                $('input[name="editar"]').each(function () {
                     this.checked = checked;
                 });
             });
-            $('#sistema_all').on('click', function() {
+            $('#sistema_all').on('click', function () {
                 var checked = this.checked;
-                $('input[name="sistema"]').each(function() {
+                $('input[name="sistema"]').each(function () {
                     this.checked = checked;
                 });
             });
-            $('#especial_all').on('click', function() {
+            $('#especial_all').on('click', function () {
                 var checked = this.checked;
-                $('input[name="especial"]').each(function() {
+                $('input[name="especial"]').each(function () {
                     this.checked = checked;
                 });
             });
-            $('#crear_all').on('click', function() {
+            $('#crear_all').on('click', function () {
                 var checked = this.checked;
-                $('input[name="crear"]').each(function() {
+                $('input[name="crear"]').each(function () {
                     this.checked = checked;
                 });
             });
-            $('#eliminar_all').on('click', function() {
+            $('#eliminar_all').on('click', function () {
                 var checked = this.checked;
-                $('input[name="eliminar"]').each(function() {
+                $('input[name="eliminar"]').each(function () {
                     this.checked = checked;
                 });
             });
 
-            $('#save').on('click', function() {
+            $("#save").text("Actualizar")
+            $("#save").attr("id", 'update')
 
+            $('#name').val(filtro[0].name);
+            $('#descripcion').val(filtro[0].descripcion);
+
+
+
+            var datos = filtro[0].permissions;
+
+            $.each(datos, function (i, value) {
+                $("input[id=" + value.id + " ]").prop("checked", true);
+            });
+            // $("input:checkbox").each(
+            //     function () {
+            //         $("input[type=checkbox]").prop("checked", true);
+            //     }
+            // );
+
+
+            $("#update").on('click', function () {
                 var name = $('#name').val(),
                     descripcion = $('#descripcion').val();
-
                 var substr = name.substr(0, 3);
                 var slug = substr.concat("-user");
 
                 $("input:checkbox:checked").each(
-                    function() {
+                    function () {
                         if ($(this).val() != 'on') {
                             ArrayPermisos.push($(this).val());
-                            // alert("El checkbox con valor " + $(this).val() + " está seleccionado");
+                            // mandamos el valor del slug
                         }
                     }
                 );
 
-                //console.table(ArrayPermisos);
-
                 if (name == '') {
                     toastr.warning("Complete todos los campos")
                 } else {
+
                     $('#loading-spinner').show();
                     $.ajax({
-                            url: '/api/roles',
-                            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                            type: 'POST',
-                            data: {
-                                name: name,
-                                slug: slug,
-                                descripcion: descripcion,
-                                permission: ArrayPermisos,
-                            }
-                        })
-                        .done(function() {
-                            setTimeout(function() {
+                        url: '/api/roles/' + id,
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                        type: 'PUT',
+                        data: {
+                            name: name,
+                            slug: slug,
+                            descripcion: descripcion,
+                            permission: ArrayPermisos,
+                        }
+                    })
+                        .done(function () {
+                            toastr.info("Rol actualizado");
+                            setTimeout(function () {
                                 $('#loading-spinner').hide();
                                 modal.modal("hide")
                             }, 600);
                             Reload()
                         })
-                        .fail(function() {
+                        .fail(function () {
                             $('#loading-spinner').hide();
                             toastr.error("Ha ocurrido un error");
                         })
-                        .always(function() {
+                        .always(function () {
                             $("#save").addClass("disabled");
                         });
                 }
+
             })
-        })
-
-        $('#roles-table').on('click', '[id^=Btn_Edit_]', function() {
-            var id = $(this).attr('data-id');
-            const filtro = AllRegister.filter(f => f.id == id);
-
-            if (filtro != 0) {
-                modal.modal('show')
-                Modal()
-
-                var ArrayPermisos = [];
-
-                $('#ver_all').on('click', function() {
-                    var checked = this.checked;
-                    $('input[name="ver"]').each(function() {
-                        this.checked = checked;
-                    });
-                });
-                $('#editar_all').on('click', function() {
-                    var checked = this.checked;
-                    $('input[name="editar"]').each(function() {
-                        this.checked = checked;
-                    });
-                });
-                $('#sistema_all').on('click', function() {
-                    var checked = this.checked;
-                    $('input[name="sistema"]').each(function() {
-                        this.checked = checked;
-                    });
-                });
-                $('#especial_all').on('click', function() {
-                    var checked = this.checked;
-                    $('input[name="especial"]').each(function() {
-                        this.checked = checked;
-                    });
-                });
-                $('#crear_all').on('click', function() {
-                    var checked = this.checked;
-                    $('input[name="crear"]').each(function() {
-                        this.checked = checked;
-                    });
-                });
-                $('#eliminar_all').on('click', function() {
-                    var checked = this.checked;
-                    $('input[name="eliminar"]').each(function() {
-                        this.checked = checked;
-                    });
-                });
-
-                $("#save").text("Actualizar")
-                $("#save").attr("id", 'update')
-
-                $('#name').val(filtro[0].name);
-                $('#descripcion').val(filtro[0].descripcion);
-
-
-
-                var datos = filtro[0].permissions;
-
-                $.each(datos, function(i, value) {
-                    $("input[id=" + value.id + " ]").prop("checked", true);
-                });
-                // $("input:checkbox").each(
-                //     function () {
-                //         $("input[type=checkbox]").prop("checked", true);
-                //     }
-                // );
-
-
-                $("#update").on('click', function() {
-                    var name = $('#name').val(),
-                        descripcion = $('#descripcion').val();
-                    var substr = name.substr(0, 3);
-                    var slug = substr.concat("-user");
-
-                    $("input:checkbox:checked").each(
-                        function() {
-                            if ($(this).val() != 'on') {
-                                ArrayPermisos.push($(this).val());
-                                // mandamos el valor del slug
-                            }
-                        }
-                    );
-
-                    if (name == '') {
-                        toastr.warning("Complete todos los campos")
-                    } else {
-
-                        $('#loading-spinner').show();
-                        $.ajax({
-                                url: '/api/roles/' + id,
-                                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                                type: 'PUT',
-                                data: {
-                                    name: name,
-                                    slug: slug,
-                                    descripcion: descripcion,
-                                    permission: ArrayPermisos,
-                                }
-                            })
-                            .done(function() {
-                                toastr.info("Rol actualizado");
-                                setTimeout(function() {
-                                    $('#loading-spinner').hide();
-                                    modal.modal("hide")
-                                }, 600);
-                                Reload()
-                            })
-                            .fail(function() {
-                                $('#loading-spinner').hide();
-                                toastr.error("Ha ocurrido un error");
-                            })
-                            .always(function() {
-                                $("#save").addClass("disabled");
-                            });
-                    }
-
-                })
-            }
-        })
-
-        $('#roles-table').on('click', '[id^=Btn_delete_]', function() {
-            var id = $(this).attr('data-id')
-
-            swal({
-                    title: "¿Realmente deseas eliminar el Rol?",
-                    text: "Ten en cuenta que eliminaras toda su información del sistema",
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonClass: "btn-danger",
-                    confirmButtonText: "Si, eliminar",
-                    closeOnConfirm: false
-                },
-                function() {
-                    $.ajax({
-                            url: "/api/roles/" + id,
-                            type: "DELETE",
-                            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                        })
-                        .done(function() {
-                            swal("Eliminado!", "Se ha eliminado el acudiente", "success");
-                            Reload();
-                        })
-                        .fail(function() {
-                            swal("Error!", "Ha ocurrido un error", "error");
-                        });
-
-                });
-        })
+        }
     })
-    /*
-    ver:                    codigo permiso
-    1 ver estudiantes           v1
-    2 ver docentes              v2
-    3 ver acudientes            v3
-    4 ver psicologos            v4
-    5 ver comportamientos       v5
-    6 ver actividades           v6
-    7 ver avances               v7
-    8 ver cursos                v8
 
-    editar
-    1 editar estudiantes        e1
-    2 editar docentes           e2
-    3 editar acudientes         e3
-    4 editar psicologos         e4
-    5 editar comportamientos    e5
-    6 editar actividades        e6
-    7 editar avances            e7
-    8 editar cursos             e8
+    $('#roles-table').on('click', '[id^=Btn_delete_]', function () {
+        var id = $(this).attr('data-id')
 
-    eliminar
-    1 elimnar estudiantes       d1
-    2 eliminar docentes         d2
-    3 eliminar acudientes       d3
-    4 eliminar psicologos       d4
-    5 eliminar comportamientos  d5
-    6 eliminar actividades      d6
-    7 eliminar avances          d7
-    8 eliminar cursos           d8
+        swal({
+            title: "¿Realmente deseas eliminar el Rol?",
+            text: "Ten en cuenta que eliminaras toda su información del sistema",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Si, eliminar",
+            closeOnConfirm: false
+        },
+            function () {
+                $.ajax({
+                    url: "/api/roles/" + id,
+                    type: "DELETE",
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                })
+                    .done(function () {
+                        swal("Eliminado!", "Se ha eliminado el acudiente", "success");
+                        Reload();
+                    })
+                    .fail(function () {
+                        swal("Error!", "Ha ocurrido un error", "error");
+                    });
 
-    crear
-    1 crear estudiantes         c1
-    2 crear docentes            c2
-    3 crear acudientes          c3
-    4 crear psicologos          c4
-    5 crear comportamientos     c5
-    6 crear actividades         c6
-    7 crear avances             c7
-    8 crear cursos              c8
+            });
+    })
+});
+/*
+ver:                    codigo permiso
+1 ver estudiantes           v1
+2 ver docentes              v2
+3 ver acudientes            v3
+4 ver psicologos            v4
+5 ver comportamientos       v5
+6 ver actividades           v6
+7 ver avances               v7
+8 ver cursos                v8
 
-    seguimiento
-    1 generar reportes          x9
-    2 Modulo seguimientos       x10
+editar
+1 editar estudiantes        e1
+2 editar docentes           e2
+3 editar acudientes         e3
+4 editar psicologos         e4
+5 editar comportamientos    e5
+6 editar actividades        e6
+7 editar avances            e7
+8 editar cursos             e8
 
-    sistema
-    1 crear usuarios            x1
-    2 editar usuarios           x2
-    3 eliminar usuarios         x3
-    4 ver usuarios              x4
+eliminar
+1 elimnar estudiantes       d1
+2 eliminar docentes         d2
+3 eliminar acudientes       d3
+4 eliminar psicologos       d4
+5 eliminar comportamientos  d5
+6 eliminar actividades      d6
+7 eliminar avances          d7
+8 eliminar cursos           d8
 
-    1 crear roles               x5
-    2 editar roles              x6
-    3 eliminar roles            x7
-    4 ver roles                 x8
+crear
+1 crear estudiantes         c1
+2 crear docentes            c2
+3 crear acudientes          c3
+4 crear psicologos          c4
+5 crear comportamientos     c5
+6 crear actividades         c6
+7 crear avances             c7
+8 crear cursos              c8
 
-    */
+seguimiento
+1 generar reportes          x9
+2 Modulo seguimientos       x10
+
+sistema
+1 crear usuarios            x1
+2 editar usuarios           x2
+3 eliminar usuarios         x3
+4 ver usuarios              x4
+
+1 crear roles               x5
+2 editar roles              x6
+3 eliminar roles            x7
+4 ver roles                 x8
+
+*/
 
 function Modal() {
     modal.find('.modal-content').empty().append(`
@@ -609,22 +609,22 @@ function Reload() {
         dataType: "JSON",
     })
 
-    .done(function(response) {
-        if (response.length != 0) {
-            AllRegister = response.roles;
-            permisos = response.permisos;
-            rol = response.rol;
-            DataTable(response.roles);
-        } else {
-            $('#roles-table').dataTable().fnClearTable();
-            $('#roles-table').dataTable().fnDestroy();
-            $('#roles-table thead').empty()
-        }
-    })
+        .done(function (response) {
+            if (response.length != 0) {
+                AllRegister = response.roles;
+                permisos = response.permisos;
+                rol = response.rol;
+                DataTable(response.roles);
+            } else {
+                $('#roles-table').dataTable().fnClearTable();
+                $('#roles-table').dataTable().fnDestroy();
+                $('#roles-table thead').empty()
+            }
+        })
 
-    .fail(function() {
-        console.log("error");
-    });
+        .fail(function () {
+            console.log("error");
+        });
 }
 
 function multiple(valor, multiple) {
@@ -646,7 +646,7 @@ function DataTable(response) {
 
     if (response.length != 0) {
         let my_columns = []
-        $.each(response[0], function(key, value) {
+        $.each(response[0], function (key, value) {
             var my_item = {};
             // my_item.class = "filter_C";
             my_item.data = key;
@@ -654,7 +654,7 @@ function DataTable(response) {
 
                 my_item.title = 'Acción';
 
-                my_item.render = function(data, type, row) {
+                my_item.render = function (data, type, row) {
                     var html = '';
                     for (let i = 0; i < permisos.length; i++) {
                         if (permisos[i] == "delete.roles") {
@@ -669,7 +669,7 @@ function DataTable(response) {
                                     </a>`;
                         }
                     }
-                    return `<div align="center">
+                    return `<div id="btn_${row.id}" align="center">
                                 <div class="btn-group btn-group-circle btn-group-solid" align="center">
                                     ${html}
                                 </div>
@@ -683,7 +683,7 @@ function DataTable(response) {
 
                 my_item.title = '#';
 
-                my_item.render = function(data, type, row) {
+                my_item.render = function (data, type, row) {
                     return `  <div> 
                                 ${row.id}
                             </div>`
@@ -695,7 +695,7 @@ function DataTable(response) {
 
                 my_item.title = 'Nombre';
 
-                my_item.render = function(data, type, row) {
+                my_item.render = function (data, type, row) {
                     return `  <div> 
                                 ${row.name}
                             </div>`
@@ -705,7 +705,7 @@ function DataTable(response) {
 
                 my_item.title = 'Descripcion';
 
-                my_item.render = function(data, type, row) {
+                my_item.render = function (data, type, row) {
                     return `<div>
                                 ${row.descripcion} 
                             </div>`
@@ -715,7 +715,7 @@ function DataTable(response) {
 
                 my_item.title = 'Permisos';
 
-                my_item.render = function(data, type, row) {
+                my_item.render = function (data, type, row) {
 
                     var html = '';
 
@@ -742,7 +742,7 @@ function DataTable(response) {
 
         })
 
-        $('#roles-table').DataTable({
+        var table = $('#roles-table').DataTable({
             responsive: false,
             'scrollX': screen.width < 400 ? true : false,
             "destroy": true,
@@ -779,6 +779,17 @@ function DataTable(response) {
             //     [10, 15, 20, "Todos"]
             // ]
         });
+
+        var rows = table.rows().data();
+        var ide;
+
+        for (let index = 0; index < rows.length; index++) {
+            ide = rows[index].id;
+            console.log(ide);
+            if (ide <= 5) {
+                $('#btn_' + ide + '').empty();
+            }
+        }
 
 
     }

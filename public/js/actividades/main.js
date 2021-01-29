@@ -422,10 +422,8 @@ $(document).ready(function () {
     $('#act-table').on('click', '[id^=ver-avances]', function () {
         var id = $(this).attr('data-id');
 
-        console.log(id);
         var filtro = AllAvances.filter(f => f.id_actividad == id);
 
-        console.log(filtro);
 
         modal.modal('show');
         ModalAvances(filtro[0].titulo_actividad);
@@ -448,7 +446,7 @@ $(document).ready(function () {
             }
 
             var html = '';
-            if (filtro[i].evidencias != "null") {
+            if (filtro[i].evidencias != null) {
                 var json = filtro[i].evidencias.split('PSIAPP');
                 var a = 0;
                 console.log(json);
@@ -518,6 +516,80 @@ $(document).ready(function () {
                 </li>
             `);
         }
+
+        $('#check_status').on('click', function () {
+            modal.modal('hide');
+            $('#modal-avances').modal('show');
+            ModalConfirmacion(filtro[0].titulo_actividad);
+
+            $('#cumplido').on('click', function () {
+                $('#loading-spinner').show();
+                $.ajax({
+                    url: '/api/actividades/' + filtro[0].id_actividad,
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    type: 'PUT',
+                    data: {
+                        estado: 1
+                    },
+                })
+                    .done(function () {
+                        setTimeout(function () {
+                            $('#loading-spinner').hide();
+                            $('#modal-avances').modal("hide");
+                        }, 600);
+
+                        $('#modal_avances_1').removeClass('modal-md');
+                        $('#modal_avances_1').addClass('modal-lg');
+
+                        toastr.warning("Actividad marcada como cumplida");
+                        Reload();
+                        ReloadCalendario();
+                    })
+                    .fail(function () {
+                        setTimeout(function () {
+                            $('#loading-spinner').hide();
+                            $('#modal-avances').modal("hide");
+                        }, 600);
+                        $('#modal_avances_1').removeClass('modal-md');
+                        $('#modal_avances_1').addClass('modal-lg');
+                        toastr.error("Ha ocurrido un error");
+                    });
+            });
+
+            $('#incumplido').on('click', function () {
+                $('#loading-spinner').show();
+                $.ajax({
+                    url: '/api/actividades/' + filtro[0].id_actividad,
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    type: 'PUT',
+                    data: {
+                        estado: 2
+                    },
+                })
+                    .done(function () {
+                        setTimeout(function () {
+                            $('#loading-spinner').hide();
+                            $('#modal-avances').modal("hide");
+                        }, 600);
+                        $('#modal_avances_1').removeClass('modal-md');
+                        $('#modal_avances_1').addClass('modal-lg');
+                        toastr.warning("Actividad marcada como incumplida");
+                        Reload();
+                        ReloadCalendario();
+                    })
+                    .fail(function () {
+                        setTimeout(function () {
+                            $('#loading-spinner').hide();
+                            $('#modal-avances').modal("hide");
+                        }, 600);
+
+                        $('#modal_avances_1').removeClass('modal-md');
+                        $('#modal_avances_1').addClass('modal-lg');
+
+                        toastr.error("Ha ocurrido un error");
+                    });
+            });
+        });
     });
 });
 
@@ -601,6 +673,26 @@ function LoadComportamientos() {
         })
 }
 
+function ModalConfirmacion(titulo) {
+    $('#modal_avances_1').removeClass('modal-lg');
+    $('#modal_avances_1').addClass('modal-md');
+
+    $('#modal-avances').find('.modal-content').empty().append(`
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">¿Se cumplió con la actividad?</h4>
+        </div>
+        <div class="modal-body">
+            <p>La atividad: <strong>${titulo}</strong> se completo correctamente?</p> 
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success" id="cumplido">Si <i class="fa fa-thumbs-up" aria-hidden="true"></i></button>
+            <button type="button" class="btn btn-danger" id="incumplido">No <i class="fa fa-thumbs-down" aria-hidden="true"></i></button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        </div>
+    `);
+}
+
 function ModalAvances(titulo) {
     modal.find('.modal-content').empty().append(`
     <div class="modal-header">
@@ -617,7 +709,7 @@ function ModalAvances(titulo) {
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-success" data-dismiss="modal">Definir estado</button>
+            <button type="button" class="btn btn-success" id="check_status">Definir estado</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
         </div>
     `);
@@ -1241,7 +1333,7 @@ function ModalEst(actividadFilter, event, options) {
                             <div class="box-body">
                                 <div class="form-group">
                                     <label>Estado</label>
-                                    <p>${actividadFilter.estado == 3 ? `<i class="fa  fa-exclamation-triangle" style="color: orange;" ></i> En espera` : actividadFilter.estado == 1 ? `<i class="fa fa-check-circle" style="color: green;"></i> Cumplida` : `<i class="fa fa-exclamation-circle" style="color: red;"></i> Incumplida` } </p>
+                                    <p>${actividadFilter.estado == 3 ? `<i class="fa  fa-exclamation-triangle" style="color: orange;" ></i> En espera` : actividadFilter.estado == 1 ? `<i class="fa fa-check-circle" style="color: green;"></i> Cumplida` : `<i class="fa fa-exclamation-circle" style="color: red;"></i> Incumplida`} </p>
                                 </div>
                                 <div class="form-group">
                                     <label>Fecha</label>
@@ -1287,7 +1379,7 @@ function ModalPsico(actividadFilter, event, options) {
                             <div class="box-body">
                                 <div class="form-group">
                                     <label>Estado</label>
-                                    <p>${actividadFilter.estado == 3 ? `<i class="fa  fa-exclamation-triangle" style="color: orange;" ></i> En espera` : actividadFilter.estado == 1 ? `<i class="fa fa-check-circle" style="color: green;"></i> Cumplida` : `<i class="fa fa-exclamation-circle" style="color: red;"></i> Incumplida` } </p>
+                                    <p>${actividadFilter.estado == 3 ? `<i class="fa  fa-exclamation-triangle" style="color: orange;" ></i> En espera` : actividadFilter.estado == 1 ? `<i class="fa fa-check-circle" style="color: green;"></i> Cumplida` : `<i class="fa fa-exclamation-circle" style="color: red;"></i> Incumplida`} </p>
                                 </div>
                                 <div class="form-group">
                                     <label>Fecha</label>

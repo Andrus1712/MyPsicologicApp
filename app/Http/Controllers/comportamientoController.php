@@ -45,6 +45,7 @@ class comportamientoController extends AppBaseController
                 ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                 ->where(DB::raw('tc.deleted_at'), '=', NULL)
                 ->where(DB::raw('c.deleted_at'), '=', NULL)
+                ->where(DB::raw('ac.deleted_at'), '=', NULL)
                 ->whereBetween(DB::raw('c.fecha'), [$r['fecha_i'], $r['fecha_f']])
                 ->select(
                     DB::raw('c.id'),
@@ -73,6 +74,7 @@ class comportamientoController extends AppBaseController
                 ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
                 ->where(DB::raw('tc.deleted_at'), '=', NULL)
                 ->where(DB::raw('c.deleted_at'), '=', NULL)
+                ->where(DB::raw('ac.deleted_at'), '=', NULL)
                 ->whereBetween(DB::raw('c.fecha'), [$r['fecha_i'], $r['fecha_f']])
                 ->selectRaw("tc.titulo,
                     SUM(CASE WHEN e.sexo = 'M' THEN 1 ELSE 0 END) AS Masculino,
@@ -91,6 +93,7 @@ class comportamientoController extends AppBaseController
                 ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                 ->where(DB::raw('tc.deleted_at'), '=', NULL)
                 ->where(DB::raw('c.deleted_at'), '=', NULL)
+                ->where(DB::raw('ac.deleted_at'), '=', NULL)
                 ->whereBetween(DB::raw('c.fecha'), [$r['fecha_i'], $r['fecha_f']])
                 ->select(
                     DB::raw('tc.titulo'),
@@ -138,7 +141,8 @@ class comportamientoController extends AppBaseController
 
             // return view('pdf_view')->with($data);
             // return $consulta;
-            return $pdf->stream('report.pdf');
+            $nombre = 'report_'.Carbon::now()->format('Ymd').'.pdf';
+            return $pdf->stream($nombre);
         } else {
             return redirect('/home');
         }
@@ -162,6 +166,7 @@ class comportamientoController extends AppBaseController
                 ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
                 ->where(DB::raw('tc.deleted_at'), '=', NULL)
                 ->where(DB::raw('c.deleted_at'), '=', NULL)
+                ->where(DB::raw('ac.deleted_at'), '=', NULL)
                 ->whereBetween(DB::raw('c.fecha'), [$r['fecha_i'], $r['fecha_f']])
                 ->when($r['edades'], function($query, $edades){
                     $e = explode(",", $edades);
@@ -213,6 +218,7 @@ class comportamientoController extends AppBaseController
                 ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
                 ->where(DB::raw('tc.deleted_at'), '=', NULL)
                 ->where(DB::raw('c.deleted_at'), '=', NULL)
+                ->where(DB::raw('ac.deleted_at'), '=', NULL)
                 ->whereBetween(DB::raw('c.fecha'), [$r['fecha_i'], $r['fecha_f']])
                 ->when($r['edades'], function($query, $edades){
                     $e = explode(",", $edades);
@@ -246,6 +252,7 @@ class comportamientoController extends AppBaseController
                 ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                 ->where(DB::raw('tc.deleted_at'), '=', NULL)
                 ->where(DB::raw('c.deleted_at'), '=', NULL)
+                ->where(DB::raw('ac.deleted_at'), '=', NULL)
                 ->whereBetween(DB::raw('c.fecha'), [$r['fecha_i'], $r['fecha_f']])
                 ->when($r['edades'], function($query, $edades){
                     $e = explode(",", $edades);
@@ -305,9 +312,10 @@ class comportamientoController extends AppBaseController
             $pdf = PDF::loadView('pdf_view', $data)
                 ->setPaper('a4', 'landscape');
 
-            return view('pdf_view')->with($data);
+            // return view('pdf_view')->with($data);
             // return $data_url;
-            // return $pdf->stream('report.pdf');
+            $nombre = 'report_'.Carbon::now()->format('Ymd').'.pdf';
+            return $pdf->stream($nombre);
         } else {
             return redirect('/home');
         }
