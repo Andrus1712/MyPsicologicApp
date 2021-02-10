@@ -38,7 +38,7 @@ class grupo extends Model
      */
     protected $casts = [
         'id' => 'integer',
-        'grado' => 'string',
+        'grado' => 'integer',
         'curso' => 'string',
         'docente_id' => 'integer'
     ];

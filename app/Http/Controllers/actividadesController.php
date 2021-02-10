@@ -68,9 +68,12 @@ class actividadesController extends AppBaseController
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                    ->leftjoin(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                    ->leftjoin(DB::raw('avances av'), 'av.actividad_id', '=', 'a.id')
+                    ->distinct('ac.id')
                     ->select(
                         'ac.id',
+                        DB::raw('av.id as id_avance'),
                         'ac.titulo',
                         'ac.fecha',
                         'ac.descripcion',
@@ -98,8 +101,9 @@ class actividadesController extends AppBaseController
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                    ->leftjoin(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->where(DB::raw('e.correo'), '=', Auth()->user()->email)
+                    ->distinct('ac.id')
                     ->select(
                         'ac.id',
                         'ac.titulo',
@@ -120,14 +124,15 @@ class actividadesController extends AppBaseController
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                    ->leftjoin(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                    ->distinct('ac.id')
                     ->select(
                         'ac.id',
                         'ac.titulo',
                         'ac.fecha',
                         'ac.descripcion',
                         'ac.estado',
-                        DB::raw('c.id as id_comportamiento'),
+                        // DB::raw('c.id as id_comportamiento'),
                         DB::raw('c.titulo as titulo_comportamiento'),
                         DB::raw('c.descripcion as descripcion_comportamiento'),
                         DB::raw('e.nombres as nombre_estudiante'),
@@ -150,7 +155,8 @@ class actividadesController extends AppBaseController
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                    ->leftjoin(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                    ->distinct('ac.id')
                     ->select(
                         'ac.id',
                         'ac.titulo',
@@ -180,9 +186,8 @@ class actividadesController extends AppBaseController
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                    ->leftjoin(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->leftjoin(DB::raw('avances av'), 'av.actividad_id', '=', 'a.id')
-                    ->distinct()
                     ->select(
                         'ac.id',
                         DB::raw('av.id as id_avance'),
@@ -213,13 +218,14 @@ class actividadesController extends AppBaseController
         $permisos = [];
 
         $avances = [];
+        
 
         if ($user->havePermission('show.actividades')) {
             array_push($permisos, "show.actividades");
             $avances = DB::table(DB::raw('avances av'))->where(DB::raw('av.deleted_at', '=', 'NULL'))
                     ->join(DB::raw('actividades a'), 'av.actividad_id', '=', 'a.id')
                     ->join(DB::raw('comportamientos c'), 'a.comportamiento_id', '=', 'c.id')
-                    ->join(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
+                    ->leftjoin(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
                     ->select(
                         'av.id',
@@ -255,6 +261,10 @@ class actividadesController extends AppBaseController
 
         if ($user->havePermission('show.avances')) {
             array_push($permisos, "show.avances");
+        }
+
+        if ($user->havePermission('show.comportamientos')) {
+            array_push($permisos, "show.comportamientos");
         }
 
         if ($user->havePermission('edit.avances')) {

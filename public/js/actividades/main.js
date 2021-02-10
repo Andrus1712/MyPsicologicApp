@@ -278,7 +278,7 @@ $(document).ready(function () {
 
 
         if (filtro.length != 0) {
-            if (filtro[0].titulo_tipo_comportamiento == null) {
+            if (filtro[0].id_comportamiento == null) {
                 modal.modal('show');
                 ModalShowEst(filtro);
                 $('#avances').on('click', function () {
@@ -998,7 +998,7 @@ function ReloadCalendario() {
                 const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
                 const event = new Date(actividadFilter.fecha.replace('-', '/'));
 
-                if (actividadFilter.titulo_tipo_comportamiento == null) {
+                if (actividadFilter.id_comportamiento == null) {
                     modal.modal('show')
                     ModalEst(actividadFilter, event, options);
                     $('#avances').on('click', function () {
@@ -1575,7 +1575,7 @@ function DataTable(response) {
 
             if (key == 'deleted_at') {
 
-                my_item.title = 'Actividades';
+                my_item.title = 'Opcion';
 
                 my_item.render = function (data, type, row) {
                     var html = '';
@@ -1721,11 +1721,15 @@ function DataTable(response) {
                 my_item.title = 'Conducta';
 
                 my_item.render = function (data, type, row) {
-                    return `<div>
+                    if(row.titulo_tipo_comportamiento == null){
+                        return `Sin asignar`;
+                    } else {
+                        return `<div>
                                 ${row.titulo_tipo_comportamiento} <a data-id=${row.id} id="Btn_info_${row.id}" class='btn btn-circle btn-xs btn-default'>
                                     <i class="fa fa-info-circle" aria-hidden="true"></i>
                                 </a>
-                            </div>`
+                            </div>`;
+                    }
                 }
                 my_columns.push(my_item);
             }

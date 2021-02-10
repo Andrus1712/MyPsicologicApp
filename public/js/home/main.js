@@ -5,11 +5,120 @@ var permisos = [];
 $(document).ready(function () {
     Reload();
     ReloadCalendario();
+    LoadChart();
 })
 
+function tiposComportamientos() {
+    $.ajax({
+        url: "/",
+        type: "GET",
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        dataType: "JSON",
+    })
+        .done(function (response) {
 
+        })
+        .fail(function () {
+            console.log('Error')
+        })
+}
+
+function LoadChart() {
+
+    let meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+    $.ajax({
+        url: "/getComportamientos",
+        type: "GET",
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        dataType: "JSON",
+    })
+        .done(function (response) {
+
+            var array_fecha = [];
+            // var array_tc = [];
+
+            for (let index = 0; index < response.comportamientos.length; index++) {
+
+                const fecha = response.comportamientos[index].fecha;
+                var objDate = new Date(fecha);
+                var mes_actual = objDate.getMonth();
+
+                array_fecha.push(meses[mes_actual]);
+
+
+            }
+            const categorias = [...new Set(array_fecha)];
+
+            var data = [];
+
+            for (let index = 0; index < categorias.length; index++) {
+                var contador = 0;
+                var array_tc = [];
+                for (let index2 = 0; index2 < response.comportamientos.length; index2++) {
+                    const fecha = response.comportamientos[index2].fecha;
+                    var objDate = new Date(fecha);
+                    var mes = objDate.getMonth();
+                    if (meses[mes] == categorias[index]) {
+                        contador++;
+                    }
+                }
+                data.push(contador);
+            }
+
+            console.log(data);
+
+            // var repetidos = {};
+            // var datos = {};
+
+            // array_tc.forEach(function (numero) {
+            //     repetidos[numero] = (repetidos[numero] || 0) + 1;
+            // });
+
+            // console.log(repetidos);
+
+
+            Highcharts.chart('container', {
+                chart: {
+                    type: 'line'
+                },
+                title: {
+                    text: 'Comportamientos Registrados'
+                },
+                subtitle: {
+                    text: 'Fuente: app.toolpsico.site'
+                },
+                xAxis: {
+                    categories: categorias,
+                },
+                yAxis: {
+                    title: {
+                        text: 'Cantidad de casos'
+                    }
+                },
+                plotOptions: {
+                    line: {
+                        dataLabels: {
+                            enabled: true
+                        },
+                        enableMouseTracking: true
+                    }
+                },
+                series: [{
+                    name: 'Comportamientos',
+                    data: data
+                }]
+            });
+
+
+        })
+        .fail(function () {
+            console.log('Error');
+        });
+}
 
 function ReloadCalendario() {
+
     var calendarEl = document.getElementById('calendar_home');
     var calendar = new FullCalendar.Calendar(calendarEl, {
         timeZone: 'America/Bogota',
@@ -31,7 +140,7 @@ function ReloadCalendario() {
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             const event = new Date(actividadFilter.fecha.replace('-', '/'));
 
-            if (actividadFilter.titulo_tipo_comportamiento == null) {
+            if (actividadFilter.id_comportamiento == null) {
                 modal.modal('show');
                 ModalEst(actividadFilter, event, options);
                 $('#avances').on('click', function () {
@@ -460,13 +569,12 @@ function Reload() {
     })
 
         .done(function (response) {
+            permisos = response.permisos;
             if (response.actividades.length != 0) {
                 var contC = 0;
                 var contI = 0;
                 var contE = 0;
                 AllRegister = response.actividades;
-                permisos = response.permisos;
-
                 for (var i = 0; i < response.actividades.length; i++) {
                     if (response.actividades[i].estado == 3) {
                         contE++;

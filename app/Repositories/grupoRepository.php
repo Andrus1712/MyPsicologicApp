@@ -20,7 +20,7 @@ class grupoRepository extends BaseRepository
      * @var array
      */
     protected $fieldSearchable = [
-        'nombre',
+        'grado',
         'curso',
         'docente_id'
     ];

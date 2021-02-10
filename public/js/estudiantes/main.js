@@ -351,7 +351,7 @@ function Modal() {
                         <label>Correo: </label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-                            <input type="email" class="form-control" placeholder="Correo" id="correo">
+                            <input type="email" class="form-control" placeholder="Correo" id="correo" pattern="[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{1,5}"@@>
                         </div>
                     </div>
 

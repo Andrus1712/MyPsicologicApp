@@ -1,6 +1,51 @@
 @extends('layouts.app')
 
 @section('content')
+    <style>
+        .highcharts-figure,
+        .highcharts-data-table table {
+            min-width: 360px;
+            max-width: 800px;
+            margin: 1em auto;
+        }
+
+        .highcharts-data-table table {
+            font-family: Verdana, sans-serif;
+            border-collapse: collapse;
+            border: 1px solid #EBEBEB;
+            margin: 10px auto;
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .highcharts-data-table caption {
+            padding: 1em 0;
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        .highcharts-data-table th {
+            font-weight: 600;
+            padding: 0.5em;
+        }
+
+        .highcharts-data-table td,
+        .highcharts-data-table th,
+        .highcharts-data-table caption {
+            padding: 0.5em;
+        }
+
+        .highcharts-data-table thead tr,
+        .highcharts-data-table tr:nth-child(even) {
+            background: #f8f8f8;
+        }
+
+        .highcharts-data-table tr:hover {
+            background: #f1f7ff;
+        }
+
+    </style>
 
     <section class="content">
 
@@ -68,8 +113,9 @@
         </div>
 
 
+        @if (Auth()->user()->havePermission('show.comportamientos'))
         <div class="row">
-            <div class="col-md-12">
+            <div id="calendario_id" class="col-md-6">
                 <div class="box box-primary">
                     <div class="box-header">
                         <h3>Calendario de actividades</h3>
@@ -85,7 +131,47 @@
                     </div>
                 </div>
             </div>
-        </div>
+            <div id="grafico_id" class="col-md-6">
+                <div class="box box-primary">
+                    <div class="box-header">
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                    class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                        <!-- /.box-tools -->
+                    </div>
+                    <div class="box-body">
+                        <figure class="highcharts-figure">
+                            <div id="container"></div>
+                            <p class="highcharts-description">
+                                This chart shows how data labels can be added to the data series. This
+                                can increase readability and comprehension for small datasets.
+                            </p>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+        </div>    
+        @else
+        <div class="row">
+            <div id="calendario_id" class="col-md-12">
+                <div class="box box-primary">
+                    <div class="box-header">
+                        <h3>Calendario de actividades</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                    class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                        <!-- /.box-tools -->
+                    </div>
+                    <div class="box-body">
+                        <div id="calendar_home"></div>
+                    </div>
+                </div>
+            </div>
+        @endif
 
 
 

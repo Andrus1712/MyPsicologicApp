@@ -442,7 +442,7 @@ class comportamientoController extends AppBaseController
                         'e.created_at',
                         DB::raw('ac.id as id_actividad'),
                         DB::raw('ac.deleted_at as estado_actividad')
-                    )->get();
+                    )->orderBy('c.fecha', 'desc')->groupBy('id')->get();
             } else if ($queryUsers[0]->role_id == 2) {
                 $comportamientos = DB::table(DB::raw('comportamientos c'))->where(DB::raw('c.deleted_at'), '=', NULL)
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
@@ -469,7 +469,7 @@ class comportamientoController extends AppBaseController
                         'e.created_at',
                         DB::raw('ac.id as id_actividad'),
                         DB::raw('ac.deleted_at as estado_actividad')
-                    )->get();
+                    )->orderBy('c.fecha', 'desc')->groupBy('id')->get();
             } else if ($queryUsers[0]->role_id == 3) {
                 $comportamientos = DB::table(DB::raw('comportamientos c'))->where(DB::raw('c.deleted_at'), '=', NULL)
                     ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
@@ -497,7 +497,7 @@ class comportamientoController extends AppBaseController
                         'e.created_at',
                         DB::raw('ac.id as id_actividad'),
                         DB::raw('ac.deleted_at as estado_actividad')
-                    )->get();
+                    )->orderBy('c.fecha', 'desc')->groupBy('id')->get();
             } else if ($queryUsers[0]->role_id == 4) {
                 $comportamientos = DB::table(DB::raw('comportamientos c'))
                     ->where(DB::raw('c.deleted_at'), '=', NULL)
@@ -527,16 +527,17 @@ class comportamientoController extends AppBaseController
                         'e.created_at',
                         DB::raw('ac.id as id_actividad'),
                         DB::raw('ac.deleted_at as estado_actividad')
-                    )->get();
+                    )->orderBy('c.fecha', 'desc')->groupBy('id')->get();
             } else {
-                $comportamientos = DB::table(DB::raw('comportamientos c'))->where(DB::raw('c.deleted_at'), '=', NULL)
-                    ->leftjoin(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
-                    ->leftjoin(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
-                    ->leftjoin(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
-                    ->leftjoin(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                $comportamientos = DB::table(DB::raw('comportamientos c'))
+                    ->where(DB::raw('c.deleted_at'), '=', NULL)
+                    ->join(DB::raw('estudiantes e'), 'c.estudiante_id', '=', 'e.id')
+                    ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
+                    ->join(DB::raw('grupos g'), 'e.grupo_id', '=', 'g.id')
+                    ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
                     ->leftjoin(DB::raw('actividades ac'), 'ac.comportamiento_id', '=', 'c.id')
                     ->leftjoin(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
-                    ->where(DB::raw('c.deleted_at', '!=', 'date()'))
+                    // ->where(DB::raw('c.deleted_at', '!=', 'date()'))
                     ->select(
                         'c.id',
                         'c.titulo',
@@ -556,7 +557,7 @@ class comportamientoController extends AppBaseController
                         'e.created_at',
                         DB::raw('ac.id as id_actividad'),
                         DB::raw('ac.deleted_at as estado_actividad')
-                    )->get();
+                    )->orderBy('c.fecha', 'desc')->groupBy('id')->get();
             }
         }
 
