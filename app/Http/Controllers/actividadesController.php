@@ -70,7 +70,6 @@ class actividadesController extends AppBaseController
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
                     ->leftjoin(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->leftjoin(DB::raw('avances av'), 'av.actividad_id', '=', 'a.id')
-                    ->distinct('ac.id')
                     ->select(
                         'ac.id',
                         DB::raw('av.id as id_avance'),
@@ -94,7 +93,7 @@ class actividadesController extends AppBaseController
                         'ac.created_at',
                         'ac.deleted_at'
                     )
-                    ->get();
+                    ->groupBy('id')->get();
 
             } else if ($queryUsers[0]->role_id == 2) {
                 $actividades = DB::table(DB::raw('actividades ac'))->where(DB::raw('ac.deleted_at', '=', NULL))
@@ -103,7 +102,6 @@ class actividadesController extends AppBaseController
                     ->join(DB::raw('acudientes a'), 'e.acudiente_id', '=', 'a.id')
                     ->leftjoin(DB::raw('tipo_comportamientos tc'), 'c.tipo_comportamiento_id', '=', 'tc.id')
                     ->where(DB::raw('e.correo'), '=', Auth()->user()->email)
-                    ->distinct('ac.id')
                     ->select(
                         'ac.id',
                         'ac.titulo',
@@ -116,9 +114,7 @@ class actividadesController extends AppBaseController
                         // DB::raw('c.descripcion as descripcion_comportamiento'),
                         'ac.created_at',
                         'ac.deleted_at'
-                    )
-                    ->get();
-
+                    )->groupBy('id')->get();
             } else if ($queryUsers[0]->role_id == 3) {
                 $actividades = DB::table(DB::raw('actividades ac'))->where(DB::raw('ac.deleted_at', '=', NULL))
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
@@ -147,9 +143,7 @@ class actividadesController extends AppBaseController
                         DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
                         'ac.created_at',
                         'ac.deleted_at'
-                    )
-                    ->get();
-
+                    )->groupBy('id')->get();
             } else if ($queryUsers[0]->role_id == 4) {
                 $actividades = DB::table(DB::raw('actividades ac'))->where(DB::raw('ac.deleted_at', '=', NULL))
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
@@ -178,9 +172,7 @@ class actividadesController extends AppBaseController
                         DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
                         'ac.created_at',
                         'ac.deleted_at'
-                    )
-                    ->where(DB::raw('a.correo'), '=', Auth()->user()->email)
-                    ->get();
+                    )->where(DB::raw('a.correo'), '=', Auth()->user()->email)->groupBy('id')->get();
             } else {
                 $actividades = DB::table(DB::raw('actividades ac'))->where(DB::raw('ac.deleted_at', '=', NULL))
                     ->join(DB::raw('comportamientos c'), 'ac.comportamiento_id', '=', 'c.id')
@@ -210,8 +202,7 @@ class actividadesController extends AppBaseController
                         DB::raw('tc.descripcion as descripcion_tipo_comportamiento'),
                         'ac.created_at',
                         'ac.deleted_at'
-                    )
-                    ->get();
+                    )->groupBy('id')->get();
             }
         }
         //Permisos que tiene el usuario

@@ -4,10 +4,10 @@ var AllRegister = []
 
 var permisos = []
 
-$(document).ready(function() {
+$(document).ready(function () {
     Reload()
 
-    $("#psicologos-table").on('click', '[id^=Btn_Edit_]', function() {
+    $("#psicologos-table").on('click', '[id^=Btn_Edit_]', function () {
         var id = $(this).attr('data-id');
 
         const filtro = AllRegister.filter(f => f.id == id);
@@ -33,7 +33,7 @@ $(document).ready(function() {
             </option>`)
 
 
-            $("#update").on('click', function() {
+            $("#update").on('click', function () {
                 var tipoIdentificacion = $("#tipoIdentificacion").val(),
                     identificacion = $("#identificacion").val(),
                     nombres = $("#nombres").val(),
@@ -43,96 +43,21 @@ $(document).ready(function() {
                     telefono = $("#telefono").val(),
                     direccion = $("#direccion").val();
 
+                var regex = /[\w-\.]{2,}@([\w-]{2,}\.)*([\w-]{2,}\.)[\w-]{2,4}/;
+
                 if (tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '' || fechaNacimiento == '' || telefono == '' || direccion == '') {
-                    toastr.warning("Complete todos los campos")
+                    toastr.warning("Complete todos los campos");
+                } else if (validar_fecha(fechaNacimiento) == false) {
+                    toastr.warning("Fecha no valida");
+                } else if (!regex.test($('#correo').val().trim())) {
+                    toastr.warning("Ingrese un correo válido.");
                 } else {
                     $.ajax({
-                            url: '/api/psicologos/' + id,
-                            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                            type: 'PUT',
-                            data: {
-                                id: id,
-                                tipoIdentificacion: tipoIdentificacion,
-                                identificacion: identificacion,
-                                nombres: nombres,
-                                apellidos: apellidos,
-                                correo: correo,
-                                fechaNacimiento: fechaNacimiento,
-                                telefono: telefono,
-                                direccion: direccion,
-                            },
-                        })
-                        .done(function() {
-                            setTimeout(function() { modal.modal("hide") }, 600);
-                            toastr.info("información actualizada");
-                            Reload()
-                        })
-                        .fail(function() {
-                            toastr.error("Ha ocurrido un error");
-                        })
-                        .always(function() {
-                            $("#update").addClass("disabled");
-                        });
-                }
-            });
-
-        }
-    })
-
-    $('#psicologos-table').on('click', '[id^=Btn_delete_]', function() {
-        var id = $(this).attr('data-id')
-
-        swal({
-                title: "¿Realmente deseas eliminar el acudiente?",
-                text: "Ten en cuenta que eliminaras toda su información del sistema",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonClass: "btn-danger",
-                confirmButtonText: "Si, eliminar",
-                closeOnConfirm: false
-            },
-            function() {
-                $.ajax({
-                        url: "/api/psicologos/" + id,
-                        type: "DELETE",
+                        url: '/api/psicologos/' + id,
                         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                    })
-                    .done(function() {
-                        swal("Eliminado!", "Se ha eliminado el acudiente", "success");
-                        Reload();
-                    })
-                    .fail(function() {
-                        swal("Error!", "Ha ocurrido un error", "error");
-                    });
-
-            });
-
-
-    })
-
-    $('#add-psicologos').on('click', function() {
-        modal.modal('show');
-        Modal();
-
-        $("#save").on('click', function() {
-            var tipoIdentificacion = $("#tipoIdentificacion").val(),
-                identificacion = $("#identificacion").val(),
-                nombres = $("#nombres").val(),
-                apellidos = $("#apellidos").val(),
-                correo = $("#correo").val(),
-                fechaNacimiento = $("#fechaNacimiento").val(),
-                telefono = $("#telefono").val(),
-                direccion = $("#direccion").val();
-
-            if (tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '' || fechaNacimiento == '' || telefono == '' || direccion == '') {
-                toastr.warning("Complete todos los campos")
-            } else {
-                $('#loading-spinner').show();
-                $.ajax({
-                        url: '/api/psicologos',
-                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                        type: 'POST',
+                        type: 'PUT',
                         data: {
+                            id: id,
                             tipoIdentificacion: tipoIdentificacion,
                             identificacion: identificacion,
                             nombres: nombres,
@@ -143,15 +68,102 @@ $(document).ready(function() {
                             direccion: direccion,
                         },
                     })
-                    .done(function(response) {
+                        .done(function () {
+                            setTimeout(function () { modal.modal("hide") }, 600);
+                            toastr.info("información actualizada");
+                            Reload()
+                        })
+                        .fail(function () {
+                            toastr.error("Ha ocurrido un error");
+                        })
+                        .always(function () {
+                            $("#update").addClass("disabled");
+                        });
+                }
+            });
+
+        }
+    })
+
+    $('#psicologos-table').on('click', '[id^=Btn_delete_]', function () {
+        var id = $(this).attr('data-id')
+
+        swal({
+            title: "¿Realmente deseas eliminar el psicoorientador?",
+            text: "Ten en cuenta que eliminaras toda su información del sistema",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Si, eliminar",
+            closeOnConfirm: false
+        },
+            function () {
+                $.ajax({
+                    url: "/api/psicologos/" + id,
+                    type: "DELETE",
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                })
+                    .done(function () {
+                        swal("Eliminado!", "Se ha eliminado el psicoorientador", "success");
+                        Reload();
+                    })
+                    .fail(function () {
+                        swal("Error!", "Ha ocurrido un error", "error");
+                    });
+
+            });
+
+
+    })
+
+    $('#add-psicologos').on('click', function () {
+        modal.modal('show');
+        Modal();
+
+        $("#save").on('click', function () {
+            var tipoIdentificacion = $("#tipoIdentificacion").val(),
+                identificacion = $("#identificacion").val(),
+                nombres = $("#nombres").val(),
+                apellidos = $("#apellidos").val(),
+                correo = $("#correo").val(),
+                fechaNacimiento = $("#fechaNacimiento").val(),
+                telefono = $("#telefono").val(),
+                direccion = $("#direccion").val();
+
+            c
+
+            if (tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '' || fechaNacimiento == '' || telefono == '' || direccion == '') {
+                toastr.warning("Complete todos los campos");
+            } else if (validar_fecha(fechaNacimiento) == false) {
+                toastr.warning("Fecha no valida");
+            } else if (!regex.test($('#correo').val().trim())) {
+                toastr.warning("Ingrese un correo válido.");
+            } else {
+                $('#loading-spinner').show();
+                $.ajax({
+                    url: '/api/psicologos',
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    type: 'POST',
+                    data: {
+                        tipoIdentificacion: tipoIdentificacion,
+                        identificacion: identificacion,
+                        nombres: nombres,
+                        apellidos: apellidos,
+                        correo: correo,
+                        fechaNacimiento: fechaNacimiento,
+                        telefono: telefono,
+                        direccion: direccion,
+                    },
+                })
+                    .done(function (response) {
                         toastr.success("psicoorientador agregado");
-                        setTimeout(function() {
+                        setTimeout(function () {
                             $('#loading-spinner').hide();
                             modal.modal("hide")
                         }, 600);
                         Reload();
                     })
-                    .fail(function(response) {
+                    .fail(function (response) {
                         $('#loading-spinner').hide();
                         // console.log(response.responseJSON);
                         if (response.responseJSON.message == "id-registrada") {
@@ -160,7 +172,7 @@ $(document).ready(function() {
                             toastr.error("Ha ocurrido un error");
                         }
                     })
-                    .always(function() {
+                    .always(function () {
                         $("#save").addClass("disabled");
                     });
             }
@@ -170,6 +182,20 @@ $(document).ready(function() {
 
 });
 
+function validar_fecha(fecha) {
+    var hoy = new Date();
+    hoy.setMinutes(hoy.getMinutes() - hoy.getTimezoneOffset());
+    hoy = hoy.toJSON().slice(0, 10);
+
+
+    if (fecha < hoy) {
+        return true;
+    } else if (fecha == hoy) {
+        return false;
+    } else {
+        return false;
+    }
+}
 function Modal() {
     modal.find('.modal-content').empty().append(`
         <div class="modal-header">
@@ -265,6 +291,21 @@ function Modal() {
     $("#timepicker").datetimepicker({
         format: "YYYY-MM-DD"
     });
+
+    // Listen for the input event.
+    jQuery("#identificacion").on('input', function (evt) {
+        // Allow only numbers.
+        jQuery(this).val(jQuery(this).val().replace(/[^0-9]/g, ''));
+    });
+    jQuery("#telefono").on('input', function (evt) {
+        // Allow only numbers.
+        jQuery(this).val(jQuery(this).val().replace(/[^0-9]/g, ''));
+    });
+
+    var hoy = new Date();
+    hoy.setMinutes(hoy.getMinutes() - hoy.getTimezoneOffset());
+    hoy = hoy.toJSON().slice(0, 10);
+    $('#fechaNacimiento').val(hoy);
 }
 
 function Reload() {
@@ -275,21 +316,21 @@ function Reload() {
         dataType: "JSON",
     })
 
-    .done(function(response) {
-        if (response.length != 0) {
-            AllRegister = response.psicologos;
-            permisos = response.permisos;
-            DataTable(response.psicologos);
-        } else {
-            $('#psicologos-table').dataTable().fnClearTable();
-            $('#psicologos-table').dataTable().fnDestroy();
-            $('#psicologos-table thead').empty()
-        }
-    })
+        .done(function (response) {
+            if (response.length != 0) {
+                AllRegister = response.psicologos;
+                permisos = response.permisos;
+                DataTable(response.psicologos);
+            } else {
+                $('#psicologos-table').dataTable().fnClearTable();
+                $('#psicologos-table').dataTable().fnDestroy();
+                $('#psicologos-table thead').empty()
+            }
+        })
 
-    .fail(function() {
-        console.log("error");
-    });
+        .fail(function () {
+            console.log("error");
+        });
 }
 
 function DataTable(response) {
@@ -306,7 +347,7 @@ function DataTable(response) {
 
     if (response.length != 0) {
         let my_columns = []
-        $.each(response[0], function(key, value) {
+        $.each(response[0], function (key, value) {
             var my_item = {};
             // my_item.class = "filter_C";
             my_item.data = key;
@@ -314,7 +355,7 @@ function DataTable(response) {
 
                 my_item.title = 'Acción';
 
-                my_item.render = function(data, type, row) {
+                my_item.render = function (data, type, row) {
                     var html = '';
                     for (let i = 0; i < permisos.length; i++) {
                         if (permisos[i] == "delete.psicologos") {
@@ -344,7 +385,7 @@ function DataTable(response) {
 
                 my_item.title = '#';
 
-                my_item.render = function(data, type, row) {
+                my_item.render = function (data, type, row) {
                     return `  <div'> 
                                 ${row.id}
                             </div>`
@@ -356,7 +397,7 @@ function DataTable(response) {
 
                 my_item.title = 'Tipo ID';
 
-                my_item.render = function(data, type, row) {
+                my_item.render = function (data, type, row) {
                     return `  <div'> 
                                 ${row.tipoIdentificacion}
                             </div>`
@@ -366,7 +407,7 @@ function DataTable(response) {
 
                 my_item.title = 'Identidicacion';
 
-                my_item.render = function(data, type, row) {
+                my_item.render = function (data, type, row) {
                     return `  <div'> 
                                 ${row.identificacion}
                             </div>`
@@ -376,7 +417,7 @@ function DataTable(response) {
 
                 my_item.title = 'Psicoorientador';
 
-                my_item.render = function(data, type, row) {
+                my_item.render = function (data, type, row) {
                     return `<div>
                                 ${row.nombres + " " + row.apellidos}
                             </div>`
@@ -386,7 +427,7 @@ function DataTable(response) {
 
                 my_item.title = 'Email';
 
-                my_item.render = function(data, type, row) {
+                my_item.render = function (data, type, row) {
                     return `<div>
                                 ${row.correo} 
                             </div>`
@@ -396,7 +437,7 @@ function DataTable(response) {
 
                 my_item.title = 'Télefono';
 
-                my_item.render = function(data, type, row) {
+                my_item.render = function (data, type, row) {
                     return `<div>
                                 ${row.telefono} 
                             </div>`
@@ -406,7 +447,7 @@ function DataTable(response) {
 
                 my_item.title = 'Dirección';
 
-                my_item.render = function(data, type, row) {
+                my_item.render = function (data, type, row) {
                     return `<div>
                                 ${row.direccion} 
                             </div>`
@@ -427,10 +468,10 @@ function DataTable(response) {
                     "sortDescending": ": activate to sort column descending"
                 },
                 "emptyTable": "No hay datos registrados",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ psicologos",
-                "infoEmpty": "No hay psicologos registrados",
-                "infoFiltered": "(Filtrado de _MAX_  psicologos)",
-                "lengthMenu": "_MENU_ psicologos",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ psicoorientadores",
+                "infoEmpty": "No hay psicoorientadores registrados",
+                "infoFiltered": "(Filtrado de _MAX_  psicoorientadores)",
+                "lengthMenu": "_MENU_ psicoorientadores",
                 "search": "Buscar:",
                 "zeroRecords": "No se han encontrado registros"
             },

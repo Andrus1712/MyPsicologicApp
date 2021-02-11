@@ -85,7 +85,7 @@ $(document).ready(function () {
         var id = $(this).attr('data-id')
 
         swal({
-            title: "¿Realmente deseas eliminar el acudiente?",
+            title: "¿Realmente deseas eliminar la actividad?",
             text: "Ten en cuenta que eliminaras toda su información del sistema",
             type: "warning",
             showCancelButton: true,
@@ -100,7 +100,7 @@ $(document).ready(function () {
                     headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                 })
                     .done(function () {
-                        swal("Eliminado!", "Se ha eliminado el acudiente", "success");
+                        swal("Eliminado!", "Se ha eliminado la actividad", "success");
                         Reload();
                     })
                     .fail(function () {

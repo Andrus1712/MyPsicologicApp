@@ -50,10 +50,14 @@ $(document).ready(function () {
                     acudiente_id = $('#acudiente_id').val(),
                     grupo_id = $('#grupo_id').val();
 
+                var regex = /[\w-\.]{2,}@([\w-]{2,}\.)*([\w-]{2,}\.)[\w-]{2,4}/;
+
                 if (tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '' || fechaNacimiento == '' || telefono == '' || acudiente_id == '' || grupo_id == '') {
                     toastr.warning("Complete todos los campos")
                 } else if (validar_fecha(fechaNacimiento) == false) {
                     toastr.warning("Fecha no valida");
+                } else if (!regex.test($('#correo').val().trim())) {
+                    toastr.warning("Ingrese un correo válido.");
                 } else {
 
                     $('#loading-spinner').show();
@@ -107,7 +111,7 @@ $(document).ready(function () {
         var id = $(this).attr('data-id')
 
         swal({
-            title: "¿Realmente deseas eliminar el acudiente?",
+            title: "¿Realmente deseas eliminar el estudiante?",
             text: "Ten en cuenta que eliminaras toda su información del sistema",
             type: "warning",
             showCancelButton: true,
@@ -122,7 +126,7 @@ $(document).ready(function () {
                     headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                 })
                     .done(function () {
-                        swal("Eliminado!", "Se ha eliminado el acudiente", "success");
+                        swal("Eliminado!", "Se ha eliminado el estudiante", "success");
                         Reload();
                     })
                     .fail(function () {
@@ -151,14 +155,16 @@ $(document).ready(function () {
                 acudiente_id = $('#acudiente_id').val(),
                 grupo_id = $('#grupo_id').val();
 
+            var regex = /[\w-\.]{2,}@([\w-]{2,}\.)*([\w-]{2,}\.)[\w-]{2,4}/;
 
             if (tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '' || fechaNacimiento == '' || sexo == '' || telefono == '' || acudiente_id == '' || grupo_id == '') {
                 toastr.warning("Complete todos los campos");
             } else if (validar_fecha(fechaNacimiento) == false) {
                 toastr.warning("Fecha no valida");
+            } else if (!regex.test($('#correo').val().trim())) {
+                toastr.warning("Ingrese un correo válido.");
             } else {
-
-                toastr.success("ingresado");
+                // toastr.success("ingresado");
                 $('#loading-spinner').show();
 
                 $.ajax({
@@ -315,7 +321,7 @@ function Modal() {
     modal.find('.modal-content').empty().append(`
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Formulario de Estudiantes</h4>
+            <h4 class="modal-title">Formulario de Registro</h4>
         </div>
         <div class="modal-body">
             <div class="row">
@@ -494,7 +500,7 @@ function DataTable(response) {
                     my_columns.push(my_item);
                 }
 
-            } 
+            }
             // else if (key == 'id') {
 
             //     my_item.title = '#';

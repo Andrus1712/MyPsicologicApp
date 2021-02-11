@@ -73,8 +73,14 @@ $(document).ready(function () {
                     telefono = $("#telefono").val(),
                     direccion = $("#direccion").val();
 
+                var regex = /[\w-\.]{2,}@([\w-]{2,}\.)*([\w-]{2,}\.)[\w-]{2,4}/;
+
                 if (tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '' || fechaNacimiento == '' || telefono == '' || direccion == '') {
-                    toastr.warning("Complete todos los campos")
+                    toastr.warning("Complete todos los campos");
+                } else if (validar_fecha(fechaNacimiento) == false) {
+                    toastr.warning("Fecha no valida");
+                } else if (!regex.test($('#correo').val().trim())) {
+                    toastr.warning("Ingrese un correo válido.");
                 } else {
                     $.ajax({
                         url: '/api/acudientes/' + id,
@@ -123,10 +129,14 @@ $(document).ready(function () {
                 telefono = $("#telefono").val(),
                 direccion = $("#direccion").val();
 
+            var regex = /[\w-\.]{2,}@([\w-]{2,}\.)*([\w-]{2,}\.)[\w-]{2,4}/;
+
             if (tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '' || fechaNacimiento == '' || telefono == '' || direccion == '') {
                 toastr.warning("Complete todos los campos")
             } else if (validar_fecha(fechaNacimiento) == false) {
                 toastr.warning("Fecha no valida");
+            } else if (!regex.test($('#correo').val().trim())) {
+                toastr.warning("Ingrese un correo válido.");
             } else {
                 $('#loading-spinner').show();
                 $.ajax({
@@ -190,7 +200,7 @@ function Modal() {
     modal.find('.modal-content').empty().append(`
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Formulario de Acudiente</h4>
+            <h4 class="modal-title">Formulario de Registro</h4>
         </div>
         <div class="modal-body">
             <div class="row">
@@ -281,6 +291,21 @@ function Modal() {
     $("#timepicker").datetimepicker({
         format: "YYYY-MM-DD"
     });
+
+    // Listen for the input event.
+    jQuery("#identificacion").on('input', function (evt) {
+        // Allow only numbers.
+        jQuery(this).val(jQuery(this).val().replace(/[^0-9]/g, ''));
+    });
+    jQuery("#telefono").on('input', function (evt) {
+        // Allow only numbers.
+        jQuery(this).val(jQuery(this).val().replace(/[^0-9]/g, ''));
+    });
+
+    var hoy = new Date();
+    hoy.setMinutes(hoy.getMinutes() - hoy.getTimezoneOffset());
+    hoy = hoy.toJSON().slice(0, 10);
+    $('#fechaNacimiento').val(hoy);
 }
 
 function Reload() {

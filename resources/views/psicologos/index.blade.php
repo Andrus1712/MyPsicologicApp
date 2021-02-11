@@ -2,7 +2,7 @@
 
 @section('content')
 <section class="content-header">
-    <h1 class="pull-left">Psicologos</h1>
+    <h1 class="pull-left">Psicoorientadores</h1>
 
     @if (Auth()->user()->havePermission('create.psicologos'))
     <h1 class="pull-right">
