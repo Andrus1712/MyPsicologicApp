@@ -1,6 +1,7 @@
 /node_modules
 /public/hot
 /public/storage
+/public/documentosPSI
 /storage/*.key
 /vendor
 /.idea
@@ -10,6 +11,5 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
-.env
-/.env
+
 /_ide_helper.php
