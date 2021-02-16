@@ -56,7 +56,7 @@
                     <div class="inner">
                         <h3 id="act-total"></h3>
 
-                        <p>Actividades Totales</p>
+                        <p>Actividades totales</p>
                     </div>
                     <div class="icon">
                         <i class="ion ion-android-calendar"></i>
@@ -145,8 +145,7 @@
                         <figure class="highcharts-figure">
                             <div id="container"></div>
                             <p class="highcharts-description">
-                                This chart shows how data labels can be added to the data series. This
-                                can increase readability and comprehension for small datasets.
+                                Esta gráfica muestra los comportamientos ingresados al sistema clasificados por meses. 
                             </p>
                         </figure>
                     </div>

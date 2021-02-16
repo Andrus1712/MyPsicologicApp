@@ -128,16 +128,16 @@ function Modal() {
     modal.find('.modal-content').empty().append(`
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Formulario de Acudiente</h4>
+            <h4 class="modal-title">Formulario de Tipo de comportamiento</h4>
         </div>
         <div class="modal-body">
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label>Conducta: </label>
+                        <label>Tipo de importamiento: </label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                            <input type="text" class="form-control" placeholder="Conducta" id="titulo">
+                            <input type="text" class="form-control" placeholder="Tipo de comportamiento" id="titulo">
                         </div>
                     </div>
 
@@ -253,12 +253,14 @@ function DataTable(response) {
                 }
                 my_columns.push(my_item);
             }
-
         })
 
         $('#tipoComportamientos-table').DataTable({
-            // responsive: true,
-            "destroy": true,
+            "scrollX": my_columns.length >= 5 ? true : false,
+            responsive: true,
+            "destroy": false,
+            bProcessing: true,
+            bAutoWidth: false,
             data: response,
             "columns": my_columns,
             "language": {
@@ -267,30 +269,16 @@ function DataTable(response) {
                     "sortDescending": ": activate to sort column descending"
                 },
                 "emptyTable": "No hay datos registrados",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ tipoComportamientos",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ tipo comportamientos",
                 "infoEmpty": "No hay tipoComportamientos registrados",
-                "infoFiltered": "(Filtrado de _MAX_  tipoComportamientos)",
+                "infoFiltered": "(Filtrado de _MAX_  tipo comportamientos)",
                 "lengthMenu": "_MENU_ tipoComportamientos",
                 "search": "Buscar:",
                 "zeroRecords": "No se han encontrado registros"
             },
-            buttons: [
-                'copy', 'excel', 'pdf'
-            ],
-
-
             "order": [
                 [0, 'asc']
             ],
-
-            "columnDefs": [
-                { "width": "20%", "targets": 3 }
-            ],
-
-            "lengthMenu": [
-                [10, 15, 20, -1],
-                [10, 15, 20, "Todos"]
-            ]
         });
     }
 }

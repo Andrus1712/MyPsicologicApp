@@ -253,7 +253,7 @@ function Modal() {
                         <label># identificación: *</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                            <input type="text" class="form-control" placeholder="Identificación" id="identificacion" required="required">
+                            <input type="text" class="form-control" placeholder="Identificación" id="identificacion" required="required" maxlength="10">
                         </div>
                     </div>
 
@@ -281,7 +281,7 @@ function Modal() {
 
         <div class="modal-footer">
             <button type="button" class="btn btn-primary" id="save">Guardar</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
         </div>
     `)
     // $("#timepicker").datetimepicker({
@@ -457,10 +457,10 @@ function DataTable(response) {
             "scrollX": my_columns.length >= 6 ? true : false,
             responsive: true,
             "destroy": false,
-            data: response,
-            "columns": my_columns,
             bProcessing: true,
             bAutoWidth: false,
+            data: response,
+            "columns": my_columns,
             "language": {
                 "aria": {
                     "sortAscending": ": activate to sort column ascending",

@@ -504,7 +504,7 @@ $(document).ready(function () {
                     <div class="timeline-item">
                         <span class="time"><i class="fa fa-clock-o"></i>${moment(filtro[i].created_at).fromNow()}</span>
 
-                        <h3 class="timeline-header"><a href="#">Avance ${filtro[i].id}</a></h3>
+                        <h3 class="timeline-header"><a href="#">Seguimeinto ${filtro[i].id}</a></h3>
 
                         <div class="timeline-body">
                             ${filtro[i].avance}
@@ -697,7 +697,7 @@ function ModalAvances(titulo) {
     modal.find('.modal-content').empty().append(`
     <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Avances de la actividad | ${titulo}</h4>
+            <h4 class="modal-title">Segumientos de la actividad | ${titulo}</h4>
         </div>
         <div class="modal-body">
             <div class="row">
@@ -1262,7 +1262,7 @@ function ModalShow(filtro) {
             </div>
 
             <div class="modal-footer">
-                ${permisos.includes('create.avances') ? `<button type="button" id="avances" class="btn btn-primary">Subir avances</button>` : ``}
+                ${permisos.includes('create.avances') ? `<button type="button" id="avances" class="btn btn-primary">Registrar segumiento</button>` : ``}
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
             </div>
             `)
@@ -1308,7 +1308,7 @@ function ModalShowEst(filtro) {
             </div>
 
             <div class="modal-footer">
-                ${permisos.includes('create.avances') ? `<button type="button" id="avances" class="btn btn-primary">Subir avances</button>` : ``}
+                ${permisos.includes('create.avances') ? `<button type="button" id="avances" class="btn btn-primary">Registrar seguimeintos</button>` : ``}
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
             </div>
             `)
@@ -1353,7 +1353,7 @@ function ModalEst(actividadFilter, event, options) {
             </div>
 
             <div class="modal-footer">
-                ${permisos.includes('create.avances') ? `<button type="button" id="avances" class="btn btn-primary">Subir avances</button>` : ``}
+                ${permisos.includes('create.avances') ? `<button type="button" id="avances" class="btn btn-primary">Registrar seguimeinto</button>` : ``}
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
             </div>
             `)
@@ -1467,7 +1467,7 @@ function ModalPsico(actividadFilter, event, options) {
             </div>
 
             <div class="modal-footer">
-                ${permisos.includes('create.avances') ? `<button type="button" id="avances" class="btn btn-primary">Subir avances</button>` : ``}
+                ${permisos.includes('create.avances') ? `<button type="button" id="avances" class="btn btn-primary">Registrar seguimientos</button>` : ``}
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
             </div>
             `)
@@ -1551,7 +1551,7 @@ function DataTable(response) {
 
             if (key == 'created_at') {
 
-                my_item.title = 'Avances';
+                my_item.title = 'Seguimiento';
 
                 my_item.render = function (data, type, row) {
                     var html2 = '';
@@ -1559,7 +1559,7 @@ function DataTable(response) {
 
 
                     if (permisos.includes("show.avances")) {
-                        html2 += `<button data-id=${row.id} id="ver-avances">Ver avances</button>`;
+                        html2 += `<button data-id=${row.id} id="ver-avances">Ver seguimeintos</button>`;
                     }
 
                     // }
@@ -1718,7 +1718,7 @@ function DataTable(response) {
 
             else if (key == 'titulo_tipo_comportamiento') {
 
-                my_item.title = 'Conducta';
+                my_item.title = 'Tipo de comportamiento';
 
                 my_item.render = function (data, type, row) {
                     if(row.titulo_tipo_comportamiento == null){
@@ -1739,9 +1739,14 @@ function DataTable(response) {
 
 
         var table = $('#act-table').DataTable({
-            'responsive': true,
-            'scrollX': my_columns.length >= 6 ? true : false,
+            "scrollX": my_columns.length >= 5 ? true : false,
+            "destroy": false,
+            responsive: true,
             "destroy": true,
+            data: response,
+            "columns": my_columns,
+            bProcessing: true,
+            bAutoWidth: false,
             data: response,
             "columns": my_columns,
             "language": {
@@ -1757,26 +1762,9 @@ function DataTable(response) {
                 "search": "Buscar:",
                 "zeroRecords": "No se han encontrado registros"
             },
-            buttons: [
-                'copy', 'excel', 'pdf'
-            ],
-
-
             "order": [
                 [2, 'asc']
             ],
-
-            "columnDefs": [
-                // { "width": "10%", "targets": 1 },
-                // { "width": "20%", "targets": 2 },
-                // { "width": "30%", "targets": 3 },
-
-            ],
-
-            "lengthMenu": [
-                [10, 15, 20, -1],
-                [10, 15, 20, "Todos"]
-            ]
         });
         $('thead > tr> th:nth-child(1)').css({ 'min-width': '30px', 'max-width': '30px' });
         $('thead > tr> th:nth-child(2)').css({ 'min-width': '110px', 'max-width': '110px' });
@@ -1802,7 +1790,7 @@ function DataTable(response) {
             console.log(ide);
             if (!AvancesElement.includes(ide)) {
                 $('#campo_avace_' + ide + '').empty();
-                $('#campo_avace_' + ide + '').append(`<p>Sin avance</p>`);
+                $('#campo_avace_' + ide + '').append(`<p>Sin seguimeintos registrados</p>`);
             }
         }
     }

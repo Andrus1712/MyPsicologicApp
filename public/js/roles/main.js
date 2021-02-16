@@ -743,9 +743,11 @@ function DataTable(response) {
         })
 
         var table = $('#roles-table').DataTable({
-            responsive: false,
-            'scrollX': screen.width < 400 ? true : false,
-            "destroy": true,
+            "scrollX": my_columns.length >= 5 ? true : false,
+            responsive: true,
+            "destroy": false,
+            bProcessing: true,
+            bAutoWidth: false,
             data: response,
             "columns": my_columns,
             "language": {
@@ -761,23 +763,9 @@ function DataTable(response) {
                 "search": "Buscar:",
                 "zeroRecords": "No se han encontrado registros"
             },
-            //dom: 'Bfrtilp',
-            buttons: [
-
-            ],
-
             "order": [
                 [0, 'asc']
             ],
-
-            // "columnDefs": [
-            //     { "width": "30%", "targets": 2 }
-            // ],
-
-            // "lengthMenu": [
-            //     [10, 15, 20, -1],
-            //     [10, 15, 20, "Todos"]
-            // ]
         });
 
         var rows = table.rows().data();

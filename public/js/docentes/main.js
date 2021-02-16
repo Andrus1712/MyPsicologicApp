@@ -255,10 +255,10 @@ function Modal() {
                 <div class="col-md-6">
 
                     <div class="form-group">
-                        <label title="Este campo es obligatorio"># identificación: </label>
+                        <label title="Este campo es obligatorio"># identificación: *</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                            <input type="text" class="form-control" placeholder="Identificación" id="identificacion" required="required">
+                            <input type="text" class="form-control" placeholder="Identificación" id="identificacion" required="required" maxlength="10">
                         </div>
                     </div>
 
@@ -286,7 +286,7 @@ function Modal() {
 
         <div class="modal-footer">
             <button type="button" class="btn btn-primary" id="save" >Guardar</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
         </div>
     `)
     // fecha no se usa

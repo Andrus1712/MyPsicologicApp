@@ -2,7 +2,7 @@
 
 @section('content')
 <section class="content-header">
-    <h1 class="pull-left">Cursos</h1>
+    <h1 class="pull-left">Grado y grupo</h1>
 
     @if (Auth()->user()->havePermission('create.cursos'))
     <h1 class="pull-right">

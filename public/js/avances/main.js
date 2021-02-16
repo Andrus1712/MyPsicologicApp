@@ -354,7 +354,7 @@ function Modal() {
     modal.find('.modal-content').empty().append(`
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Registar Avances de Actividades</h4>
+            <h4 class="modal-title">Registar seguimeintos de Actividades</h4>
         </div>
         <div class="modal-body">
             <div class="row">
@@ -527,7 +527,7 @@ function DataTable(response) {
 
             } else if (key == 'avance') {
 
-                my_item.title = 'Avance';
+                my_item.title = 'Segumiento';
 
                 my_item.render = function(data, type, row) {
                     return `  <div'> 
@@ -602,8 +602,14 @@ function DataTable(response) {
         })
 
         $('#avances-table').DataTable({
-            "scrollX": screen.width < 400 ? true : false,
+            "scrollX": my_columns.length >= 5 ? true : false,
+            "destroy": false,
+            responsive: true,
             "destroy": true,
+            data: response,
+            "columns": my_columns,
+            bProcessing: true,
+            bAutoWidth: false,
             data: response,
             "columns": my_columns,
             "language": {
@@ -619,25 +625,9 @@ function DataTable(response) {
                 "search": "Buscar:",
                 "zeroRecords": "No se han encontrado registros"
             },
-            buttons: [
-                'copy', 'excel', 'pdf'
-            ],
-
             "order": [
                 [0, 'asc']
             ],
-
-            "columnDefs": [
-                { "width": "20%", "targets": 1 },
-                { "width": "20%", "targets": 2 },
-                { "width": "20%", "targets": 4 },
-
-            ],
-
-            "lengthMenu": [
-                [10, 15, 20, -1],
-                [10, 15, 20, "Todos"]
-            ]
         });
     }
 }

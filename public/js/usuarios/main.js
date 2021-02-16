@@ -473,9 +473,11 @@ function DataTable(response) {
         })
 
         var table = $('#user-table').DataTable({
-            responsive: false,
-            'scrollX': screen.width < 400 ? true : false,
-            "destroy": true,
+            "scrollX": my_columns.length >= 6 ? true : false,
+            responsive: true,
+            "destroy": false,
+            bProcessing: true,
+            bAutoWidth: false,
             data: response,
             "columns": my_columns,
             "language": {
@@ -491,25 +493,9 @@ function DataTable(response) {
                 "search": "Buscar:",
                 "zeroRecords": "No se han encontrado registros"
             },
-            //dom: 'Bfrtilp',
-            buttons: [
-
-            ],
-
             "order": [
                 [0, 'asc']
             ],
-
-            "columnDefs": [
-                { "width": "20%", "targets": 1 },
-                { "width": "20%", "targets": 2 },
-                { "width": "15%", "targets": 5 },
-            ],
-
-            "lengthMenu": [
-                [10, 15, 20, -1],
-                [10, 15, 20, "Todos"]
-            ]
         });
 
         $('thead > tr> th:nth-child(1)').css({ 'min-width': '30px', 'max-width': '30px' });

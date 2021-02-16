@@ -25,7 +25,7 @@
         ->user()
         ->havePermission('show.cursos'))
         <li class="{{ Request::is('grupos*') ? 'active' : '' }}">
-            <a href="{{ route('grupos.index') }}"><i class="fa fa-school"></i><span>Cursos</span></a>
+            <a href="{{ route('grupos.index') }}"><i class="fa fa-school"></i><span>Grado y grupos</span></a>
         </li>
     @endif
 

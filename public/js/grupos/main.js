@@ -33,6 +33,7 @@ $(document).ready(function() {
                 if (grado == '' || curso == '' || docente_id == '') {
                     toastr.warning("Complete todos los campos")
                 } else {
+                    $('#loading-spinner').show();
                     $.ajax({
                             url: '/api/grupos/' + id,
                             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
@@ -44,11 +45,15 @@ $(document).ready(function() {
                             },
                         })
                         .done(function() {
-                            setTimeout(function() { modal.modal("hide") }, 600);
+                            setTimeout(function() {
+                                $('#loading-spinner').hide();
+                                modal.modal("hide")
+                            }, 600);
                             toastr.info("información actualizada");
                             Reload()
                         })
                         .fail(function() {
+                            $('#loading-spinner').hide();
                             toastr.error("Ha ocurrido un error");
                         })
                         .always(function() {
@@ -141,7 +146,7 @@ function Modal() {
     modal.find('.modal-content').empty().append(/* html */`
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Formulario de Grupos</h4>
+        <h4 class="modal-title">Formulario de Grado y grupos</h4>
     </div>
 
     <div class="modal-body">
@@ -293,7 +298,7 @@ function DataTable(response) {
             //                 </div>`
             //     }
             //     my_columns.push(my_item);
-            } else if (key == 'curso') {
+            } else if (key == 'grado') {
                 my_item.title = 'Grado';
 
                 my_item.render = function(data, type, row) {
@@ -303,9 +308,9 @@ function DataTable(response) {
                 }
                 my_columns.push(my_item);
 
-            } else if (key == 'grado') {
+            } else if (key == 'curso') {
 
-                my_item.title = 'Curso';
+                my_item.title = 'Grupo';
 
                 my_item.render = function(data, type, row) {
                     return `  <div'> 
@@ -341,10 +346,10 @@ function DataTable(response) {
                     "sortDescending": ": activate to sort column descending"
                 },
                 "emptyTable": "No hay datos registrados",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ grupos",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ Grados y gupos",
                 "infoEmpty": "No hay grupos registrados",
-                "infoFiltered": "(Filtrado de _MAX_  grupos)",
-                "lengthMenu": "_MENU_ grupos",
+                "infoFiltered": "(Filtrado de _MAX_  Grados y gupos)",
+                "lengthMenu": "_MENU_ Grado y grupos",
                 "search": "Buscar:",
                 "zeroRecords": "No se han encontrado registros"
             },
