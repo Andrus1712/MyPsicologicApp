@@ -52,14 +52,13 @@ $(document).ready(function () {
 
                 var regex = /[\w-\.]{2,}@([\w-]{2,}\.)*([\w-]{2,}\.)[\w-]{2,4}/;
 
-                if (tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '' || fechaNacimiento == '' || telefono == '' || acudiente_id == '' || grupo_id == '') {
+                if (tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '' || fechaNacimiento == '' || acudiente_id == '' || grupo_id == '') {
                     toastr.warning("Complete todos los campos")
                 } else if (validar_fecha(fechaNacimiento) == false) {
                     toastr.warning("Fecha no valida");
                 } else if (!regex.test($('#correo').val().trim())) {
                     toastr.warning("Ingrese un correo válido.");
                 } else {
-
                     $('#loading-spinner').show();
                     $.ajax({
                         url: '/api/estudiantes/' + id,
@@ -101,9 +100,7 @@ $(document).ready(function () {
                             $("#update").addClass("disabled");
                         });
                 }
-            })
-
-
+            });
         }
     })
 
@@ -157,7 +154,7 @@ $(document).ready(function () {
 
             var regex = /[\w-\.]{2,}@([\w-]{2,}\.)*([\w-]{2,}\.)[\w-]{2,4}/;
 
-            if (tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '' || fechaNacimiento == '' || sexo == '' || telefono == '' || acudiente_id == '' || grupo_id == '') {
+            if (tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '' || fechaNacimiento == '' || sexo == '' || acudiente_id == '' || grupo_id == '') {
                 toastr.warning("Complete todos los campos");
             } else if (validar_fecha(fechaNacimiento) == false) {
                 toastr.warning("Fecha no valida");
@@ -318,7 +315,8 @@ function validar_fecha(fecha) {
 }
 
 function Modal() {
-    modal.find('.modal-content').empty().append(`
+    modal.find('.modal-content').empty().append(/* html */
+        `
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Formulario de Registro</h4>
@@ -327,7 +325,7 @@ function Modal() {
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Tipo de identificación: </label>
+                        <label title="Este campo es obligatorio">Tipo de identificación: *</label>
                         <select class="form-control" id="tipoIdentificacion" name="state">
                             <option value="">Seleccione</option>
                             <option value="CC">Cédula de ciudadania</option>
@@ -338,31 +336,31 @@ function Modal() {
                     </div>
 
                     <div class="form-group">
-                        <label>Nombres: </label>
+                        <label title="Este campo es obligatorio">Nombres: *</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                            <input type="text" class="form-control" placeholder="Nombres" id="nombres">
+                            <input type="text" class="form-control" placeholder="Nombres" id="nombres"required="required">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Apellidos: </label>
+                        <label title="Este campo es obligatorio">Apellidos: *</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                            <input type="text" class="form-control" placeholder="Apellidos" id="apellidos">
+                            <input type="text" class="form-control" placeholder="Apellidos" id="apellidos" required="required">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Correo: </label>
+                        <label title="Este campo es obligatorio">Correo: *</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-                            <input type="email" class="form-control" placeholder="Correo" id="correo" pattern="[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{1,5}"@@>
+                            <input type="email" class="form-control" placeholder="Direccion de correo" id="correo" required="required" pattern="[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{1,5}"@@>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label >Acudiente: </label>
+                        <label title="Este campo es obligatorio">Acudiente: *</label>
                         <div class="input-group">
                             <select class="form-control" id="acudiente_id" style="width: 100%;">
 
@@ -375,15 +373,15 @@ function Modal() {
                 <div class="col-md-6">
 
                     <div class="form-group">
-                        <label># identificación: </label>
+                        <label title="Este campo es obligatorio"># identificación: *</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                            <input type="text"  maxlength="10" class="form-control" placeholder="Identificación" id="identificacion">
+                            <input type="text"  maxlength="10" class="form-control" placeholder="número de identificación" id="identificacion" required="required">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Fecha de nacimiento: </label>
+                        <label title="Este campo es obligatorio">Fecha de nacimiento: *</label>
                         <div class="input-group date" id="timepicker">
                             <div class="input-group-addon">
                                 <i class="fa fa-calendar"></i>
@@ -393,7 +391,7 @@ function Modal() {
                     </div>
 
                     <div class="form-group">
-                            <label>Sexo: </label>
+                            <label title="Este campo es obligatorio">Sexo: *</label>
                             <select class="form-control" id="genero" name="state">
                                 <option value="">Seleccione</option>
                                 <option value="M">Masculino</option>
@@ -407,12 +405,12 @@ function Modal() {
                             <div class="input-group-addon">
                                 <i class="fa fa-phone"></i>
                             </div>
-                            <input type="text" class="form-control" id="telefono" maxlength="10">
+                            <input type="text" class="form-control" id="telefono" placeholder="Numero de telefono" maxlength="10">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label >Curso: </label>
+                        <label title="Este campo es obligatorio">Curso: *</label>
                         <div class="input-group">
                             <select class="form-control" id="grupo_id" style="width: 100%;">
 
@@ -530,7 +528,7 @@ function DataTable(response) {
 
                 my_item.render = function (data, type, row) {
                     return `<div>
-                                ${row.identificacion} 
+                    ${row.tipoIdentificacion}. ${row.identificacion} 
                             </div>`
                 }
                 my_columns.push(my_item);
@@ -570,7 +568,7 @@ function DataTable(response) {
 
                 my_item.render = function (data, type, row) {
                     return `<div>
-                                ${row.telefono}
+                                ${row.telefono == null ? 'No establecido' : row.telefono}
                             </div>`
                 }
                 my_columns.push(my_item);
@@ -609,11 +607,14 @@ function DataTable(response) {
         })
 
         $('#estudiantes-table').DataTable({
-            "responsive": true,
+            "scrollX": my_columns.length >= 5 ? true : false,
             "destroy": false,
-            "scrollX": my_columns.length >= 10 ? true : false,
+            responsive: true,
+            "destroy": true,
             data: response,
             "columns": my_columns,
+            bProcessing: true,
+            bAutoWidth: false,
             "language": {
                 "aria": {
                     "sortAscending": ": activate to sort column ascending",
@@ -627,24 +628,9 @@ function DataTable(response) {
                 "search": "Buscar:",
                 "zeroRecords": "No se han encontrado registros"
             },
-            buttons: [
-                'copy', 'excel', 'pdf'
-            ],
-
-
             "order": [
                 [0, 'asc']
             ],
-
-            "columnDefs": [
-                { "width": "20%", "targets": 8 },
-                { "width": "20%", "targets": 3 }
-            ],
-
-            "lengthMenu": [
-                [10, 15, 20, -1],
-                [10, 15, 20, "Todos"]
-            ]
         });
     }
 }

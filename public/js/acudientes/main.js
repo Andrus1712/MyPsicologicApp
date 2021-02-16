@@ -56,7 +56,7 @@ $(document).ready(function () {
             $("#telefono").val(filtro[0].telefono)
             $("#correo").val(filtro[0].correo)
             $("#direccion").val(filtro[0].direccion)
-            $("#fechaNacimiento").val(filtro[0].fechaNacimiento)
+            // $("#fechaNacimiento").val(filtro[0].fechaNacimiento)
             $("#tipoIdentificacion").empty()
             $("#tipoIdentificacion").append(`<option value="${filtro[0].tipoIdentificacion}">
                 ${filtro[0].tipoIdentificacion == 'CC' ? 'Cédula de ciudadania' : filtro[0].tipoIdentificacion == 'CE' ? 'Cédula extranjera' : 'Pasaporte'}
@@ -69,19 +69,20 @@ $(document).ready(function () {
                     nombres = $("#nombres").val(),
                     apellidos = $("#apellidos").val(),
                     correo = $("#correo").val(),
-                    fechaNacimiento = $("#fechaNacimiento").val(),
+                    // fechaNacimiento = $("#fechaNacimiento").val(),
                     telefono = $("#telefono").val(),
                     direccion = $("#direccion").val();
 
                 var regex = /[\w-\.]{2,}@([\w-]{2,}\.)*([\w-]{2,}\.)[\w-]{2,4}/;
 
-                if (tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '' || fechaNacimiento == '' || telefono == '' || direccion == '') {
+                if (tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '') {
                     toastr.warning("Complete todos los campos");
-                } else if (validar_fecha(fechaNacimiento) == false) {
-                    toastr.warning("Fecha no valida");
+                    // } else if (validar_fecha(fechaNacimiento) == false) {
+                    //     toastr.warning("Fecha no valida");
                 } else if (!regex.test($('#correo').val().trim())) {
                     toastr.warning("Ingrese un correo válido.");
                 } else {
+                    $('#loading-spinner').show();
                     $.ajax({
                         url: '/api/acudientes/' + id,
                         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
@@ -93,17 +94,21 @@ $(document).ready(function () {
                             nombres: nombres,
                             apellidos: apellidos,
                             correo: correo,
-                            fechaNacimiento: fechaNacimiento,
+                            fechaNacimiento: null,
                             telefono: telefono,
                             direccion: direccion,
                         },
                     })
                         .done(function () {
-                            setTimeout(function () { modal.modal("hide") }, 600);
                             toastr.info("información actualizada");
-                            Reload()
+                            setTimeout(function () {
+                                $('#loading-spinner').hide();
+                                modal.modal("hide")
+                            }, 600);
+                            Reload();
                         })
                         .fail(function () {
+                            $('#loading-spinner').hide();
                             toastr.error("Ha ocurrido un error");
                         })
                         .always(function () {
@@ -117,7 +122,7 @@ $(document).ready(function () {
 
     $("#add-acudiente").on('click', function () {
         modal.modal('show');
-        Modal()
+        Modal();
 
         $("#save").on('click', function () {
             var tipoIdentificacion = $("#tipoIdentificacion").val(),
@@ -125,16 +130,16 @@ $(document).ready(function () {
                 nombres = $("#nombres").val(),
                 apellidos = $("#apellidos").val(),
                 correo = $("#correo").val(),
-                fechaNacimiento = $("#fechaNacimiento").val(),
+                // fechaNacimiento = $("#fechaNacimiento").val(),
                 telefono = $("#telefono").val(),
                 direccion = $("#direccion").val();
 
             var regex = /[\w-\.]{2,}@([\w-]{2,}\.)*([\w-]{2,}\.)[\w-]{2,4}/;
 
-            if (tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '' || fechaNacimiento == '' || telefono == '' || direccion == '') {
+            if (tipoIdentificacion == '' || identificacion == '' || nombres == '' || apellidos == '' || correo == '') {
                 toastr.warning("Complete todos los campos")
-            } else if (validar_fecha(fechaNacimiento) == false) {
-                toastr.warning("Fecha no valida");
+                // } else if (validar_fecha(fechaNacimiento) == false) {
+                //     toastr.warning("Fecha no valida");
             } else if (!regex.test($('#correo').val().trim())) {
                 toastr.warning("Ingrese un correo válido.");
             } else {
@@ -149,7 +154,7 @@ $(document).ready(function () {
                         nombres: nombres,
                         apellidos: apellidos,
                         correo: correo,
-                        fechaNacimiento: fechaNacimiento,
+                        fechaNacimiento: null,
                         telefono: telefono,
                         direccion: direccion,
                     },
@@ -197,7 +202,8 @@ function validar_fecha(fecha) {
 }
 
 function Modal() {
-    modal.find('.modal-content').empty().append(`
+    modal.find('.modal-content').empty().append(/* html */
+        `
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Formulario de Registro</h4>
@@ -206,7 +212,7 @@ function Modal() {
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Tipo de identificación: </label>
+                        <label>Tipo de identificación: *</label>
                         <select class="form-control" id="tipoIdentificacion" name="state">
                             <option value="">Seleccione</option>
                             <option value="CC">Cédula de ciudadania</option>
@@ -217,26 +223,26 @@ function Modal() {
                     </div>
 
                     <div class="form-group">
-                        <label>Nombres: </label>
+                        <label title="Este campo es obligatorio">Nombres: *</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                            <input type="text" class="form-control" placeholder="Nombres" id="nombres">
+                            <input type="text" class="form-control" placeholder="Nombres" id="nombres" required="required">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Apellidos: </label>
+                        <label title="Este campo es obligatorio">Apellidos: *</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                            <input type="text" class="form-control" placeholder="Apellidos" id="apellidos">
+                            <input type="text" class="form-control" placeholder="Apellidos" id="apellidos" required="required">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Correo: </label>
+                        <label title="Este campo es obligatorio">Correo: *</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-                            <input type="email" class="form-control" placeholder="Correo" id="correo">
+                            <input type="email" class="form-control" placeholder="Correo" id="correo" required="required">
                         </div>
                     </div>
                 </div>
@@ -244,20 +250,10 @@ function Modal() {
                 <div class="col-md-6">
 
                     <div class="form-group">
-                        <label># identificación: </label>
+                        <label title="Este campo es obligatorio"># identificación: </label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                            <input type="text" class="form-control" placeholder="Identificación" id="identificacion">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Fecha de nacimiento: </label>
-                        <div class="input-group date" id="timepicker">
-                            <div class="input-group-addon">
-                                <i class="fa fa-calendar"></i>
-                            </div>
-                            <input type="text" class="form-control pull-right" id="fechaNacimiento" >
+                            <input type="text" class="form-control" placeholder="Identificación" id="identificacion" required="required">
                         </div>
                     </div>
 
@@ -288,9 +284,20 @@ function Modal() {
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
     `)
-    $("#timepicker").datetimepicker({
-        format: "YYYY-MM-DD"
-    });
+    // $("#timepicker").datetimepicker({
+    //     format: "YYYY-MM-DD"
+    // });
+
+    //Fecha de nacimiento no se usa
+    // < div class="form-group" >
+    //                 <label>Fecha de nacimiento: </label>
+    //                 <div class="input-group date" id="timepicker">
+    //                     <div class="input-group-addon">
+    //                         <i class="fa fa-calendar"></i>
+    //                     </div>
+    //                     <input type="text" class="form-control pull-right" id="fechaNacimiento" >
+    //                 </div>
+    //             </div>
 
     // Listen for the input event.
     jQuery("#identificacion").on('input', function (evt) {
@@ -382,34 +389,34 @@ function DataTable(response) {
                     my_columns.push(my_item);
                 }
 
-            } else if (key == 'id') {
+                // } else if (key == 'id') {
 
-                my_item.title = '#';
+                //     my_item.title = '#';
 
-                my_item.render = function (data, type, row) {
-                    return `  <div'> 
-                                ${row.id}
-                            </div>`
-                }
-                my_columns.push(my_item);
+                //     my_item.render = function (data, type, row) {
+                //         return `  <div'> 
+                //                     ${row.id}
+                //                 </div>`
+                //     }
+                //     my_columns.push(my_item);
 
-            } else if (key == 'tipoIdentificacion') {
+                // } else if (key == 'tipoIdentificacion') {
 
-                my_item.title = 'Tipo de ID';
+                //     my_item.title = 'Tipo de ID';
 
-                my_item.render = function (data, type, row) {
-                    return `<div>
-                                ${row.tipoIdentificacion} 
-                            </div>`
-                }
-                my_columns.push(my_item);
+                //     my_item.render = function (data, type, row) {
+                //         return `<div>
+                //                     ${row.tipoIdentificacion} 
+                //                 </div>`
+                //     }
+                //     my_columns.push(my_item);
             } else if (key == 'identificacion') {
 
                 my_item.title = 'identificacion';
 
                 my_item.render = function (data, type, row) {
                     return `  <div'> 
-                                ${row.identificacion}
+                                ${row.tipoIdentificacion}. ${row.identificacion}
                             </div>`
                 }
                 my_columns.push(my_item);
@@ -439,7 +446,7 @@ function DataTable(response) {
 
                 my_item.render = function (data, type, row) {
                     return `<div>
-                                ${row.telefono} 
+                                ${row.telefono == null ? 'No signado' : row.telefono} 
                             </div>`
                 }
                 my_columns.push(my_item);
@@ -449,7 +456,7 @@ function DataTable(response) {
 
                 my_item.render = function (data, type, row) {
                     return `<div>
-                                ${row.direccion} 
+                                ${row.direccion == null ? 'No asignado' : row.direccion} 
                             </div>`
                 }
                 my_columns.push(my_item);
@@ -458,10 +465,13 @@ function DataTable(response) {
         })
 
         $('#acudientes-table').DataTable({
-            "scrollX": screen.width < 400 ? true : false,
-            "destroy": true,
+            "scrollX": my_columns.length >= 5 ? true : false,
+            "destroy": false,
+            responsive: true,
             data: response,
             "columns": my_columns,
+            bProcessing: true,
+            bAutoWidth: false,
             "language": {
                 "aria": {
                     "sortAscending": ": activate to sort column ascending",
@@ -475,22 +485,14 @@ function DataTable(response) {
                 "search": "Buscar:",
                 "zeroRecords": "No se han encontrado registros"
             },
-            buttons: [
-                'copy', 'excel', 'pdf'
-            ],
-
-
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            },
             "order": [
                 [0, 'asc']
-            ],
-
-            "columnDefs": [
-                { "width": "20%", "targets": 2 }
-            ],
-
-            "lengthMenu": [
-                [10, 15, 20, -1],
-                [10, 15, 20, "Todos"]
             ]
         });
     }

@@ -138,7 +138,7 @@ $(document).ready(function() {
 });
 
 function Modal() {
-    modal.find('.modal-content').empty().append(`
+    modal.find('.modal-content').empty().append(/* html */`
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <h4 class="modal-title">Formulario de Grupos</h4>
@@ -283,17 +283,25 @@ function DataTable(response) {
                     my_columns.push(my_item);
                 }
 
-            } else if (key == 'id') {
+            // } else if (key == 'id') {
 
-                my_item.title = '#';
+            //     my_item.title = '#';
+
+            //     my_item.render = function(data, type, row) {
+            //         return `  <div'> 
+            //                     ${row.id}
+            //                 </div>`
+            //     }
+            //     my_columns.push(my_item);
+            } else if (key == 'curso') {
+                my_item.title = 'Grado';
 
                 my_item.render = function(data, type, row) {
                     return `  <div'> 
-                                ${row.id}
+                                ${row.grado}
                             </div>`
                 }
                 my_columns.push(my_item);
-
 
             } else if (key == 'grado') {
 
@@ -301,7 +309,7 @@ function DataTable(response) {
 
                 my_item.render = function(data, type, row) {
                     return `  <div'> 
-                                ${row.grado + "-" + row.curso}
+                                ${row.curso}
                             </div>`
                 }
                 my_columns.push(my_item);
@@ -319,8 +327,12 @@ function DataTable(response) {
         })
 
         $('#grupos-table').DataTable({
-            // responsive: true,
+            "scrollX": my_columns.length >= 5 ? true : false,
+            "destroy": false,
+            responsive: true,
             "destroy": true,
+            bProcessing: true,
+            bAutoWidth: false,
             data: response,
             "columns": my_columns,
             "language": {
@@ -336,23 +348,9 @@ function DataTable(response) {
                 "search": "Buscar:",
                 "zeroRecords": "No se han encontrado registros"
             },
-            buttons: [
-                'copy', 'excel', 'pdf'
-            ],
-
 
             "order": [
                 [0, 'asc']
-            ],
-
-            "columnDefs": [
-                { "width": "40%", "targets": 2 },
-                { "width": "10%", "targets": 3 }
-            ],
-
-            "lengthMenu": [
-                [10, 15, 20, -1],
-                [10, 15, 20, "Todos"]
             ]
         });
     }

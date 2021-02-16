@@ -121,10 +121,11 @@ class grupoAPIController extends AppBaseController
     public function destroy($id)
     {
         /** @var grupo $grupo */
-        $grupo = grupo::find($id);
+        // $grupo = grupo::find($id);
+        DB::table('grupos')->whereId($id)->delete();
 
 
-        $grupo->delete();
+        // $grupo->delete();
 
         return response()->json(['status' => 'Grupo deleted successfully']);
     }

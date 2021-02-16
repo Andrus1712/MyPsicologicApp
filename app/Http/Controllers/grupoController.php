@@ -67,7 +67,7 @@ class grupoController extends AppBaseController
         if (count($queryUsers) != 0) {
             if ($queryUsers[0]->role_id == 1) {
                 $grupos = DB::table(DB::raw('grupos g'))->where(DB::raw('g.deleted_at', '=', 'NULL'))
-                    ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                    ->leftjoin(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
                     ->select(
                         'g.id',
                         'g.grado',
@@ -79,7 +79,7 @@ class grupoController extends AppBaseController
                     ->get();
             } else if ($queryUsers[0]->role_id == 2) {
                 $grupos = DB::table(DB::raw('grupos g'))->where(DB::raw('g.deleted_at', '=', 'NULL'))
-                    ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                    ->leftjoin(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
                     ->select(
                         'g.id',
                         'g.grado',
@@ -91,7 +91,7 @@ class grupoController extends AppBaseController
                     ->get();
             } else if ($queryUsers[0]->role_id == 3) {
                 $grupos = DB::table(DB::raw('grupos g'))->where(DB::raw('g.deleted_at', '=', 'NULL'))
-                    ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                    ->leftjoin(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
                     ->select(
                         'g.id',
                         'g.grado',
@@ -103,7 +103,7 @@ class grupoController extends AppBaseController
                     ->get();
             } else if ($queryUsers[0]->role_id == 4) {
                 $grupos = DB::table(DB::raw('grupos g'))->where(DB::raw('g.deleted_at', '=', 'NULL'))
-                    ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                    ->leftjoin(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
                     ->select(
                         'g.id',
                         'g.grado',
@@ -115,7 +115,7 @@ class grupoController extends AppBaseController
                     ->get();
             } else {
                 $grupos = DB::table(DB::raw('grupos g'))->where(DB::raw('g.deleted_at', '=', 'NULL'))
-                    ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+                    ->leftjoin(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
                     ->select(
                         'g.id',
                         'g.grado',
