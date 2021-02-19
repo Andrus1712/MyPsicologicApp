@@ -916,7 +916,7 @@ $(document).ready(function () {
             url: '/api/tipo_comportamientos',
         })
             .done(function (response) {
-                
+
                 for (var i in response.data) {
                     $("#check_conducta").append(`
                         <div class="checkbox">
@@ -1119,7 +1119,7 @@ $(document).ready(function () {
     function ModalReporte() {
         $('#modal1_tam').removeClass('modal-lg');
         $('#modal1_tam').addClass('modal-md');
-        modal.find('.modal-content').empty().append(`
+        modal.find('.modal-content').empty().append(/* html */`
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Seleccione el tipo de  Reporte</h4>
@@ -1142,7 +1142,7 @@ $(document).ready(function () {
     function ModalImport() {
         $('#modal1_tam').removeClass('modal-lg');
         $('#modal1_tam').addClass('modal-md');
-        modal.find('.modal-content').empty().append(`
+        modal.find('.modal-content').empty().append(/* html */`
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Importar datos</h4>
@@ -1173,7 +1173,7 @@ $(document).ready(function () {
     function Modal() {
         $('#modal1_tam').removeClass('modal-md');
         $('#modal1_tam').addClass('modal-lg');
-        modal.find('.modal-content').empty().append(`
+        modal.find('.modal-content').empty().append(/* html */`
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Formulario de Comportamientos</h4>

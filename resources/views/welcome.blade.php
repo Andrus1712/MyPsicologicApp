@@ -54,10 +54,10 @@
         <ul class="nav-menu">
           <li class="menu-active"><a href="#body">Inicio</a></li>
           <li><a href="#about">Módulos</a></li>
-          <li><a href="#services">Beneficios y Utilidades</a></li>
+          <li><a href="#services">Beneficios y utilidades</a></li>
           <li><a href="#portfolio"> ¿Quiénes somos?</a></li>
           <li><a href="#contact"> Contáctanos</a></li>
-          <li><a href="#team">Team</a></li>
+          <li><a href="#team">Equipo de trabajo</a></li>
           <li><a href="{{url('/legal')}}">Legal</a></li>
           <li><a href="{{url('/login')}}">Ingresar</a></li>
         </ul>
@@ -73,7 +73,7 @@
   <section id="intro">
 
     <div class="intro-content">
-      <h2>Monitoreo de Comportamiento <br> estudiantil <br>¡Un apoyo al psicoorientador!</h2>
+      <h2>Monitoreo de comportamiento <br> estudiantil <br>¡Un apoyo al psicoorientador!</h2>
       <div>
         <a href="{{url('/login')}}" class="btn-get-started scrollto">Ingresar</a>
       </div>
@@ -108,11 +108,11 @@
               las siguientes funcionalidades: </h3>
 
             <ul>
-              <li><i class="ion-android-checkmark-circle"></i> Gestión de Comportamientos.</li>
-              <li><i class="ion-android-checkmark-circle"></i> Gestión de Citas.</li>
-              <li><i class="ion-android-checkmark-circle"></i> Gestión de Usuarios.</li>
-              <li><i class="ion-android-checkmark-circle"></i> Gestión de Actividades.</li>
-              <li><i class="ion-android-checkmark-circle"></i> Reportes con Estándares Locales.</li>
+              <li><i class="ion-android-checkmark-circle"></i> Gestión de comportamientos.</li>
+              <li><i class="ion-android-checkmark-circle"></i> Gestión de usuarios.</li>
+              <li><i class="ion-android-checkmark-circle"></i> Gestión de actividades.</li>
+              <li><i class="ion-android-checkmark-circle"></i> Gestión de seguimientos.</li>
+              <li><i class="ion-android-checkmark-circle"></i> Reportes con estándares locales.</li>
             </ul>
 
           </div>
@@ -127,9 +127,9 @@
     <section id="services">
       <div class="container">
         <div class="section-header">
-          <h2>Beneficios y Utilidades</h2>
+          <h2>Beneficios y utilidades</h2>
           <p>El apoyo de las TIC ha falicitado los procesos en muchos ámbitos, y este no es una excepción. Esta
-            herramienta nos permitirá llevar un control de los estudiantes de una manera más ágil</p>
+            herramienta nos permitirá llevar un control de los estudiantes de una manera más ágil.</p>
         </div>
 
         <div class="row">
@@ -137,7 +137,7 @@
           <div class="col-lg-6">
             <div class="box wow fadeInLeft">
               <div class="icon"><i class="fa fa-bar-chart"></i></div>
-              <h4 class="title"><a href="">Estadísticas a un Clic </a></h4>
+              <h4 class="title"><a href="">Estadísticas a un clic </a></h4>
               <p class="description">Podrás visualizar o exportar toda la información de los comportamientos registrados
                 mediante un reporte.</p>
             </div>
@@ -155,7 +155,7 @@
           <div class="col-lg-6">
             <div class="box wow fadeInLeft" data-wow-delay="0.2s">
               <div class="icon"><i class="fa fa-calendar"></i></div>
-              <h4 class="title"><a href="">Agendamiento de Actividades</a></h4>
+              <h4 class="title"><a href="">Agendamiento de actividades</a></h4>
               <p class="description"> Podrás agregar citas o tareas como actividades que se podrán visualizar en un
                 calendario diario, mensual o semanal.</p>
             </div>
@@ -166,7 +166,7 @@
               <div class="icon"><i class="fa fa-mobile"></i></div>
               <h4 class="title"><a href="">Plataforma Responsive</a></h4>
               <p class="description">Podrás usar ToolPsico desde cualquier dispositivo con acceso a un navegador web sin
-                problemas, pues su interfaz se adaptara al dispositivos</p>
+                problemas, pues su interfaz se adaptara al dispositivos.</p>
             </div>
           </div>
 
@@ -232,7 +232,7 @@
       <section id="team" class="wow fadeInUp">
         <div class="container">
           <div class="section-header">
-            <h2>Team</h2>
+            <h2>Equipo de trabajo</h2>
           </div>
           <div class="row">
             <div class="col-lg-3 col-md-6">
@@ -253,7 +253,7 @@
             <div class="col-lg-3 col-md-6">
               <div class="member">
                           <div class="details">
-                  <h4>Andres Calderon</h4>
+                  <h4>Andrés Calderon</h4>
                   <span>Estudiante de ingeniería de sistemas</span>
                   <div class="social">
                     <a href=""><i class="fa fa-twitter"></i></a>

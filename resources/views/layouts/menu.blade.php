@@ -128,6 +128,18 @@
     </li>
 @endif
 
+@if ( Auth()->user()->havePermission('make.reportes'))
+    <li>
+        <a id="generar_reportes_menu"><i class="fa fa-file-pdf"></i>
+            <span>Generar reportes</span>
+            <span class="label label-warning hide" id="numbercomportaiment">
+                <span class=""></span>
+            </span>
+        </a>
+    </li>
+@endif
+
+
 @if (Auth()
         ->user()
         ->havePermission('tipos.comportamientos'))

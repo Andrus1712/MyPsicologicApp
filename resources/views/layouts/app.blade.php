@@ -279,6 +279,19 @@
 
             <!-- Left side column. contains the logo and sidebar -->
             @include('layouts.sidebar')
+
+            <div class="modal fade" id="modal-menu-1" tabindex="-1" role="basic" data-backdrop="static"  aria-hidden="true">
+            <div id="modal1_menu_tam" class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">            
+            </div>
+            </div>
+            </div>
+            <div class="modal fade" id="modal-menu-2" tabindex="-1" role="basic" data-backdrop="static"  aria-hidden="true">
+            <div id="modal2_menu_tam" class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-content">            
+            </div>
+            </div>
+            </div>
             <!-- Content Wrapper. Contains page content -->
             <div class="content-wrapper">
                 @yield('content')
@@ -338,7 +351,6 @@
     @endif
 
     @yield('scripts')
-
 
 </body>
 
