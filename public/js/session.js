@@ -4,16 +4,12 @@ $.ajax({
     type: "GET",
     headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
     dataType: "JSON",
-})
-
-.done(function (response) {
+}).done(function (response) {
     if (response.length > 0) {
         $("#numbercomportaiment").text(response.length)
         $("#numbercomportaiment").removeClass('hide')
     }
-})
-
-.fail(function () {
+}).fail(function () {
     console.log("error");
 });
 
@@ -22,16 +18,12 @@ $.ajax({
     type: "GET",
     headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
     dataType: "JSON",
-})
-
-.done(function (response) {
+}).done(function (response) {
     if (response.length > 0) {
         $("#numberactivities").text(response.length)
         $("#numberactivities").removeClass('hide')
     }
-})
-
-.fail(function () {
+}).fail(function () {
     console.log("error");
 });
 
@@ -396,6 +388,27 @@ $('#generar_reportes_menu').on('click', function () {
     //** ********************************************************************** */
 
 });
+
+function LoadTiposComportamientosCheck() {
+    $.ajax({
+        url: '/api/tipo_comportamientos',
+    })
+        .done(function (response) {
+            
+            for (var i in response.data) {
+                $("#check_conducta").append(`
+                    <div class="checkbox">
+                        <label>
+                            <input id="tc_${i}" value="${response.data[i].id}" name="conducta" type="checkbox">${response.data[i].titulo}
+                        </label>
+                    </div>
+                `)
+            }
+        })
+        .fail(function () {
+            console.log("error");
+        })
+}
 
 function openWindowWithPostRequest(url, params) {
     var winName = 'reporte';

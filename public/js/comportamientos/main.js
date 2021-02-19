@@ -916,7 +916,7 @@ $(document).ready(function () {
             url: '/api/tipo_comportamientos',
         })
             .done(function (response) {
-
+                
                 for (var i in response.data) {
                     $("#check_conducta").append(`
                         <div class="checkbox">
