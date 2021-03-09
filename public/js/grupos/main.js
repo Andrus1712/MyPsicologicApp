@@ -36,7 +36,9 @@ $(document).ready(function() {
                     $('#loading-spinner').show();
                     $.ajax({
                             url: '/api/grupos/' + id,
-                            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
                             type: 'PUT',
                             data: {
                                 grado: grado,
@@ -44,13 +46,24 @@ $(document).ready(function() {
                                 docente_id: docente_id
                             },
                         })
-                        .done(function() {
-                            setTimeout(function() {
+                        .done(function(response) {
+                            var success = response.success;
+                            var messages = response.message;
+                            if (success) {
+                                setTimeout(function() {
+                                    $('#loading-spinner').hide();
+                                    modal.modal("hide")
+                                }, 600);
+                                toastr.info("Infomacion actualizada");
+                                Reload();
+                            } else {
+                                // Mensaje de validacion
                                 $('#loading-spinner').hide();
-                                modal.modal("hide")
-                            }, 600);
-                            toastr.info("información actualizada");
-                            Reload()
+                                Object.keys(messages).forEach(type => {
+                                    console.log(messages[type]);
+                                    toastr.error(messages[type]);
+                                });
+                            }
                         })
                         .fail(function() {
                             $('#loading-spinner').hide();
@@ -70,7 +83,7 @@ $(document).ready(function() {
         var id = $(this).attr('data-id')
 
         swal({
-                title: "¿Realmente deseas eliminar el acudiente?",
+                title: "¿Realmente deseas eliminar el grado y el curso?",
                 text: "Ten en cuenta que eliminaras toda su información del sistema",
                 type: "warning",
                 showCancelButton: true,
@@ -82,7 +95,9 @@ $(document).ready(function() {
                 $.ajax({
                         url: "/api/grupos/" + id,
                         type: "DELETE",
-                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
                     })
                     .done(function() {
                         swal("Eliminado!", "Se ha eliminado el acudiente", "success");
@@ -107,13 +122,16 @@ $(document).ready(function() {
                 curso = $("#curso").val(),
                 docente_id = $("#docente_id").val();
 
-            if (grado == '' || curso == '' || docente_id == '') {
+
+            if (grado == '' || curso == '' || docente_id == null) {
                 toastr.warning("Complete todos los campos")
             } else {
                 $('#loading-spinner').show();
                 $.ajax({
                         url: '/api/grupos',
-                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
                         type: 'POST',
                         data: {
                             grado: grado,
@@ -121,12 +139,24 @@ $(document).ready(function() {
                             docente_id: docente_id
                         },
                     })
-                    .done(function() {
-                        setTimeout(function() {
+                    .done(function(response) {
+                        var success = response.success;
+                        var messages = response.message;
+                        if (success) {
+                            setTimeout(function() {
+                                $('#loading-spinner').hide();
+                                modal.modal("hide")
+                            }, 600);
+                            toastr.success("Grupo y grado creado correctamente");
+                            Reload();
+                        } else {
+                            // Mensaje de validacion
                             $('#loading-spinner').hide();
-                            modal.modal("hide")
-                        }, 600);
-                        Reload()
+                            Object.keys(messages).forEach(type => {
+                                console.log(messages[type]);
+                                toastr.error(messages[type]);
+                            });
+                        }
                     })
                     .fail(function() {
                         $('#loading-spinner').hide();
@@ -143,7 +173,7 @@ $(document).ready(function() {
 });
 
 function Modal() {
-    modal.find('.modal-content').empty().append(/* html */`
+    modal.find('.modal-content').empty().append( /* html */ `
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <h4 class="modal-title">Formulario de Grado y grupos</h4>
@@ -216,7 +246,9 @@ function Reload() {
     $.ajax({
         url: "/getGrupos",
         type: "GET",
-        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
         dataType: "JSON",
     })
 
@@ -288,16 +320,16 @@ function DataTable(response) {
                     my_columns.push(my_item);
                 }
 
-            // } else if (key == 'id') {
+                // } else if (key == 'id') {
 
-            //     my_item.title = '#';
+                //     my_item.title = '#';
 
-            //     my_item.render = function(data, type, row) {
-            //         return `  <div'> 
-            //                     ${row.id}
-            //                 </div>`
-            //     }
-            //     my_columns.push(my_item);
+                //     my_item.render = function(data, type, row) {
+                //         return `  <div'> 
+                //                     ${row.id}
+                //                 </div>`
+                //     }
+                //     my_columns.push(my_item);
             } else if (key == 'grado') {
                 my_item.title = 'Grado';
 

@@ -3,11 +3,14 @@ var AllRegister = []
 
 var permisos = [];
 
+var ides = [];
+var emails = [];
 
-$(document).ready(function () {
+
+$(document).ready(function() {
     Reload()
 
-    $("#estudiantes-table").on('click', '[id^=Btn_Edit_]', function () {
+    $("#estudiantes-table").on('click', '[id^=Btn_Edit_]', function() {
 
         var id = $(this).attr('data-id')
         var filtro = AllRegister.filter(f => f.id == id);
@@ -37,7 +40,7 @@ $(document).ready(function () {
                 ${filtro[0].tipoIdentificacion == 'CC' ? 'Cédula de ciudadania' : filtro[0].tipoIdentificacion == 'CE' ? 'Cédula extranjera' : 'Pasaporte'}
             </option>`)
 
-            $('#update').on('click', function () {
+            $('#update').on('click', function() {
                 var tipoIdentificacion = $("#tipoIdentificacion").val(),
                     identificacion = $("#identificacion").val(),
                     nombres = $("#nombres").val(),
@@ -61,33 +64,33 @@ $(document).ready(function () {
                 } else {
                     $('#loading-spinner').show();
                     $.ajax({
-                        url: '/api/estudiantes/' + id,
-                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                        type: 'PUT',
-                        data: {
-                            tipoIdentificacion: tipoIdentificacion,
-                            identificacion: identificacion,
-                            nombres: nombres,
-                            apellidos: apellidos,
-                            edad: edad,
-                            telefono: telefono,
-                            sexo: sexo,
-                            correo: correo,
-                            fechaNacimiento: fechaNacimiento,
-                            acudiente_id: acudiente_id,
-                            grupo_id: grupo_id
+                            url: '/api/estudiantes/' + id,
+                            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                            type: 'PUT',
+                            data: {
+                                tipoIdentificacion: tipoIdentificacion,
+                                identificacion: identificacion,
+                                nombres: nombres,
+                                apellidos: apellidos,
+                                edad: edad,
+                                telefono: telefono,
+                                sexo: sexo,
+                                correo: correo,
+                                fechaNacimiento: fechaNacimiento,
+                                acudiente_id: acudiente_id,
+                                grupo_id: grupo_id
 
-                        },
-                    })
-                        .done(function (response) {
+                            },
+                        })
+                        .done(function(response) {
                             toastr.success("Datos editados correctamente");
-                            setTimeout(function () {
+                            setTimeout(function() {
                                 $('#loading-spinner').hide();
                                 modal.modal("hide")
                             }, 600);
                             Reload();
                         })
-                        .fail(function (response) {
+                        .fail(function(response) {
                             $('#loading-spinner').hide();
                             // console.log(response.responseJSON);
                             if (response.responseJSON.message == "id-registrada") {
@@ -96,7 +99,7 @@ $(document).ready(function () {
                                 toastr.error("Ha ocurrido un error");
                             }
                         })
-                        .always(function () {
+                        .always(function() {
                             $("#update").addClass("disabled");
                         });
                 }
@@ -104,42 +107,56 @@ $(document).ready(function () {
         }
     })
 
-    $('#estudiantes-table').on('click', '[id^=Btn_delete_]', function () {
+    $('#estudiantes-table').on('click', '[id^=Btn_delete_]', function() {
         var id = $(this).attr('data-id')
 
         swal({
-            title: "¿Realmente deseas eliminar el estudiante?",
-            text: "Ten en cuenta que eliminaras toda su información del sistema",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonClass: "btn-danger",
-            confirmButtonText: "Si, eliminar",
-            closeOnConfirm: false
-        },
-            function () {
+                title: "¿Realmente deseas eliminar el estudiante?",
+                text: "Ten en cuenta que eliminaras toda su información del sistema",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Si, eliminar",
+                closeOnConfirm: false
+            },
+            function() {
                 $.ajax({
-                    url: "/api/estudiantes/" + id,
-                    type: "DELETE",
-                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                })
-                    .done(function () {
+                        url: "/api/estudiantes/" + id,
+                        type: "DELETE",
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    })
+                    .done(function() {
                         swal("Eliminado!", "Se ha eliminado el estudiante", "success");
                         Reload();
                     })
-                    .fail(function () {
+                    .fail(function() {
                         swal("Error!", "Ha ocurrido un error", "error");
                     });
 
             });
     })
 
-    $("#add-estudiante").on('click', function () {
+    $("#add-estudiante").on('click', function() {
         modal.modal('show');
         Modal()
         LoadAcudiente()
-        LoadCurso()
+        LoadCurso();
 
-        $('#save').on('click', function () {
+        console.log(ides);
+        $("#identificacion").on('change', function() {
+            var id_temp = $("#identificacion").val();
+            if (ides.includes(id_temp)) {
+                toastr.error("La id ya esta registrada");
+            }
+        });
+        $("#correo").on('change', function() {
+            var email_temp = $("#identificacion").val();
+            if (emails.includes(email_temp)) {
+                toastr.error("El correo ya esta registrado");
+            }
+        });
+
+        $('#save').on('click', function() {
             var tipoIdentificacion = $("#tipoIdentificacion").val(),
                 identificacion = $("#identificacion").val(),
                 nombres = $("#nombres").val(),
@@ -165,33 +182,33 @@ $(document).ready(function () {
                 $('#loading-spinner').show();
 
                 $.ajax({
-                    url: '/api/estudiantes',
-                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                    type: 'POST',
-                    data: {
-                        tipoIdentificacion: tipoIdentificacion,
-                        identificacion: identificacion,
-                        nombres: nombres,
-                        apellidos: apellidos,
-                        edad: edad,
-                        sexo: sexo,
-                        telefono: telefono,
-                        correo: correo,
-                        fechaNacimiento: fechaNacimiento,
-                        acudiente_id: acudiente_id,
-                        grupo_id: grupo_id
+                        url: '/api/estudiantes',
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                        type: 'POST',
+                        data: {
+                            tipoIdentificacion: tipoIdentificacion,
+                            identificacion: identificacion,
+                            nombres: nombres,
+                            apellidos: apellidos,
+                            edad: edad,
+                            sexo: sexo,
+                            telefono: telefono,
+                            correo: correo,
+                            fechaNacimiento: fechaNacimiento,
+                            acudiente_id: acudiente_id,
+                            grupo_id: grupo_id
 
-                    },
-                })
-                    .done(function () {
+                        },
+                    })
+                    .done(function() {
                         toastr.success("estudiante agregado");
-                        setTimeout(function () {
+                        setTimeout(function() {
                             $('#loading-spinner').hide();
                             modal.modal("hide")
                         }, 600);
                         Reload();
                     })
-                    .fail(function (response) {
+                    .fail(function(response) {
                         $('#loading-spinner').hide();
                         // console.log(response.responseJSON);
                         if (response.responseJSON.message == "id-registrada") {
@@ -200,7 +217,7 @@ $(document).ready(function () {
                             toastr.error("Ha ocurrido un error");
                         }
                     })
-                    .always(function () {
+                    .always(function() {
                         $("#save").addClass("disabled");
                     });
             }
@@ -234,9 +251,9 @@ function LoadAcudiente(id) {
     });
 
     $.ajax({
-        url: '/api/acudientes',
-    })
-        .done(function (response) {
+            url: '/api/acudientes',
+        })
+        .done(function(response) {
             for (var i in response.data) {
                 $("#acudiente_id").append(`<option value='${response.data[i].id}'>${response.data[i].nombres} ${response.data[i].apellidos}</option>`)
             }
@@ -244,7 +261,7 @@ function LoadAcudiente(id) {
             $("#acudiente_id").val(id);
 
         })
-        .fail(function () {
+        .fail(function() {
             console.log("error");
         })
 }
@@ -258,16 +275,16 @@ function LoadCurso(id) {
     });
 
     $.ajax({
-        url: '/api/grupos',
-    })
-        .done(function (response) {
+            url: '/api/grupos',
+        })
+        .done(function(response) {
             for (var i in response.data) {
                 $("#grupo_id").append(`<option value='${response.data[i].id}'>${response.data[i].grado} - ${response.data[i].curso}</option>`)
             }
 
             $("#grupo_id").val(id);
         })
-        .fail(function () {
+        .fail(function() {
             console.log("error");
         })
 }
@@ -280,23 +297,28 @@ function Reload() {
         dataType: "JSON",
     })
 
-        .done(function (response) {
-            if (response.length != 0) {
-                AllRegister = response.estudiantes;
-                // console.log(AllRegister);
-                permisos = response.permisos;
-                // console.table(permisos.permisos);
-                DataTable(response.estudiantes);
-            } else {
-                $('#estudiantes-table').dataTable().fnClearTable();
-                $('#estudiantes-table').dataTable().fnDestroy();
-                $('#estudiantes-table thead').empty()
-            }
-        })
+    .done(function(response) {
+        if (response.length != 0) {
+            AllRegister = response.estudiantes;
 
-        .fail(function () {
-            console.log("error");
-        });
+            AllRegister.forEach(estudiante => {
+                ides.push(estudiante.identificacion);
+                emails.push(estudiante.correo);
+            });
+            // console.log(AllRegister);
+            permisos = response.permisos;
+            // console.table(permisos.permisos);
+            DataTable(response.estudiantes);
+        } else {
+            $('#estudiantes-table').dataTable().fnClearTable();
+            $('#estudiantes-table').dataTable().fnDestroy();
+            $('#estudiantes-table thead').empty()
+        }
+    })
+
+    .fail(function() {
+        console.log("error");
+    });
 }
 
 function validar_fecha(fecha) {
@@ -315,7 +337,7 @@ function validar_fecha(fecha) {
 }
 
 function Modal() {
-    modal.find('.modal-content').empty().append(/* html */
+    modal.find('.modal-content').empty().append( /* html */
         `
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -376,7 +398,7 @@ function Modal() {
                         <label title="Este campo es obligatorio"># identificación: *</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                            <input type="text"  maxlength="10" class="form-control" placeholder="número de identificación" id="identificacion" required="required">
+                            <input type="text"  maxlength="11" class="form-control" placeholder="número de identificación" id="identificacion" required="required">
                         </div>
                     </div>
 
@@ -434,11 +456,11 @@ function Modal() {
     });
 
     // Listen for the input event.
-    jQuery("#identificacion").on('input', function (evt) {
+    jQuery("#identificacion").on('input', function(evt) {
         // Allow only numbers.
         jQuery(this).val(jQuery(this).val().replace(/[^0-9]/g, ''));
     });
-    jQuery("#telefono").on('input', function (evt) {
+    jQuery("#telefono").on('input', function(evt) {
         // Allow only numbers.
         jQuery(this).val(jQuery(this).val().replace(/[^0-9]/g, ''));
     });
@@ -463,7 +485,7 @@ function DataTable(response) {
 
     if (response.length != 0) {
         let my_columns = []
-        $.each(response[0], function (key, value) {
+        $.each(response[0], function(key, value) {
             var my_item = {};
             // my_item.class = "filter_C";
             my_item.data = key;
@@ -471,7 +493,7 @@ function DataTable(response) {
 
                 my_item.title = 'Acción';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     var html = '';
                     for (let i = 0; i < permisos.length; i++) {
                         if (permisos[i] == "delete.estudiantes") {
@@ -526,7 +548,7 @@ function DataTable(response) {
 
                 my_item.title = 'Identificacion';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `<div>
                     ${row.tipoIdentificacion}. ${row.identificacion} 
                             </div>`
@@ -536,7 +558,7 @@ function DataTable(response) {
 
                 my_item.title = 'Estudiante';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `<div>
                                 ${row.nombres + " " + row.apellidos} 
                             </div>`
@@ -546,7 +568,7 @@ function DataTable(response) {
 
                 my_item.title = 'Edad';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `<div>
                                 ${row.edad} años
                             </div>`
@@ -556,7 +578,7 @@ function DataTable(response) {
 
                 my_item.title = 'Genero';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `<div>
                                 ${row.sexo}
                             </div>`
@@ -566,7 +588,7 @@ function DataTable(response) {
 
                 my_item.title = 'Contacto';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `<div>
                                 ${row.telefono == null ? 'No establecido' : row.telefono}
                             </div>`
@@ -576,7 +598,7 @@ function DataTable(response) {
 
                 my_item.title = 'Correo';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `<div>
                                 ${row.correo} 
                             </div>`
@@ -586,7 +608,7 @@ function DataTable(response) {
 
                 my_item.title = 'Acudiente';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `<div>
                                 ${row.nombre_acudiente + " " + row.apellido_acudiente} 
                             </div>`
@@ -596,7 +618,7 @@ function DataTable(response) {
 
                 my_item.title = 'Curso';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `<div>
                                 ${row.grado + "-" + row.curso} 
                             </div>`

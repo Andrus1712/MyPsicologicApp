@@ -11,354 +11,352 @@ var rol;
 var user;
 
 
-$(document).ready(function () {
-    Reload();
+$(document).ready(function() {
+            Reload();
 
-    $('#comportamientos-table').on('click', '[id^=Btn_act_]', function () {
-        var id = $(this).attr('data-id');
-        const filtro = AllRegister.filter(f => f.id == id);
+            $('#comportamientos-table').on('click', '[id^=Btn_act_]', function() {
+                var id = $(this).attr('data-id');
+                const filtro = AllRegister.filter(f => f.id == id);
 
-        modal.modal('hide');
+                modal.modal('hide');
 
-        if (filtro[0].titulo_tc == null) {
-            modal2.modal('show');
-            LoadModalTC(filtro);
-            LoadTiposComportamientos(modal2);
+                if (filtro[0].titulo_tc == null) {
+                    modal2.modal('show');
+                    LoadModalTC(filtro);
+                    LoadTiposComportamientos(modal2);
 
-            $('#save2').on('click', function () {
-                var tipo_comportamiento_id = $("#tipo_comportamiento_id").val();
+                    $('#save2').on('click', function() {
+                        var tipo_comportamiento_id = $("#tipo_comportamiento_id").val();
 
-                $.ajax({
-                    url: '/api/comportamientos/' + id,
-                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                    type: 'PUT',
-                    data: {
-                        tipo_comportamiento_id: tipo_comportamiento_id,
-                    },
-                })
-                    .done(function () {
-                        setTimeout(function () { modal2.modal("hide") }, 600);
-                        toastr.info("información actualizada");
-                        Reload();
+                        $.ajax({
+                                url: '/api/comportamientos/' + id,
+                                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                                type: 'PUT',
+                                data: {
+                                    tipo_comportamiento_id: tipo_comportamiento_id,
+                                },
+                            })
+                            .done(function() {
+                                setTimeout(function() { modal2.modal("hide") }, 600);
+                                toastr.info("información actualizada");
+                                Reload();
 
-                    })
-                    .fail(function () {
-                        toastr.error("Ha ocurrido un error");
-                    })
-                    .always(function () {
-                        $("#save2").addClass("disabled");
+                            })
+                            .fail(function() {
+                                toastr.error("Ha ocurrido un error");
+                            })
+                            .always(function() {
+                                $("#save2").addClass("disabled");
+                            });
+
+                        modal.modal('show');
                     });
 
-                modal.modal('show');
-            });
-
-            $('#omitir').on('click', function () {
-                setTimeout(function () { modal2.modal("hide") }, 600);
-                modal.modal('show');
-            });
-        }
-
-        if (filtro[0].titulo_tc != null) {
-            modal.modal('show');
-        }
-
-        ModalActividades()
-        $('#input_actividad').hide()
-        LoadComportamientos(id)
-
-        $('#save').on('click', function () {
-            var comportamiento_id = $("#comportamiento_id").val(),
-                titulo = $("#titulo").val(),
-                descripcion = $("#descripcion").val(),
-                fecha = $("#fecha").val(),
-                estado = 3 //estado por defecto de las actividades
-
-            if (comportamiento_id == '' || titulo == '' || descripcion == '' || fecha == '') {
-                toastr.warning("Complete todos los campos")
-            } else {
-                $('#loading-spinner').show();
-                $.ajax({
-                    url: '/api/actividades',
-                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                    type: 'POST',
-                    data: {
-                        comportamiento_id: comportamiento_id,
-                        titulo: titulo,
-                        descripcion: descripcion,
-                        fecha: fecha,
-                        estado: estado,
-                    },
-                })
-                    .done(function () {
-                        setTimeout(function () {
-                            $('#loading-spinner').hide();
-                            modal.modal("hide")
-                        }, 600);
-                        Reload()
-                    })
-                    .fail(function () {
-                        $('#loading-spinner').hide();
-                        toastr.error("Ha ocurrido un error");
-                    })
-                    .always(function () {
-                        $("#save").addClass("disabled");
+                    $('#omitir').on('click', function() {
+                        setTimeout(function() { modal2.modal("hide") }, 600);
+                        modal.modal('show');
                     });
-            }
-
-        })
-
-    })
-
-    $('#comportamientos-table').on('click', '[id^=Btn_Edit_]', function () {
-        var id = $(this).attr('data-id');
-
-        const filtro = AllRegister.filter(f => f.id == id);
-
-        if (filtro.length != 0) {
-            modal.modal("show");
-            Modal()
-            LoadEstudiantes(filtro[0].id_estudiante)
-            LoadTiposComportamientos(filtro[0].id_tc, modal)
-
-
-            $("#save").text("Actualizar")
-            $("#save").attr("id", 'update')
-
-            // $('#rutaFile').removeClass('hide')
-            // $("#rutaFile").attr('href', filtro[0].multimedia)
-            // $('#rutaFile').attr('target', '_blank')
-            // $("#rutaFile").text('Ver documento')
-
-            $("#titulo").val(filtro[0].titulo)
-            $("#estudiante_id").val(filtro[0].estudiante_id)
-            $("#descripcion").val(filtro[0].descripcion)
-            $("#fecha").val(filtro[0].fecha)
-            // $("#emisor").val(filtro[0].emisor)
-
-            $("#update").on('click', function () {
-
-                var tipo_comportamiento_id = $("#tipo_comportamiento_id").val(),
-                    estudiante_id = $("#estudiante_id").val(),
-                    titulo = $("#titulo").val(),
-                    descripcion = $("#descripcion").val(),
-                    fecha = $("#fecha").val()
-
-                if (estudiante_id == '' || titulo == '' || descripcion == '' || fecha == '') {
-                    toastr.warning("Complete todos los campos")
-                } else {
-
-                    var form = new FormData();
-
-                    var archivos = 0;
-                    form.append('tempMultimedia', filtro[0].multimedia)
-
-                    jQuery.each(jQuery('#multimedia')[0].files, function (i, file) {
-                        form.append('file' + i, file);
-                        archivos++;
-                    });
-                    form.append('archivos', archivos);
-
-
-                    form.append('estudiante_id', estudiante_id)
-                    form.append('titulo', titulo)
-                    form.append('descripcion', descripcion)
-                    form.append('fecha', fecha)
-                    form.append('tipo_comportamiento_id', tipo_comportamiento_id)
-                    form.append('method', 'update')
-                    form.append('id', id)
-
-
-                    $('#loading-spinner').show();
-                    $.ajax({
-                        url: '/add_comportamientos',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        type: 'POST',
-                        processData: false,
-                        contentType: false,
-                        data: form,
-                    })
-                        .done(function () {
-                            setTimeout(function () {
-                                $('#loading-spinner').hide();
-                                modal.modal("hide")
-                            }, 600);
-                            toastr.info("información actualizada");
-                            Reload();
-                        })
-                        .fail(function () {
-                            $('#loading-spinner').hide();
-                            toastr.error("Ha ocurrido un error");
-                        })
-                        .always(function () {
-                            $("#update").addClass("disabled");
-                        });
                 }
-                // modal.find('.modal-content').empty()
-            })
-        }
-    })
 
-    $('#comportamientos-table').on('click', '[id^=Btn_delete_]', function () {
-        var id = $(this).attr('data-id')
+                if (filtro[0].titulo_tc != null) {
+                    modal.modal('show');
+                }
 
-        swal({
-            title: "¿Realmente deseas eliminar el acudiente?",
-            text: "Ten en cuenta que eliminaras toda su información del sistema",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonClass: "btn-danger",
-            confirmButtonText: "Si, eliminar",
-            closeOnConfirm: false
-        },
-            function () {
-                $.ajax({
-                    url: "/api/comportamientos/" + id,
-                    type: "DELETE",
-                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                })
-                    .done(function () {
-                        swal("Eliminado!", "Se ha eliminado el acudiente", "success");
-                        Reload();
-                    })
-                    .fail(function () {
-                        swal("Error!", "Ha ocurrido un error", "error");
-                    });
+                ModalActividades()
+                $('#input_actividad').hide()
+                LoadComportamientos(id)
 
-            });
+                $('#save').on('click', function() {
+                    var comportamiento_id = $("#comportamiento_id").val(),
+                        titulo = $("#titulo").val(),
+                        descripcion = $("#descripcion").val(),
+                        fecha = $("#fecha").val(),
+                        estado = 3 //estado por defecto de las actividades
 
-
-    })
-
-    $('#add-comportamientos').on('click', function () {
-        modal.modal('show')
-        Modal()
-        $("#tc").hide();
-
-        LoadEstudiantes()
-        establecer_fecha()
-
-        console.log(permisos);
-        console.log(permisos.includes('tipos.comportamientos'));
-        if (permisos.includes('tipos.comportamientos')) {
-            LoadTiposComportamientos();
-            $("#tc").show();
-        }
-        // $('#btn_add').on('click', function(){
-        //     alert("agregar estudiante")
-        // })
-
-        $('#save').on('click', function () {
-            var tipo_comportamiento_id = $("#tipo_comportamiento_id").val(),
-                estudiante_id = $("#estudiante_id").val(),
-                titulo = $("#titulo").val(),
-                descripcion = $("#descripcion").val(),
-                fecha = $("#fecha").val(),
-                // emisor = "X",
-                multimedia = $("#multimedia")[0].files;
-
-            if (estudiante_id == '' || titulo == '' || descripcion == '' || fecha == '') {
-                toastr.warning("Complete todos los campos")
-            } else {
-                var form = new FormData();
-                var archivos = 0;
-                jQuery.each(jQuery('#multimedia')[0].files, function (i, file) {
-                    form.append('file' + i, file);
-                    archivos++;
-                });
-                form.append('archivos', archivos);
-
-
-                form.append('estudiante_id', estudiante_id)
-                form.append('titulo', titulo)
-                form.append('descripcion', descripcion)
-                form.append('fecha', fecha)
-                // form.append('emisor', emisor)
-                form.append('tipo_comportamiento_id', tipo_comportamiento_id)
-                // form.append('multimedia', multimedia)
-                $('#loading-spinner').show();
-                $.ajax({
-                    url: '/add_comportamientos',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    type: 'POST',
-                    data: form,
-                    processData: false,
-                    contentType: false,
-                })
-                    .done(function () {
-                        toastr.success("Comportamiento registrado");
-                        setTimeout(function () {
-                            $('#loading-spinner').hide();
-                            modal.modal("hide")
-                        }, 600);
-
-                        Reload();
-                    })
-                    .fail(function () {
-                        $('#loading-spinner').hide();
-                        toastr.error("Ha ocurrido un error");
-                    })
-                    .always(function () {
-                        $("#save").addClass("disabled");
-                    });
-            }
-        })
-    })
-
-    $('#comportamientos-table').on('click', '[id^=Btn_file_]', function () {
-        modal.modal('show')
-        var id = $(this).attr('data-id');
-
-        const filtro = AllRegister.filter(f => f.id == id);
-
-        if (filtro.length != 0) {
-            var json = filtro[0].multimedia.split('PSIAPP');
-            var html = ''
-            var a = 0;
-            for (var i = 0; i < json.length; i++) {
-                if (json[i] != '') {
-                    var icon = 'fa fa-file';
-
-                    var extension = json[i].split('.')[2];
-                    console.log(extension)
-
-                    switch (extension) {
-                        case 'doc':
-                            icon = 'fa-file-word-o';
-                            break;
-                        case 'docx':
-                            icon = 'fa-file-word-o';
-                            break;
-                        case 'xlsx':
-                            icon = 'fa-file-excel-o bg-success bg-green';
-                            break;
-                        case 'pdf':
-                            icon = 'fa-file-pdf bg-danger bg-red';
-                            break;
-                        case 'txt':
-                            icon = 'fa-file-text';
-                            break;
-                        case 'jpeg':
-                            icon = 'fa-file-image-o';
-                            break;
-                        case 'png':
-                            icon = 'fa-file-image-o';
-                            break;
-                        case 'jpg':
-                            icon = 'fa-file-image-o';
-                            break;
-                        case 'mp3':
-                            icon = 'fa-file-audio-o bg-secondary';
-                            break;
-                        case 'mp4':
-                            icon = 'fa-file-movie-o bg-secondary';
-                            break;
+                    if (comportamiento_id == '' || titulo == '' || descripcion == '' || fecha == '') {
+                        toastr.warning("Complete todos los campos")
+                    } else {
+                        $('#loading-spinner').show();
+                        $.ajax({
+                                url: '/api/actividades',
+                                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                                type: 'POST',
+                                data: {
+                                    comportamiento_id: comportamiento_id,
+                                    titulo: titulo,
+                                    descripcion: descripcion,
+                                    fecha: fecha,
+                                    estado: estado,
+                                },
+                            })
+                            .done(function() {
+                                setTimeout(function() {
+                                    $('#loading-spinner').hide();
+                                    modal.modal("hide")
+                                }, 600);
+                                Reload()
+                            })
+                            .fail(function() {
+                                $('#loading-spinner').hide();
+                                toastr.error("Ha ocurrido un error");
+                            })
+                            .always(function() {
+                                $("#save").addClass("disabled");
+                            });
                     }
-                    html += `
+
+                })
+
+            })
+
+            $('#comportamientos-table').on('click', '[id^=Btn_Edit_]', function() {
+                var id = $(this).attr('data-id');
+
+                const filtro = AllRegister.filter(f => f.id == id);
+
+                if (filtro.length != 0) {
+                    modal.modal("show");
+                    Modal()
+                    LoadEstudiantes(filtro[0].id_estudiante)
+                    LoadTiposComportamientos(filtro[0].id_tc, modal)
+
+
+                    $("#save").text("Actualizar")
+                    $("#save").attr("id", 'update')
+
+                    // $('#rutaFile').removeClass('hide')
+                    // $("#rutaFile").attr('href', filtro[0].multimedia)
+                    // $('#rutaFile').attr('target', '_blank')
+                    // $("#rutaFile").text('Ver documento')
+
+                    $("#titulo").val(filtro[0].titulo)
+                    $("#estudiante_id").val(filtro[0].estudiante_id)
+                    $("#descripcion").val(filtro[0].descripcion)
+                    $("#fecha").val(filtro[0].fecha)
+                        // $("#emisor").val(filtro[0].emisor)
+
+                    $("#update").on('click', function() {
+
+                        var tipo_comportamiento_id = $("#tipo_comportamiento_id").val(),
+                            estudiante_id = $("#estudiante_id").val(),
+                            titulo = $("#titulo").val(),
+                            descripcion = $("#descripcion").val(),
+                            fecha = $("#fecha").val()
+
+                        if (estudiante_id == '' || titulo == '' || descripcion == '' || fecha == '') {
+                            toastr.warning("Complete todos los campos")
+                        } else {
+
+                            var form = new FormData();
+
+                            var archivos = 0;
+                            form.append('tempMultimedia', filtro[0].multimedia)
+
+                            jQuery.each(jQuery('#multimedia')[0].files, function(i, file) {
+                                form.append('file' + i, file);
+                                archivos++;
+                            });
+                            form.append('archivos', archivos);
+
+
+                            form.append('estudiante_id', estudiante_id)
+                            form.append('titulo', titulo)
+                            form.append('descripcion', descripcion)
+                            form.append('fecha', fecha)
+                            form.append('tipo_comportamiento_id', tipo_comportamiento_id)
+                            form.append('method', 'update')
+                            form.append('id', id)
+
+
+                            $('#loading-spinner').show();
+                            $.ajax({
+                                    url: '/add_comportamientos',
+                                    headers: {
+                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                                        'X-Requested-With': 'XMLHttpRequest'
+                                    },
+                                    type: 'POST',
+                                    processData: false,
+                                    contentType: false,
+                                    data: form,
+                                })
+                                .done(function() {
+                                    setTimeout(function() {
+                                        $('#loading-spinner').hide();
+                                        modal.modal("hide")
+                                    }, 600);
+                                    toastr.info("información actualizada");
+                                    Reload();
+                                })
+                                .fail(function() {
+                                    $('#loading-spinner').hide();
+                                    toastr.error("Ha ocurrido un error");
+                                })
+                                .always(function() {
+                                    $("#update").addClass("disabled");
+                                });
+                        }
+                        // modal.find('.modal-content').empty()
+                    })
+                }
+            })
+
+            $('#comportamientos-table').on('click', '[id^=Btn_delete_]', function() {
+                var id = $(this).attr('data-id')
+
+                swal({
+                        title: "¿Realmente deseas eliminar el acudiente?",
+                        text: "Ten en cuenta que eliminaras toda su información del sistema",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonClass: "btn-danger",
+                        confirmButtonText: "Si, eliminar",
+                        closeOnConfirm: false
+                    },
+                    function() {
+                        $.ajax({
+                                url: "/api/comportamientos/" + id,
+                                type: "DELETE",
+                                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                            })
+                            .done(function() {
+                                swal("Eliminado!", "Se ha eliminado el acudiente", "success");
+                                Reload();
+                            })
+                            .fail(function() {
+                                swal("Error!", "Ha ocurrido un error", "error");
+                            });
+
+                    });
+
+
+            })
+
+            $('#add-comportamientos').on('click', function() {
+                modal.modal('show')
+                Modal()
+                $("#tc").hide();
+
+                LoadEstudiantes()
+                establecer_fecha()
+
+                if (permisos.includes('tipos.comportamientos')) {
+                    LoadTiposComportamientos();
+                    $("#tc").show();
+                }
+                // $('#btn_add').on('click', function(){
+                //     alert("agregar estudiante")
+                // })
+
+                $('#save').on('click', function() {
+                    var tipo_comportamiento_id = $("#tipo_comportamiento_id").val(),
+                        estudiante_id = $("#estudiante_id").val(),
+                        titulo = $("#titulo").val(),
+                        descripcion = $("#descripcion").val(),
+                        fecha = $("#fecha").val(),
+                        // emisor = "X",
+                        multimedia = $("#multimedia")[0].files;
+
+                    if (estudiante_id == '' || titulo == '' || descripcion == '' || fecha == '') {
+                        toastr.warning("Complete todos los campos")
+                    } else {
+                        var form = new FormData();
+                        var archivos = 0;
+                        jQuery.each(jQuery('#multimedia')[0].files, function(i, file) {
+                            form.append('file' + i, file);
+                            archivos++;
+                        });
+                        form.append('archivos', archivos);
+
+
+                        form.append('estudiante_id', estudiante_id)
+                        form.append('titulo', titulo)
+                        form.append('descripcion', descripcion)
+                        form.append('fecha', fecha)
+                            // form.append('emisor', emisor)
+                        form.append('tipo_comportamiento_id', tipo_comportamiento_id)
+                            // form.append('multimedia', multimedia)
+                        $('#loading-spinner').show();
+                        $.ajax({
+                                url: '/add_comportamientos',
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                },
+                                type: 'POST',
+                                data: form,
+                                processData: false,
+                                contentType: false,
+                            })
+                            .done(function() {
+                                toastr.success("Comportamiento registrado");
+                                setTimeout(function() {
+                                    $('#loading-spinner').hide();
+                                    modal.modal("hide")
+                                }, 600);
+
+                                Reload();
+                            })
+                            .fail(function() {
+                                $('#loading-spinner').hide();
+                                toastr.error("Ha ocurrido un error");
+                            })
+                            .always(function() {
+                                $("#save").addClass("disabled");
+                            });
+                    }
+                })
+            })
+
+            $('#comportamientos-table').on('click', '[id^=Btn_file_]', function() {
+                modal.modal('show')
+                var id = $(this).attr('data-id');
+
+                const filtro = AllRegister.filter(f => f.id == id);
+
+                if (filtro.length != 0) {
+                    var json = filtro[0].multimedia.split('PSIAPP');
+                    var html = ''
+                    var a = 0;
+                    for (var i = 0; i < json.length; i++) {
+                        if (json[i] != '') {
+                            var icon = 'fa fa-file';
+
+                            var extension = json[i].split('.')[2];
+                            console.log(extension)
+
+                            switch (extension) {
+                                case 'doc':
+                                    icon = 'fa-file-word-o';
+                                    break;
+                                case 'docx':
+                                    icon = 'fa-file-word-o';
+                                    break;
+                                case 'xlsx':
+                                    icon = 'fa-file-excel-o bg-success bg-green';
+                                    break;
+                                case 'pdf':
+                                    icon = 'fa-file-pdf bg-danger bg-red';
+                                    break;
+                                case 'txt':
+                                    icon = 'fa-file-text';
+                                    break;
+                                case 'jpeg':
+                                    icon = 'fa-file-image-o';
+                                    break;
+                                case 'png':
+                                    icon = 'fa-file-image-o';
+                                    break;
+                                case 'jpg':
+                                    icon = 'fa-file-image-o';
+                                    break;
+                                case 'mp3':
+                                    icon = 'fa-file-audio-o bg-secondary';
+                                    break;
+                                case 'mp4':
+                                    icon = 'fa-file-movie-o bg-secondary';
+                                    break;
+                            }
+                            html += `
                     <div class="col-md-3">
                         <div class="box box-default">
                             <div class="box-header with-border">
@@ -376,16 +374,16 @@ $(document).ready(function () {
                         
                     </div>`
 
-                    a++;
-                }
+                            a++;
+                        }
 
-            }
-
-
+                    }
 
 
 
-            modal.find('.modal-content').empty().append(`
+
+
+                    modal.find('.modal-content').empty().append(`
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Archivos cargados</h4>
@@ -397,178 +395,178 @@ $(document).ready(function () {
                     
                 </div>
             `)
-        }
-
-    });
-
-    $('#make-reporte').on('click', function () {
-
-        modal.modal("show");
-        ModalReporte();
-
-        //Reporte general
-        $('#btn_reporte_general').on('click', function () {
-            modal.modal("hide");
-
-            modal2.modal("show");
-            ModalReporteGeneral();
-            $('#back').on('click', function () {
-                modal2.modal("hide");
-                modal.modal("show");
-            });
-
-
-            //** ****************************DateRangepicker**************************** */
-            // Se carga de dateRangePicker
-            var start = moment().subtract(29, 'days');
-            var end = moment();
-
-            var fechas;
-
-            function cb(start, end) {
-                $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-                fechas = {
-                    fecha_i: start.format('YYYY-MM-DD'),
-                    fecha_f: end.format('YYYY-MM-DD')
-                };
-                console.log(fechas);
-            }
-
-
-            $('#reportrange').daterangepicker({
-                startDate: start,
-                endDate: end,
-                ranges: {
-                    'Hoy': [moment(), moment()],
-                    'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                    'Últimos 7 dias': [moment().subtract(6, 'days'), moment()],
-                    'Últimos 30 dias': [moment().subtract(29, 'days'), moment()],
-                    'Este mes': [moment().startOf('month'), moment().endOf('month')],
-                    'Ultimo mes': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-                },
-                "locale": {
-                    "separator": " - ",
-                    "applyLabel": "Aplicar",
-                    "cancelLabel": "Cancelar",
-                    "fromLabel": "DE",
-                    "toLabel": "HASTA",
-                    "customRangeLabel": "Custom",
-                    "daysOfWeek": [
-                        "Dom",
-                        "Lun",
-                        "Mar",
-                        "Mie",
-                        "Jue",
-                        "Vie",
-                        "Sáb"
-                    ],
-                    "monthNames": [
-                        "Enero",
-                        "Febrero",
-                        "Marzo",
-                        "Abril",
-                        "Mayo",
-                        "Junio",
-                        "Julio",
-                        "Agosto",
-                        "Septiembre",
-                        "Octubre",
-                        "Noviembre",
-                        "Diciembre"
-                    ],
-                    "firstDay": 1
                 }
-            }, cb);
 
-            cb(start, end);
-            //** ********************************************************************** */
-
-            /** Acion al generar el pdf */
-            $('#generar').on('click', function () {
-                // https://quickchart.io/chart?bkg=white&c={type:%27bar%27,data:{labels:[2012,2013,2014,2015,2016],datasets:[{label:%27Users%27,data:[120,60,50,180,120]}]}}
-                openWindowWithPostRequest('/reporte_general', fechas)
             });
 
+            $('#make-reporte').on('click', function() {
 
-        });
-        // ************************
-
-        //Reporte Avanzado
-        $('#btn_reporte_avanzado').on('click', function () {
-            modal.modal("hide");
-            modal2.modal("show");
-            ModalReporteAvanzado();
-            $('#back').on('click', function () {
-                modal2.modal("hide");
                 modal.modal("show");
-            });
+                ModalReporte();
 
-            //** ****************************DateRangepicker**************************** */
-            var start = moment().subtract(29, 'days');
-            var end = moment();
+                //Reporte general
+                $('#btn_reporte_general').on('click', function() {
+                    modal.modal("hide");
 
-            var fechas = [];
-
-            function cb(start, end) {
-                $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-                fechas = {
-                    fecha_i: start.format('YYYY-MM-DD'),
-                    fecha_f: end.format('YYYY-MM-DD')
-                };
-                console.log(fechas);
-            }
-
-            $('#reportrange').daterangepicker({
-                startDate: start,
-                endDate: end,
-                ranges: {
-                    'Hoy': [moment(), moment()],
-                    'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                    'Últimos 7 dias': [moment().subtract(6, 'days'), moment()],
-                    'Últimos 30 dias': [moment().subtract(29, 'days'), moment()],
-                    'Este mes': [moment().startOf('month'), moment().endOf('month')],
-                    'Ultimo mes': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-                },
-                "locale": {
-                    "separator": " - ",
-                    "applyLabel": "Aplicar",
-                    "cancelLabel": "Cancelar",
-                    "fromLabel": "DE",
-                    "toLabel": "HASTA",
-                    "customRangeLabel": "Custom",
-                    "daysOfWeek": [
-                        "Dom",
-                        "Lun",
-                        "Mar",
-                        "Mie",
-                        "Jue",
-                        "Vie",
-                        "Sáb"
-                    ],
-                    "monthNames": [
-                        "Enero",
-                        "Febrero",
-                        "Marzo",
-                        "Abril",
-                        "Mayo",
-                        "Junio",
-                        "Julio",
-                        "Agosto",
-                        "Septiembre",
-                        "Octubre",
-                        "Noviembre",
-                        "Diciembre"
-                    ],
-                    "firstDay": 1
-                }
-            }, cb);
-
-            cb(start, end);
-            //** ********************************************************************** */
+                    modal2.modal("show");
+                    ModalReporteGeneral();
+                    $('#back').on('click', function() {
+                        modal2.modal("hide");
+                        modal.modal("show");
+                    });
 
 
-            //** ****************************Slider**************************** */
-            $('#range').html(`
+                    //** ****************************DateRangepicker**************************** */
+                    // Se carga de dateRangePicker
+                    var start = moment().subtract(29, 'days');
+                    var end = moment();
+
+                    var fechas;
+
+                    function cb(start, end) {
+                        $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+                        fechas = {
+                            fecha_i: start.format('YYYY-MM-DD'),
+                            fecha_f: end.format('YYYY-MM-DD')
+                        };
+                        console.log(fechas);
+                    }
+
+
+                    $('#reportrange').daterangepicker({
+                        startDate: start,
+                        endDate: end,
+                        ranges: {
+                            'Hoy': [moment(), moment()],
+                            'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                            'Últimos 7 dias': [moment().subtract(6, 'days'), moment()],
+                            'Últimos 30 dias': [moment().subtract(29, 'days'), moment()],
+                            'Este mes': [moment().startOf('month'), moment().endOf('month')],
+                            'Ultimo mes': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                        },
+                        "locale": {
+                            "separator": " - ",
+                            "applyLabel": "Aplicar",
+                            "cancelLabel": "Cancelar",
+                            "fromLabel": "DE",
+                            "toLabel": "HASTA",
+                            "customRangeLabel": "Custom",
+                            "daysOfWeek": [
+                                "Dom",
+                                "Lun",
+                                "Mar",
+                                "Mie",
+                                "Jue",
+                                "Vie",
+                                "Sáb"
+                            ],
+                            "monthNames": [
+                                "Enero",
+                                "Febrero",
+                                "Marzo",
+                                "Abril",
+                                "Mayo",
+                                "Junio",
+                                "Julio",
+                                "Agosto",
+                                "Septiembre",
+                                "Octubre",
+                                "Noviembre",
+                                "Diciembre"
+                            ],
+                            "firstDay": 1
+                        }
+                    }, cb);
+
+                    cb(start, end);
+                    //** ********************************************************************** */
+
+                    /** Acion al generar el pdf */
+                    $('#generar').on('click', function() {
+                        // https://quickchart.io/chart?bkg=white&c={type:%27bar%27,data:{labels:[2012,2013,2014,2015,2016],datasets:[{label:%27Users%27,data:[120,60,50,180,120]}]}}
+                        openWindowWithPostRequest('/reporte_general', fechas)
+                    });
+
+
+                });
+                // ************************
+
+                //Reporte Avanzado
+                $('#btn_reporte_avanzado').on('click', function() {
+                    modal.modal("hide");
+                    modal2.modal("show");
+                    ModalReporteAvanzado();
+                    $('#back').on('click', function() {
+                        modal2.modal("hide");
+                        modal.modal("show");
+                    });
+
+                    //** ****************************DateRangepicker**************************** */
+                    var start = moment().subtract(29, 'days');
+                    var end = moment();
+
+                    var fechas = [];
+
+                    function cb(start, end) {
+                        $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+                        fechas = {
+                            fecha_i: start.format('YYYY-MM-DD'),
+                            fecha_f: end.format('YYYY-MM-DD')
+                        };
+                        console.log(fechas);
+                    }
+
+                    $('#reportrange').daterangepicker({
+                        startDate: start,
+                        endDate: end,
+                        ranges: {
+                            'Hoy': [moment(), moment()],
+                            'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                            'Últimos 7 dias': [moment().subtract(6, 'days'), moment()],
+                            'Últimos 30 dias': [moment().subtract(29, 'days'), moment()],
+                            'Este mes': [moment().startOf('month'), moment().endOf('month')],
+                            'Ultimo mes': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                        },
+                        "locale": {
+                            "separator": " - ",
+                            "applyLabel": "Aplicar",
+                            "cancelLabel": "Cancelar",
+                            "fromLabel": "DE",
+                            "toLabel": "HASTA",
+                            "customRangeLabel": "Custom",
+                            "daysOfWeek": [
+                                "Dom",
+                                "Lun",
+                                "Mar",
+                                "Mie",
+                                "Jue",
+                                "Vie",
+                                "Sáb"
+                            ],
+                            "monthNames": [
+                                "Enero",
+                                "Febrero",
+                                "Marzo",
+                                "Abril",
+                                "Mayo",
+                                "Junio",
+                                "Julio",
+                                "Agosto",
+                                "Septiembre",
+                                "Octubre",
+                                "Noviembre",
+                                "Diciembre"
+                            ],
+                            "firstDay": 1
+                        }
+                    }, cb);
+
+                    cb(start, end);
+                    //** ********************************************************************** */
+
+
+                    //** ****************************Slider**************************** */
+                    $('#range').html(`
                 <input id="mySlider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="50" data-slider-step="1" data-slider-value="[5,20]"/>
                 <span style="
                 margin-left: 10px;" id="mySliderCurrentSliderValLabel">Intervalo: 
@@ -576,433 +574,433 @@ $(document).ready(function () {
                 </span>
             `);
 
-            $("#mySlider").slider();
+                    $("#mySlider").slider();
 
-            $("#mySlider").on("slide", function (slideEvt) {
-                $("#mySliderVal").text(slideEvt.value);
-            });
-            //** ********************************************************************** */
+                    $("#mySlider").on("slide", function(slideEvt) {
+                        $("#mySliderVal").text(slideEvt.value);
+                    });
+                    //** ********************************************************************** */
 
 
-            //** ********************************************************************** */
-            $("#check_conducta").append(`
+                    //** ********************************************************************** */
+                    $("#check_conducta").append(`
                         <div class="checkbox">
                             <label>
                                 <input id="tc_all" value="all" type="checkbox">Selecionar todo
                             </label>
                         </div>
                     `);
-            LoadTiposComportamientosCheck();
+                    LoadTiposComportamientosCheck();
 
-            $('#tc_all').on('click', function () {
-                var checked = this.checked;
-                $('input[name="conducta"]:checkbox').each(function () {
-                    this.checked = checked;
-                });
-            });
+                    $('#tc_all').on('click', function() {
+                        var checked = this.checked;
+                        $('input[name="conducta"]:checkbox').each(function() {
+                            this.checked = checked;
+                        });
+                    });
 
-            $('#i_genero').on('click', function () {
-                var checked = this.checked;
-                if (checked) {
-                    $('#check_genero').show();
-                    $('input[name="genero"]:checkbox').prop('checked', true);
-                } else {
-                    $('#check_genero').hide();
-                    $('input[name="genero"]:checkbox').prop('checked', false);
-                }
-            });
-
-            var status = false;
-            $('#i_grupo').on('click', function () {
-                var checked = this.checked;
-                if (!status) {
-                    LoadGrupos();
-                    status = true;
-                }
-                if (checked) {
-                    $('#check_grupo').show();
-                    $("#all_grupos").on('click', function () {
+                    $('#i_genero').on('click', function() {
                         var checked = this.checked;
                         if (checked) {
-                            $("#grupo_id option").prop('selected', true);
-                            $("#grupo_id").trigger('change');
+                            $('#check_genero').show();
+                            $('input[name="genero"]:checkbox').prop('checked', true);
                         } else {
+                            $('#check_genero').hide();
+                            $('input[name="genero"]:checkbox').prop('checked', false);
+                        }
+                    });
+
+                    var status = false;
+                    $('#i_grupo').on('click', function() {
+                        var checked = this.checked;
+                        if (!status) {
+                            LoadGrupos();
+                            status = true;
+                        }
+                        if (checked) {
+                            $('#check_grupo').show();
+                            $("#all_grupos").on('click', function() {
+                                var checked = this.checked;
+                                if (checked) {
+                                    $("#grupo_id option").prop('selected', true);
+                                    $("#grupo_id").trigger('change');
+                                } else {
+                                    $("#grupo_id option").prop('selected', false);
+                                    $("#grupo_id").trigger('change');
+                                }
+                            });
+                        } else {
+                            $('#check_grupo').hide();
+                            $("#all_grupos").prop('checked', false);
                             $("#grupo_id option").prop('selected', false);
                             $("#grupo_id").trigger('change');
                         }
                     });
-                } else {
-                    $('#check_grupo').hide();
-                    $("#all_grupos").prop('checked', false);
-                    $("#grupo_id option").prop('selected', false);
-                    $("#grupo_id").trigger('change');
-                }
-            });
 
 
-            $('#i_edad').on('click', function () {
-                var checked = this.checked;
-                if (checked) {
-                    $('#check_edad').show();
-                } else {
-                    $('#check_edad').hide();
-                }
-            });
-            //** ********************************************************************** */
-
-            $('#generar').on('click', function () {
-                var ArrayConducta = [];
-                var ArrayGenero = [];
-                var ArrayEdad = [];
-                var ArrayGrupo = [];
-
-                $('input[name="conducta"]:checkbox:checked').each(
-                    function () {
-                        if ($(this).val() != 'on') {
-                            ArrayConducta.push($(this).val());
+                    $('#i_edad').on('click', function() {
+                        var checked = this.checked;
+                        if (checked) {
+                            $('#check_edad').show();
+                        } else {
+                            $('#check_edad').hide();
                         }
-                    }
-                );
-                $('input[name="genero"]:checkbox:checked').each(
-                    function () {
-                        if ($(this).val() != 'on') {
-                            ArrayGenero.push($(this).val());
+                    });
+                    //** ********************************************************************** */
+
+                    $('#generar').on('click', function() {
+                        var ArrayConducta = [];
+                        var ArrayGenero = [];
+                        var ArrayEdad = [];
+                        var ArrayGrupo = [];
+
+                        $('input[name="conducta"]:checkbox:checked').each(
+                            function() {
+                                if ($(this).val() != 'on') {
+                                    ArrayConducta.push($(this).val());
+                                }
+                            }
+                        );
+                        $('input[name="genero"]:checkbox:checked').each(
+                            function() {
+                                if ($(this).val() != 'on') {
+                                    ArrayGenero.push($(this).val());
+                                }
+                            }
+                        );
+
+                        // var rangoEdad = $('#mySlider').val();
+                        if ($('#i_edad').prop('checked') == true) {
+                            ArrayEdad = $('#mySlider').val().split(",");
                         }
-                    }
-                );
+                        if ($('#i_grupo').prop('checked') == true) {
+                            ArrayGrupo = $('#grupo_id').val();
+                        }
 
-                // var rangoEdad = $('#mySlider').val();
-                if ($('#i_edad').prop('checked') == true) {
-                    ArrayEdad = $('#mySlider').val().split(",");
-                }
-                if ($('#i_grupo').prop('checked') == true) {
-                    ArrayGrupo = $('#grupo_id').val();
-                }
-
-                let datos = {
-                    fecha_i: fechas.fecha_i,
-                    fecha_f: fechas.fecha_f,
-                    conductas_id: ArrayConducta,
-                    generos: ArrayGenero,
-                    edades: ArrayEdad != null ? ArrayEdad : null,
-                    grupos_id: ArrayGrupo
-                };
-                openWindowWithPostRequest('/reporte_avanzado', datos);
-            });
-        });
-        //** ********************************************************************** */
-
-    });
-
-    $('#import-data').on('click', function () {
-        modal.modal("show");
-        ModalImport();
-
-        $('#save').on('click', function () {
-            var form = new FormData();
-            var archivos = 0;
-            jQuery.each(jQuery('#multimedia')[0].files, function (i, file) {
-                form.append('file' + i, file);
-                archivos++;
-            });
-            form.append('archivos', archivos);
-
-            $.ajax({
-                url: "/import_xlsx",
-                type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: form,
-                processData: false,
-                contentType: false,
-            })
-                .done(function (response) {
-                    // toastr.success("Comportamiento registrado");
-                    setTimeout(function () { modal.modal("hide") }, 600);
-
-                    var arr = response.split('XLSX');
-                    // console.log(arr[1]);
-
-
-                    var url = arr[1];
-                    var oReq = new XMLHttpRequest();
-                    oReq.open("GET", url, true);
-                    oReq.responseType = "arraybuffer";
-
-                    oReq.onload = function (e) {
-                        var arraybuffer = oReq.response;
-
-                        /* convert data to binary string */
-                        var data = new Uint8Array(arraybuffer);
-                        var arr = new Array();
-                        for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
-                        var bstr = arr.join("");
-
-                        /* Call XLSX */
-                        var workbook = XLSX.read(bstr, { type: "binary", });
-
-                        /* DO SOMETHING WITH workbook HERE */
-                        var first_sheet_name = workbook.SheetNames[0];
-                        /* Get worksheet */
-                        var worksheet = workbook.Sheets[first_sheet_name];
-                        var data = XLSX.utils.sheet_to_json(worksheet, { raw: false });
-                        // const myString = JSON.stringify(data);
-
-                        console.log(data);
-                        saveXLXS(data);
-
-                    }
-
-                    oReq.send();
-                })
-                .fail(function () {
-                    toastr.error("Ha ocurrido un error");
-                })
-                .always(function () {
-                    $("#save").addClass("disabled");
+                        let datos = {
+                            fecha_i: fechas.fecha_i,
+                            fecha_f: fechas.fecha_f,
+                            conductas_id: ArrayConducta,
+                            generos: ArrayGenero,
+                            edades: ArrayEdad != null ? ArrayEdad : null,
+                            grupos_id: ArrayGrupo
+                        };
+                        openWindowWithPostRequest('/reporte_avanzado', datos);
+                    });
                 });
-        });
-    });
+                //** ********************************************************************** */
 
-    function saveXLXS(params) {
-        var data = JSON.stringify(params);
-        console.log(data);
-        $.ajax({
-            url: "/guardar_xlsx",
-            type: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            data: { datos: data },
-        })
-            .done(function () {
-                toastr.success("Comportamiento guardado");
-            })
-            .fail(function () {
-                toastr.error("Ha ocurrido un error");
             });
-    }
+
+            $('#import-data').on('click', function() {
+                modal.modal("show");
+                ModalImport();
+
+                $('#save').on('click', function() {
+                    var form = new FormData();
+                    var archivos = 0;
+                    jQuery.each(jQuery('#multimedia')[0].files, function(i, file) {
+                        form.append('file' + i, file);
+                        archivos++;
+                    });
+                    form.append('archivos', archivos);
+
+                    $.ajax({
+                            url: "/import_xlsx",
+                            type: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            data: form,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(response) {
+                            // toastr.success("Comportamiento registrado");
+                            setTimeout(function() { modal.modal("hide") }, 600);
+
+                            var arr = response.split('XLSX');
+                            // console.log(arr[1]);
 
 
-    function openWindowWithPostRequest(url, params) {
-        var winName = 'reporte';
-        var winURL = url;
-        // var windowoption = 'resizable=yes,height=1000,width=800,location=0,menubar=0,scrollbars=1';
+                            var url = arr[1];
+                            var oReq = new XMLHttpRequest();
+                            oReq.open("GET", url, true);
+                            oReq.responseType = "arraybuffer";
 
-        var form = document.createElement("form");
-        form.setAttribute("method", "post");
-        form.setAttribute("action", winURL);
-        form.setAttribute("target", winName);
-        for (var i in params) {
-            if (params.hasOwnProperty(i)) {
-                var input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = i;
-                input.value = params[i];
-                form.appendChild(input);
+                            oReq.onload = function(e) {
+                                var arraybuffer = oReq.response;
+
+                                /* convert data to binary string */
+                                var data = new Uint8Array(arraybuffer);
+                                var arr = new Array();
+                                for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+                                var bstr = arr.join("");
+
+                                /* Call XLSX */
+                                var workbook = XLSX.read(bstr, { type: "binary", });
+
+                                /* DO SOMETHING WITH workbook HERE */
+                                var first_sheet_name = workbook.SheetNames[0];
+                                /* Get worksheet */
+                                var worksheet = workbook.Sheets[first_sheet_name];
+                                var data = XLSX.utils.sheet_to_json(worksheet, { raw: false });
+                                // const myString = JSON.stringify(data);
+
+                                console.log(data);
+                                saveXLXS(data);
+
+                            }
+
+                            oReq.send();
+                        })
+                        .fail(function() {
+                            toastr.error("Ha ocurrido un error");
+                        })
+                        .always(function() {
+                            $("#save").addClass("disabled");
+                        });
+                });
+            });
+
+            function saveXLXS(params) {
+                var data = JSON.stringify(params);
+                console.log(data);
+                $.ajax({
+                        url: "/guardar_xlsx",
+                        type: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        data: { datos: data },
+                    })
+                    .done(function() {
+                        toastr.success("Comportamiento guardado");
+                    })
+                    .fail(function() {
+                        toastr.error("Ha ocurrido un error");
+                    });
             }
-        }
 
-        let csrfField = document.createElement('input');
-        csrfField.setAttribute('type', 'hidden');
-        csrfField.setAttribute('name', '_token');
-        csrfField.setAttribute('value', $('meta[name="csrf-token"]').attr('content'));
-        form.appendChild(csrfField);
 
-        document.body.appendChild(form);
-        window.open('', winName);
-        form.target = winName;
-        form.submit();
-        document.body.removeChild(form);
-    }
+            function openWindowWithPostRequest(url, params) {
+                var winName = 'reporte';
+                var winURL = url;
+                // var windowoption = 'resizable=yes,height=1000,width=800,location=0,menubar=0,scrollbars=1';
 
-    function LoadGrupos() {
-        $("#grupo_id").select2({
-            placeholder: 'Seleccione el grupo',
-            allowClear: true,
-            dropdownParent: modal2,
-            dropdownAutoWidth: false,
-        });
-
-        $.ajax({
-            url: '/api/grupos',
-            type: "GET",
-            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-            dataType: "JSON",
-        })
-            .done(function (response) {
-                for (var i in response.data) {
-                    $("#grupo_id").append(`<option value='${response.data[i].id}'>${response.data[i].grado} - ${response.data[i].curso}</option>`);
-                }
-            })
-            .fail(function () {
-                console.log("error");
-            });
-    }
-
-    function LoadEstudiantes(id) {
-        $("#estudiante_id").select2({
-            placeholder: 'Seleccione el estudiante',
-            allowClear: true,
-            dropdownParent: modal,
-            width: 'resolve'
-        });
-
-        $.ajax({
-            url: '/getEstudiantes',
-            type: "GET",
-            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-            dataType: "JSON",
-        })
-            .done(function (response) {
-                if (response.estudiantes.length != 0) {
-                    // if (id != null) {
-                    //     for (var i = 0; i < response.estudiantes.length; i++) {
-                    //         if (response.estudiantes[i].id == id) {
-                    //             $("#estudiante_id").append(`<option value='${response.estudiantes[i].id}'>${response.estudiantes[i].nombres} ${response.estudiantes[i].apellidos} </option>`);
-                    //         }
-                    //     }
-                    // } else {
-                    //     for (var i = 0; i < response.estudiantes.length; i++) {
-                    //         $("#estudiante_id").append(`<option value='${response.estudiantes[i].id}'>${response.estudiantes[i].nombres} ${response.estudiantes[i].apellidos} </option>`);
-                    //     }
-                    // }
-                    for (var i = 0; i < response.estudiantes.length; i++) {
-                        $("#estudiante_id").append(`<option value='${response.estudiantes[i].id}'>${response.estudiantes[i].nombres} ${response.estudiantes[i].apellidos} </option>`);
+                var form = document.createElement("form");
+                form.setAttribute("method", "post");
+                form.setAttribute("action", winURL);
+                form.setAttribute("target", winName);
+                for (var i in params) {
+                    if (params.hasOwnProperty(i)) {
+                        var input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = i;
+                        input.value = params[i];
+                        form.appendChild(input);
                     }
-                    $("#estudiante_id").val(id);
-                    // $("#estudiante_id").trigger('change');
                 }
 
+                let csrfField = document.createElement('input');
+                csrfField.setAttribute('type', 'hidden');
+                csrfField.setAttribute('name', '_token');
+                csrfField.setAttribute('value', $('meta[name="csrf-token"]').attr('content'));
+                form.appendChild(csrfField);
 
-            })
-            .fail(function () {
-                console.log("error");
-            })
-    }
+                document.body.appendChild(form);
+                window.open('', winName);
+                form.target = winName;
+                form.submit();
+                document.body.removeChild(form);
+            }
 
-    function establecer_fecha() {
-        var hoy = new Date();
-        hoy.setMinutes(hoy.getMinutes() - hoy.getTimezoneOffset());
-        hoy = hoy.toJSON().slice(0, 10);
-        $("#fecha").val(hoy);
-    }
+            function LoadGrupos() {
+                $("#grupo_id").select2({
+                    placeholder: 'Seleccione el grupo',
+                    allowClear: true,
+                    dropdownParent: modal2,
+                    dropdownAutoWidth: false,
+                });
 
-    function LoadTiposComportamientos(id, modal_parent) {
-        $("#tipo_comportamiento_id").select2({
-            placeholder: 'Seleccione el tipo comportamiento',
-            allowClear: true,
-            dropdownParent: modal_parent,
-            width: 'resolve'
-        });
+                $.ajax({
+                        url: '/api/grupos',
+                        type: "GET",
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                        dataType: "JSON",
+                    })
+                    .done(function(response) {
+                        for (var i in response.data) {
+                            $("#grupo_id").append(`<option value='${response.data[i].id}'>${response.data[i].grado} - ${response.data[i].curso}</option>`);
+                        }
+                    })
+                    .fail(function() {
+                        console.log("error");
+                    });
+            }
 
-        $.ajax({
-            url: '/api/tipo_comportamientos',
-        })
-            .done(function (response) {
-                for (var i in response.data) {
-                    $("#tipo_comportamiento_id").append(`<option value='${response.data[i].id}'>${response.data[i].titulo}</option>`)
-                }
-                $("#tipo_comportamiento_id").val(id);
-            })
-            .fail(function () {
-                console.log("error");
-            })
-    }
+            function LoadEstudiantes(id) {
+                $("#estudiante_id").select2({
+                    placeholder: 'Seleccione el estudiante',
+                    allowClear: true,
+                    dropdownParent: modal,
+                    width: 'resolve'
+                });
 
-    function LoadTiposComportamientosCheck() {
-        $.ajax({
-            url: '/api/tipo_comportamientos',
-        })
-            .done(function (response) {
-                
-                for (var i in response.data) {
-                    $("#check_conducta").append(`
+                $.ajax({
+                        url: '/getEstudiantes',
+                        type: "GET",
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                        dataType: "JSON",
+                    })
+                    .done(function(response) {
+                        if (response.estudiantes.length != 0) {
+                            // if (id != null) {
+                            //     for (var i = 0; i < response.estudiantes.length; i++) {
+                            //         if (response.estudiantes[i].id == id) {
+                            //             $("#estudiante_id").append(`<option value='${response.estudiantes[i].id}'>${response.estudiantes[i].nombres} ${response.estudiantes[i].apellidos} </option>`);
+                            //         }
+                            //     }
+                            // } else {
+                            //     for (var i = 0; i < response.estudiantes.length; i++) {
+                            //         $("#estudiante_id").append(`<option value='${response.estudiantes[i].id}'>${response.estudiantes[i].nombres} ${response.estudiantes[i].apellidos} </option>`);
+                            //     }
+                            // }
+                            for (var i = 0; i < response.estudiantes.length; i++) {
+                                $("#estudiante_id").append(`<option value='${response.estudiantes[i].id}'>${response.estudiantes[i].nombres} ${response.estudiantes[i].apellidos} </option>`);
+                            }
+                            $("#estudiante_id").val(id);
+                            // $("#estudiante_id").trigger('change');
+                        }
+
+
+                    })
+                    .fail(function() {
+                        console.log("error");
+                    })
+            }
+
+            function establecer_fecha() {
+                var hoy = new Date();
+                hoy.setMinutes(hoy.getMinutes() - hoy.getTimezoneOffset());
+                hoy = hoy.toJSON().slice(0, 10);
+                $("#fecha").val(hoy);
+            }
+
+            function LoadTiposComportamientos(id, modal_parent) {
+                $("#tipo_comportamiento_id").select2({
+                    placeholder: 'Seleccione el tipo comportamiento',
+                    allowClear: true,
+                    dropdownParent: modal_parent,
+                    width: 'resolve'
+                });
+
+                $.ajax({
+                        url: '/api/tipo_comportamientos',
+                    })
+                    .done(function(response) {
+                        for (var i in response.data) {
+                            $("#tipo_comportamiento_id").append(`<option value='${response.data[i].id}'>${response.data[i].titulo}</option>`)
+                        }
+                        $("#tipo_comportamiento_id").val(id);
+                    })
+                    .fail(function() {
+                        console.log("error");
+                    })
+            }
+
+            function LoadTiposComportamientosCheck() {
+                $.ajax({
+                        url: '/api/tipo_comportamientos',
+                    })
+                    .done(function(response) {
+
+                        for (var i in response.data) {
+                            $("#check_conducta").append(`
                         <div class="checkbox">
                             <label>
                                 <input id="tc_${i}" value="${response.data[i].id}" name="conducta" type="checkbox">${response.data[i].titulo}
                             </label>
                         </div>
                     `)
-                }
-            })
-            .fail(function () {
-                console.log("error");
-            })
-    }
+                        }
+                    })
+                    .fail(function() {
+                        console.log("error");
+                    })
+            }
 
-    function LoadComportamientos(id) {
-        $("#comportamiento_id").select2({
-            placeholder: 'Seleccione el comportamiento',
-            allowClear: true,
-            dropdownParent: modal,
-            width: 'resolve'
-        });
+            function LoadComportamientos(id) {
+                $("#comportamiento_id").select2({
+                    placeholder: 'Seleccione el comportamiento',
+                    allowClear: true,
+                    dropdownParent: modal,
+                    width: 'resolve'
+                });
 
-        $.ajax({
-            url: '/api/comportamientos',
-        })
-            .done(function (response) {
-                for (var i in response.data) {
-                    if (response.data[i].id == id) {
-                        $("#comportamiento_id").append(`<option value='${response.data[i].id}'>${response.data[i].titulo} | ${response.data[i].nombres}  ${response.data[i].apellidos} | CMP${response.data[i].id} </option>`)
-                    }
-                }
-
-            })
-            .fail(function () {
-                console.log("error");
-            })
-    }
-
-    function Reload() {
-        $.ajax({
-            url: "/getComportamientos",
-            type: "GET",
-            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-            dataType: "JSON",
-        })
-
-            .done(function (response) {
-                if (response.length != 0) {
-                    AllRegister = response.comportamientos;
-                    permisos = response.permisos;
-                    rol = response.rol;
-                    user = response.user;
-
-                    if (user != null) {
-
-                        var my_data = [];
-
-                        for (let index = 0; index < AllRegister.length; index++) {
-                            // const element = AllRegister[index];
-                            if (JSON.parse(AllRegister[index].emis0r).email == user.email) {
-
-                                my_data.push(AllRegister[index]);
+                $.ajax({
+                        url: '/api/comportamientos',
+                    })
+                    .done(function(response) {
+                        for (var i in response.data) {
+                            if (response.data[i].id == id) {
+                                $("#comportamiento_id").append(`<option value='${response.data[i].id}'>${response.data[i].titulo} | ${response.data[i].nombres}  ${response.data[i].apellidos} | CMP${response.data[i].id} </option>`)
                             }
                         }
-                        DataTable(my_data);
+
+                    })
+                    .fail(function() {
+                        console.log("error");
+                    })
+            }
+
+            function Reload() {
+                $.ajax({
+                    url: "/getComportamientos",
+                    type: "GET",
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    dataType: "JSON",
+                })
+
+                .done(function(response) {
+                    if (response.length != 0) {
+                        AllRegister = response.comportamientos;
+                        permisos = response.permisos;
+                        rol = response.rol;
+                        user = response.user;
+
+                        if (user != null) {
+
+                            var my_data = [];
+
+                            for (let index = 0; index < AllRegister.length; index++) {
+                                // const element = AllRegister[index];
+                                if (JSON.parse(AllRegister[index].emis0r).email == user.email) {
+
+                                    my_data.push(AllRegister[index]);
+                                }
+                            }
+                            DataTable(my_data);
+                        } else {
+                            DataTable(response.comportamientos);
+                        }
+                        console.log(AllRegister);
                     } else {
-                        DataTable(response.comportamientos);
+                        $('#comportamientos-table').dataTable().fnClearTable();
+                        $('#comportamientos-table').dataTable().fnDestroy();
+                        $('#comportamientos-table thead').empty()
                     }
-                    console.log(AllRegister);
-                } else {
-                    $('#comportamientos-table').dataTable().fnClearTable();
-                    $('#comportamientos-table').dataTable().fnDestroy();
-                    $('#comportamientos-table thead').empty()
-                }
-            })
+                })
 
-            .fail(function () {
-                console.log("error");
-            });
-    }
+                .fail(function() {
+                    console.log("error");
+                });
+            }
 
-    function ModalReporteAvanzado() {
-        $('#modal2_tam').removeClass('modal-lg');
-        $('#modal2_tam').addClass('modal-md');
-        modal2.find('.modal-content').empty().append(`
+            function ModalReporteAvanzado() {
+                $('#modal2_tam').removeClass('modal-lg');
+                $('#modal2_tam').addClass('modal-md');
+                modal2.find('.modal-content').empty().append(`
         <div class="modal-header">
             <a class="btn pull-left" id="back"><i class="fas fa-arrow-left"></i></a>
             <h4 class="modal-title">Crear Reportes</h4>
@@ -1081,12 +1079,12 @@ $(document).ready(function () {
             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
         </div>
     `);
-    }
+            }
 
-    function ModalReporteGeneral() {
-        $('#modal2_tam').removeClass('modal-lg');
-        $('#modal2_tam').addClass('modal-md');
-        modal2.find('.modal-content').empty().append(`
+            function ModalReporteGeneral() {
+                $('#modal2_tam').removeClass('modal-lg');
+                $('#modal2_tam').addClass('modal-md');
+                modal2.find('.modal-content').empty().append(`
         <div class="modal-header">
             <a class="btn pull-left" id="back"><i class="fas fa-arrow-left"></i></a>
             <h4 class="modal-title">Crear Reportes</h4>
@@ -1114,12 +1112,12 @@ $(document).ready(function () {
             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
         </div>
     `);
-    }
+            }
 
-    function ModalReporte() {
-        $('#modal1_tam').removeClass('modal-lg');
-        $('#modal1_tam').addClass('modal-md');
-        modal.find('.modal-content').empty().append(/* html */`
+            function ModalReporte() {
+                $('#modal1_tam').removeClass('modal-lg');
+                $('#modal1_tam').addClass('modal-md');
+                modal.find('.modal-content').empty().append( /* html */ `
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Seleccione el tipo de  Reporte</h4>
@@ -1137,12 +1135,12 @@ $(document).ready(function () {
         </div>
     `);
 
-    }
+            }
 
-    function ModalImport() {
-        $('#modal1_tam').removeClass('modal-lg');
-        $('#modal1_tam').addClass('modal-md');
-        modal.find('.modal-content').empty().append(/* html */`
+            function ModalImport() {
+                $('#modal1_tam').removeClass('modal-lg');
+                $('#modal1_tam').addClass('modal-md');
+                modal.find('.modal-content').empty().append( /* html */ `
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Importar datos</h4>
@@ -1168,12 +1166,12 @@ $(document).ready(function () {
         </div>
     `);
 
-    }
+            }
 
-    function Modal() {
-        $('#modal1_tam').removeClass('modal-md');
-        $('#modal1_tam').addClass('modal-lg');
-        modal.find('.modal-content').empty().append(/* html */`
+            function Modal() {
+                $('#modal1_tam').removeClass('modal-md');
+                $('#modal1_tam').addClass('modal-lg');
+                modal.find('.modal-content').empty().append( /* html */ `
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Formulario de Comportamientos</h4>
@@ -1252,13 +1250,13 @@ $(document).ready(function () {
             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
         </div>
     `)
-        $("#timepicker").datetimepicker({
-            format: "YYYY-MM-DD"
-        });
-    }
+                $("#timepicker").datetimepicker({
+                    format: "YYYY-MM-DD"
+                });
+            }
 
-    function LoadModalTC(comp) {
-        modal2.find('.modal-content').empty().append(`
+            function LoadModalTC(comp) {
+                modal2.find('.modal-content').empty().append(`
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Tipo de comportamiento</h4>
@@ -1286,10 +1284,10 @@ $(document).ready(function () {
             <button type="button" class="btn btn-default" id="omitir" data-dismiss="modal">Omitir</button>
         </div>
     `)
-    }
+            }
 
-    function ModalActividades() {
-        modal.find('.modal-content').empty().append(`
+            function ModalActividades() {
+                modal.find('.modal-content').empty().append(`
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Formulario de Actividades</h4>
@@ -1361,220 +1359,220 @@ $(document).ready(function () {
             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
         </div>
     `)
-        $("#fecha").datetimepicker({
-            format: "YYYY-MM-DD"
-        });
-    }
+                $("#fecha").datetimepicker({
+                    format: "YYYY-MM-DD"
+                });
+            }
 
-    function DataTableReport(response) {
+            function DataTableReport(response) {
 
-        if ($.fn.DataTable.isDataTable('#reportes-table')) {
-            $('#reportes-table').dataTable().fnClearTable();
-            $('#reportes-table').dataTable().fnDestroy();
-            $('#reportes-table thead').empty()
-        } else {
-            $('#reportes-table thead').empty()
-        }
+                if ($.fn.DataTable.isDataTable('#reportes-table')) {
+                    $('#reportes-table').dataTable().fnClearTable();
+                    $('#reportes-table').dataTable().fnDestroy();
+                    $('#reportes-table thead').empty()
+                } else {
+                    $('#reportes-table thead').empty()
+                }
 
-        // console.log("info tabla " + response);
+                // console.log("info tabla " + response);
 
-        if (response.length != 0) {
-            let my_columns = []
-            $.each(response[0], function (key, value) {
-                var my_item = {};
-                // my_item.class = "filter_C";
-                my_item.data = key;
-                if (key == "fecha_f") {
+                if (response.length != 0) {
+                    let my_columns = []
+                    $.each(response[0], function(key, value) {
+                        var my_item = {};
+                        // my_item.class = "filter_C";
+                        my_item.data = key;
+                        if (key == "fecha_f") {
 
-                    my_item.title = 'Fecha';
+                            my_item.title = 'Fecha';
 
-                    my_item.render = function (data, type, row) {
-                        return `  <div> 
+                            my_item.render = function(data, type, row) {
+                                return `  <div> 
                                 ${row.fecha_f}
                             </div>`
-                    }
-                    my_columns.push(my_item);
+                            }
+                            my_columns.push(my_item);
 
-                } else if (key == "fecha_i") {
+                        } else if (key == "fecha_i") {
 
-                    my_item.title = 'Fecha';
+                            my_item.title = 'Fecha';
 
-                    my_item.render = function (data, type, row) {
-                        return `  <div> 
+                            my_item.render = function(data, type, row) {
+                                return `  <div> 
                                 ${row.fecha_i}
                             </div>`
-                    }
-                    my_columns.push(my_item);
+                            }
+                            my_columns.push(my_item);
 
+                        }
+                    });
+                    $('#reportes-table').DataTable({
+                        // 'scrollX': my_columns.length >= 6 ? true : false,
+                        "destroy": true,
+                        data: response,
+                        "columns": my_columns,
+                        dom: 'Bfrtip',
+                        responsive: true,
+                        paging: true,
+                    });
                 }
-            });
-            $('#reportes-table').DataTable({
-                // 'scrollX': my_columns.length >= 6 ? true : false,
-                "destroy": true,
-                data: response,
-                "columns": my_columns,
-                dom: 'Bfrtip',
-                responsive: true,
-                paging: true,
-            });
-        }
 
-    }
+            }
 
-    function DataTable(response) {
+            function DataTable(response) {
 
 
-        if ($.fn.DataTable.isDataTable('#comportamientos-table')) {
-            $('#comportamientos-table').dataTable().fnClearTable();
-            $('#comportamientos-table').dataTable().fnDestroy();
-            $('#comportamientos-table thead').empty()
-        } else {
-            $('#comportamientos-table thead').empty()
-        }
+                if ($.fn.DataTable.isDataTable('#comportamientos-table')) {
+                    $('#comportamientos-table').dataTable().fnClearTable();
+                    $('#comportamientos-table').dataTable().fnDestroy();
+                    $('#comportamientos-table thead').empty()
+                } else {
+                    $('#comportamientos-table thead').empty()
+                }
 
 
-        if (response.length != 0) {
-            let my_columns = []
-            $.each(response[0], function (key, value) {
-                var my_item = {};
-                // my_item.class = "filter_C";
-                my_item.data = key;
+                if (response.length != 0) {
+                    let my_columns = []
+                    $.each(response[0], function(key, value) {
+                                var my_item = {};
+                                // my_item.class = "filter_C";
+                                my_item.data = key;
 
-                if (key == 'created_at') {
-                    my_item.title = 'Acción';
+                                if (key == 'created_at') {
+                                    my_item.title = 'Acción';
 
-                    my_item.render = function (data, type, row) {
-                        var html = '';
-                        for (let i = 0; i < permisos.length; i++) {
-                            if (permisos[i] == "delete.comportamientos") {
-                                html += `
+                                    my_item.render = function(data, type, row) {
+                                        var html = '';
+                                        for (let i = 0; i < permisos.length; i++) {
+                                            if (permisos[i] == "delete.comportamientos") {
+                                                html += `
                                     <a data-id=${row.id} id="Btn_delete_${row.id}" class='btn btn-circle btn-sm btn-danger'>
                                         <i class="fa fa-trash" aria-hidden="true"></i>
                                     </a> `
-                            } else if (permisos[i] == "edit.comportamientos") {
-                                html += `
+                                            } else if (permisos[i] == "edit.comportamientos") {
+                                                html += `
                                     <a data-id=${row.id} id="Btn_Edit_${row.id}" class='btn btn-circle btn-sm btn-primary'>
                                         <i class="fa fa-edit" aria-hidden="true"></i>
                                     </a>
                                     `
-                            } else if (permisos[i] == "create.actividades") {
-                                html += `
+                                            } else if (permisos[i] == "create.actividades") {
+                                                html += `
                                     <a data-id=${row.id} id="Btn_act_${row.id}" class='btn btn-circle btn-sm btn-success'>
                                         <i class="fa fa-calendar-plus-o" aria-hidden="true"></i>
                                     </a> `
-                            }
-                        }
-                        return `<div align="center">
+                                            }
+                                        }
+                                        return `<div align="center">
                                 <div class="btn-group btn-group-circle btn-group-solid" align="center">
                                     ${html}
                                 </div>
                             </div>`;
 
-                    }
-                    if (permisos.length != 0) {
-                        my_columns.push(my_item);
-                    }
+                                    }
+                                    if (permisos.length != 0) {
+                                        my_columns.push(my_item);
+                                    }
 
-                } else if (key == 'id') {
+                                } else if (key == 'id') {
 
-                    my_item.title = '#';
+                                    my_item.title = '#';
 
-                    my_item.render = function (data, type, row) {
-                        return `  <div'> 
+                                    my_item.render = function(data, type, row) {
+                                        return `  <div'> 
                                 CMP${row.id}
                             </div>`
-                    }
-                    my_columns.push(my_item);
+                                    }
+                                    my_columns.push(my_item);
 
-                } else if (key == 'fecha') {
+                                } else if (key == 'fecha') {
 
-                    my_item.title = 'Fecha de reporte';
+                                    my_item.title = 'Fecha de reporte';
 
-                    my_item.render = function (data, type, row) {
-                        return `  <div'> 
+                                    my_item.render = function(data, type, row) {
+                                        return `  <div'> 
                                 ${row.fecha}
                             </div>`
-                    }
-                    my_columns.push(my_item);
+                                    }
+                                    my_columns.push(my_item);
 
-                } else if (key == 'titulo') {
+                                } else if (key == 'titulo') {
 
-                    my_item.title = 'Titulo';
+                                    my_item.title = 'Titulo';
 
-                    my_item.render = function (data, type, row) {
-                        return `<div>
+                                    my_item.render = function(data, type, row) {
+                                        return `<div>
                                 ${row.titulo} 
                             </div>`
-                    }
-                    my_columns.push(my_item);
-                } else if (key == 'descripcion') {
+                                    }
+                                    my_columns.push(my_item);
+                                } else if (key == 'descripcion') {
 
-                    my_item.title = 'Descripcion';
+                                    my_item.title = 'Descripcion';
 
-                    my_item.render = function (data, type, row) {
-                        return `<div>
+                                    my_item.render = function(data, type, row) {
+                                        return `<div>
                                 ${row.descripcion} 
                             </div>`
-                    }
-                    my_columns.push(my_item);
-                } else if (key == 'nombres') {
+                                    }
+                                    my_columns.push(my_item);
+                                } else if (key == 'nombres') {
 
-                    my_item.title = 'Estudiante';
+                                    my_item.title = 'Estudiante';
 
-                    my_item.render = function (data, type, row) {
-                        return `<div>
+                                    my_item.render = function(data, type, row) {
+                                        return `<div>
                                 ${row.nombres + " " + row.apellidos} 
                             </div>`
-                    }
-                    my_columns.push(my_item);
-                } else if (key == 'nombre_acudiente') {
+                                    }
+                                    my_columns.push(my_item);
+                                } else if (key == 'nombre_acudiente') {
 
-                    my_item.title = 'Acudiente';
+                                    my_item.title = 'Acudiente';
 
-                    my_item.render = function (data, type, row) {
-                        return `<div>
+                                    my_item.render = function(data, type, row) {
+                                        return `<div>
                                 ${row.nombre_acudiente + " " + row.apellido_acudiente}
                             </div>`
-                    }
-                    my_columns.push(my_item);
-                } else if (key == 'grado') {
+                                    }
+                                    my_columns.push(my_item);
+                                } else if (key == 'grado') {
 
-                    my_item.title = 'Curso';
+                                    my_item.title = 'Curso';
 
-                    my_item.render = function (data, type, row) {
-                        return `<div>
+                                    my_item.render = function(data, type, row) {
+                                        return `<div>
                                 ${row.grado + "-" + row.curso} 
                             </div>`
-                    }
-                    my_columns.push(my_item);
-                } else if (key == 'multimedia') {
+                                    }
+                                    my_columns.push(my_item);
+                                } else if (key == 'multimedia') {
 
-                    my_item.title = 'Multimedia';
+                                    my_item.title = 'Multimedia';
 
-                    my_item.render = function (data, type, row) {
-                        return `<div align="center">
+                                    my_item.render = function(data, type, row) {
+                                        return `<div align="center">
                                 <a class="btn btn-default ${row.multimedia == 'undefined' || row.multimedia == null ? 'disabled' : ''}" id="Btn_file_${row.id}" data-id=${row.id} >
                                     <i class="fa fa-file"></i>
                                 </a>
                             </div>`
-                    }
-                    my_columns.push(my_item);
-                } else if (key == 'emisor') {
+                                    }
+                                    my_columns.push(my_item);
+                                } else if (key == 'emisor') {
 
-                    my_item.title = 'Emisor';
+                                    my_item.title = 'Emisor';
 
-                    my_item.render = function (data, type, row) {
-                        return `<div>
+                                    my_item.render = function(data, type, row) {
+                                        return `<div>
                                 ${JSON.parse(row.emisor).email}
                             </div>`
-                    }
-                    my_columns.push(my_item);
-                } else if (key == 'titulo_tc') {
+                                    }
+                                    my_columns.push(my_item);
+                                } else if (key == 'titulo_tc') {
 
-                    my_item.title = 'Tipo de conducta';
+                                    my_item.title = 'Tipo de conducta';
 
-                    my_item.render = function (data, type, row) {
-                        return `<div>
+                                    my_item.render = function(data, type, row) {
+                                            return `<div>
                                 ${row.titulo_tc == null ? `<span class="label label-warning">Sin asignar</span>` : row.titulo_tc}
                             </div>`
                     }

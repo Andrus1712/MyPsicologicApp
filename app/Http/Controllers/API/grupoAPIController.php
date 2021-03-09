@@ -8,9 +8,12 @@ use App\Models\grupo;
 use App\Repositories\grupoRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Response;
 
 use Illuminate\Support\Facades\DB;
+
 /**
  * Class grupoController
  * @package App\Http\Controllers\API
@@ -36,17 +39,22 @@ class grupoAPIController extends AppBaseController
     public function index(Request $request)
     {
         $grupos = DB::table(DB::raw('grupos g'))->where(DB::raw('g.deleted_at', '=', 'NULL'))
-                ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
-                ->select('g.id', 'g.grado', 'g.curso', 'g.docente_id', 
-                    DB::raw('CONCAT(TRIM(d.nombres), " ", TRIM(d.apellidos) ) AS docente'),
-                    'g.created_at')
-                ->get();
+            ->join(DB::raw('docentes d'), 'g.docente_id', '=', 'd.id')
+            ->select(
+                'g.id',
+                'g.grado',
+                'g.curso',
+                'g.docente_id',
+                DB::raw('CONCAT(TRIM(d.nombres), " ", TRIM(d.apellidos) ) AS docente'),
+                'g.created_at'
+            )
+            ->get();
 
 
         return $this->sendResponse($grupos->toArray(), 'Grupos retrieved successfully');
     }
 
-    
+
 
     /**
      * Store a newly created grupo in storage.
@@ -59,10 +67,44 @@ class grupoAPIController extends AppBaseController
     public function store(CreategrupoAPIRequest $request)
     {
         $input = $request->all();
+        $grado = $input['grado'];
+        $curso = $input['curso'];
+        $messages = [
+            'grado.required' => 'El grupo es requerido',
+            'grado.numeric' => 'El grupo debe ser numerico',
+            'curso.required' => 'El curso es requerido',
+            'grado.unique' => 'El grupo y el grado ya estan asignados',
+            'docente_id.required' => 'El docente es requerido',
+            'docente_id.unique' => 'El docente ya esta asignado',
+        ];
 
-        $grupo = $this->grupoRepository->create($input);
+        $validator = Validator::make($input, [
+            'grado' => [
+                'required', 'numeric',
+                Rule::unique('grupos')->where(function ($query) use ($grado, $curso) {
+                    return $query->where('grado', $grado)
+                        ->where('curso', $curso);
+                }),
+            ],
+            'curso' => ['required'],
+            'docente_id' => ['required', 'numeric', 'unique:grupos'],
+        ], $messages);
 
-        return $this->sendResponse($grupo->toArray(), 'Grupo saved successfully');
+        if ($validator->fails()) {
+            return response()->json([
+                "success" => false,
+                "message" => $validator->messages(),
+                "data" => null
+            ]);
+        } else {
+            $grupo = $this->grupoRepository->create($input);
+            return response()->json([
+                "success" => true,
+                "message" => "Grupo saved successfully",
+                "data" => $grupo
+            ]);
+            // return $this->sendResponse($grupo->toArray(), 'Grupo saved successfully');
+        }
     }
 
     /**
@@ -97,17 +139,56 @@ class grupoAPIController extends AppBaseController
     public function update($id, UpdategrupoAPIRequest $request)
     {
         $input = $request->all();
+        $grado = $input['grado'];
+        $curso = $input['curso'];
+        $messages = [
+            'grado.required' => 'El grupo es requerido',
+            'grado.numeric' => 'El grupo debe ser numerico',
+            'curso.required' => 'El curso es requerido',
+            'grado.unique' => 'El grupo y el grado ya estan asignados',
+            'curso.unique' => 'El grupo ya esta asignado',
+            'docente_id.required' => 'El docente es requerido',
+            'docente_id.unique' => 'El docente ya esta asignado',
+        ];
 
-        /** @var grupo $grupo */
         $grupo = $this->grupoRepository->findWithoutFail($id);
 
         if (empty($grupo)) {
             return $this->sendError('Grupo not found');
         }
 
-        $grupo = $this->grupoRepository->update($input, $id);
+        $validator = Validator::make($input, [
+            'grado' => [
+                'required', 'numeric',
+                Rule::unique('grupos')->where(function ($query) use ($grado, $curso) {
+                    return $query->where('grado', $grado)
+                        ->where('curso', $curso);
+                })->ignore($grupo->id)
+            ],
+            'curso' => [
+                'required',
+            ],
+            'docente_id' => [
+                'required', 'numeric',
+                Rule::unique('grupos')->ignore($grupo->id)
+            ],
+        ], $messages);
 
-        return $this->sendResponse($grupo->toArray(), 'grupo updated successfully');
+        if ($validator->fails()) {
+            return response()->json([
+                "success" => false,
+                "message" => $validator->messages(),
+                "data" => null
+            ]);
+        } else {
+            $grupo = $this->grupoRepository->update($input, $id);
+            return response()->json([
+                "success" => true,
+                "message" => $validator->messages(),
+                "data" => $grupo
+            ]);
+            //return $this->sendResponse($grupo->toArray(), 'grupo updated successfully');
+        }
     }
 
     /**

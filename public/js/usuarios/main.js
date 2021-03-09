@@ -4,15 +4,15 @@ var AllRegister = []
 var permisos = []
 
 
-$(document).ready(function () {
+$(document).ready(function() {
     Reload()
 
-    $('#add-user').on('click', function () {
+    $('#add-user').on('click', function() {
         modal.modal('show')
         Modal()
         LoadRoles()
 
-        $('#save').on('click', function () {
+        $('#save').on('click', function() {
             var name = $('#name').val(),
                 email = $('#email').val(),
                 password = $('#password').val(),
@@ -28,28 +28,30 @@ $(document).ready(function () {
                 } else {
                     $('#loading-spinner').show();
                     $.ajax({
-                        url: '/api/usuarios',
-                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                        type: 'POST',
-                        data: {
-                            name: name,
-                            email: email,
-                            password: password,
-                            role_id: role_id,
-                        }
-                    })
-                        .done(function () {
-                            setTimeout(function () {
+                            url: '/api/usuarios',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            type: 'POST',
+                            data: {
+                                name: name,
+                                email: email,
+                                password: password,
+                                role_id: role_id,
+                            }
+                        })
+                        .done(function() {
+                            setTimeout(function() {
                                 $('#loading-spinner').hide();
                                 modal.modal("hide")
                             }, 600);
                             Reload()
                         })
-                        .fail(function () {
+                        .fail(function() {
                             $('#loading-spinner').hide();
                             toastr.error("Ha ocurrido un error");
                         })
-                        .always(function () {
+                        .always(function() {
                             $("#save").addClass("disabled");
                         });
                 }
@@ -57,7 +59,7 @@ $(document).ready(function () {
         })
     })
 
-    $('#user-table').on('click', '[id^=Btn_rol_]', function () {
+    $('#user-table').on('click', '[id^=Btn_rol_]', function() {
         var id = $(this).attr('data-id');
 
         const filtro = AllRegister.filter(f => f.id == id);
@@ -65,14 +67,14 @@ $(document).ready(function () {
         if (filtro != 0) {
             modal.modal('show');
             ModalRol();
-            LoadRoles(filtro[0].roles[0].id != null ? filtro[0].roles[0].id : null);
+            LoadRoles(filtro[0].roles.length != 0 ? filtro[0].roles[0].id : null);
 
             $("#save").text("Actualizar")
             $("#save").attr("id", 'update')
 
             $('#name').val(filtro[0].name);
 
-            $("#update").on('click', function () {
+            $("#update").on('click', function() {
                 var role_id = $('#role_id').val();
 
                 if (role_id == '') {
@@ -80,23 +82,28 @@ $(document).ready(function () {
                 } else {
                     $('#loading-spinner').show();
                     $.ajax({
-                        url: '/api/usuarios/' + id,
-                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                        type: 'PUT',
-                        data: {
-                            role_id: role_id,
-                        }
-                    })
-                        .done(function () {
+                            url: '/api/usuarios/' + id,
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            type: 'PUT',
+                            data: {
+                                role_id: role_id,
+                            }
+                        })
+                        .done(function() {
                             toastr.info("rol establecido correctamente");
-                            setTimeout(function () { modal.modal("hide"); $('#loading-spinner').hide(); }, 600);
+                            setTimeout(function() {
+                                modal.modal("hide");
+                                $('#loading-spinner').hide();
+                            }, 600);
                             Reload()
                         })
-                        .fail(function () {
+                        .fail(function() {
                             $('#loading-spinner').hide();
                             toastr.error("Ha ocurrido un error");
                         })
-                        .always(function () {
+                        .always(function() {
                             $("#save").addClass("disabled");
                         });
                 }
@@ -105,7 +112,7 @@ $(document).ready(function () {
 
     })
 
-    $('#user-table').on('click', '[id^=Btn_Edit_]', function () {
+    $('#user-table').on('click', '[id^=Btn_Edit_]', function() {
         var id = $(this).attr('data-id');
 
         const filtro = AllRegister.filter(f => f.id == id);
@@ -121,7 +128,7 @@ $(document).ready(function () {
             $('#name').val(filtro[0].name);
             $('#email').val(filtro[0].email);
 
-            $("#update").on('click', function () {
+            $("#update").on('click', function() {
                 var name = $('#name').val(),
                     email = $('#email').val(),
                     password = $('#password').val(),
@@ -137,26 +144,31 @@ $(document).ready(function () {
                     } else {
                         $('#loading-spinner').show();
                         $.ajax({
-                            url: '/api/usuarios/' + id,
-                            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                            type: 'PUT',
-                            data: {
-                                name: name,
-                                email: email,
-                                password: password,
-                                // role_id: role_id,
-                            }
-                        })
-                            .done(function () {
+                                url: '/api/usuarios/' + id,
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                },
+                                type: 'PUT',
+                                data: {
+                                    name: name,
+                                    email: email,
+                                    password: password,
+                                    // role_id: role_id,
+                                }
+                            })
+                            .done(function() {
                                 toastr.info("usuario editado correctamente");
-                                setTimeout(function () { modal.modal("hide"); $('#loading-spinner').hide(); }, 600);
+                                setTimeout(function() {
+                                    modal.modal("hide");
+                                    $('#loading-spinner').hide();
+                                }, 600);
                                 Reload()
                             })
-                            .fail(function () {
+                            .fail(function() {
                                 $('#loading-spinner').hide();
                                 toastr.error("Ha ocurrido un error");
                             })
-                            .always(function () {
+                            .always(function() {
                                 $("#save").addClass("disabled");
                             });
                     }
@@ -165,30 +177,32 @@ $(document).ready(function () {
         }
     })
 
-    $('#user-table').on('click', '[id^=Btn_delete_]', function () {
+    $('#user-table').on('click', '[id^=Btn_delete_]', function() {
         var id = $(this).attr('data-id')
 
         swal({
-            title: "¿Realmente deseas eliminar el usuario?",
-            text: "Ten en cuenta que eliminaras toda su información del sistema",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonClass: "btn-danger",
-            confirmButtonText: "Si, eliminar",
-            closeOnConfirm: false
-        },
-            function () {
+                title: "¿Realmente deseas eliminar el usuario?",
+                text: "Ten en cuenta que eliminaras toda su información del sistema",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Si, eliminar",
+                closeOnConfirm: false
+            },
+            function() {
 
                 $.ajax({
-                    url: "/api/usuarios/" + id,
-                    type: "DELETE",
-                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                })
-                    .done(function () {
+                        url: "/api/usuarios/" + id,
+                        type: "DELETE",
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                    })
+                    .done(function() {
                         swal("Eliminado!", "Se ha eliminado el acudiente", "success");
                         Reload();
                     })
-                    .fail(function () {
+                    .fail(function() {
                         swal("Error!", "Ha ocurrido un error", "error");
                     });
 
@@ -301,25 +315,27 @@ function Reload() {
     $.ajax({
         url: "/getUsuarios",
         type: "GET",
-        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
         dataType: "JSON",
     })
 
-        .done(function (response) {
-            if (response.length != 0) {
-                AllRegister = response.usuarios;
-                permisos = response.permisos;
-                DataTable(response.usuarios);
-            } else {
-                $('#user-table').dataTable().fnClearTable();
-                $('#user-table').dataTable().fnDestroy();
-                $('#user-table thead').empty()
-            }
-        })
+    .done(function(response) {
+        if (response.length != 0) {
+            AllRegister = response.usuarios;
+            permisos = response.permisos;
+            DataTable(response.usuarios);
+        } else {
+            $('#user-table').dataTable().fnClearTable();
+            $('#user-table').dataTable().fnDestroy();
+            $('#user-table thead').empty()
+        }
+    })
 
-        .fail(function () {
-            console.log("error");
-        });
+    .fail(function() {
+        console.log("error");
+    });
 }
 
 function LoadRoles(rol) {
@@ -331,17 +347,19 @@ function LoadRoles(rol) {
     });
 
     $.ajax({
-        url: '/api/roles',
-    })
-        .done(function (response) {
+            url: '/api/roles',
+        })
+        .done(function(response) {
             for (var i in response.data) {
                 $("#role_id").append(`<option value='${response.data[i].id}'>${response.data[i].name}</option>`)
             }
 
-            $("#role_id").val(rol);
+            if (rol != null) {
+                $("#role_id").val(rol);
+            }
 
         })
-        .fail(function () {
+        .fail(function() {
             console.log("error");
         })
 }
@@ -369,7 +387,7 @@ function DataTable(response) {
 
     if (response.length != 0) {
         let my_columns = []
-        $.each(response[0], function (key, value) {
+        $.each(response[0], function(key, value) {
             var my_item = {};
             // my_item.class = "filter_C";
             my_item.data = key;
@@ -378,7 +396,7 @@ function DataTable(response) {
 
                 my_item.title = 'Acción';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     var html = '';
                     for (let i = 0; i < permisos.length; i++) {
                         if (permisos[i] == "delete.user") {
@@ -413,7 +431,7 @@ function DataTable(response) {
 
                 my_item.title = '#';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `  <div> 
                                 ${row.id}
                             </div>`
@@ -425,7 +443,7 @@ function DataTable(response) {
 
                 my_item.title = 'Nombre';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `  <div> 
                                 ${row.name}
                             </div>`
@@ -435,7 +453,7 @@ function DataTable(response) {
 
                 my_item.title = 'Email';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     return `<div>
                                 ${row.email} 
                             </div>`
@@ -445,7 +463,7 @@ function DataTable(response) {
 
                 my_item.title = 'Rol';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     if (row.roles.length != 0) {
                         return `<div>
                                 ${row.roles[0].name} 
@@ -459,9 +477,13 @@ function DataTable(response) {
             } else if (key == 'updated_at') {
                 my_item.title = 'Fecha de creacion';
 
-                my_item.render = function (data, type, row) {
+                my_item.render = function(data, type, row) {
                     var fecha = new Date(row.created_at);
-                    var options = { year: 'numeric', month: 'long', day: 'numeric' };
+                    var options = {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    };
                     return `<div> 
                                 ${fecha.toLocaleDateString("es-ES", options)}
                             </div>`
@@ -498,12 +520,30 @@ function DataTable(response) {
             ],
         });
 
-        $('thead > tr> th:nth-child(1)').css({ 'min-width': '30px', 'max-width': '30px' });
-        $('thead > tr> th:nth-child(2)').css({ 'min-width': '100px', 'max-width': '100px' });
-        $('thead > tr> th:nth-child(3)').css({ 'min-width': '160px', 'max-width': '160px' });
-        $('thead > tr> th:nth-child(4)').css({ 'min-width': '80px', 'max-width': '80px' });
-        $('thead > tr> th:nth-child(5)').css({ 'min-width': '120px', 'max-width': '120px' });
-        $('thead > tr> th:nth-child(6)').css({ 'min-width': '120px', 'max-width': '120px' });
+        $('thead > tr> th:nth-child(1)').css({
+            'min-width': '30px',
+            'max-width': '30px'
+        });
+        $('thead > tr> th:nth-child(2)').css({
+            'min-width': '100px',
+            'max-width': '100px'
+        });
+        $('thead > tr> th:nth-child(3)').css({
+            'min-width': '160px',
+            'max-width': '160px'
+        });
+        $('thead > tr> th:nth-child(4)').css({
+            'min-width': '80px',
+            'max-width': '80px'
+        });
+        $('thead > tr> th:nth-child(5)').css({
+            'min-width': '120px',
+            'max-width': '120px'
+        });
+        $('thead > tr> th:nth-child(6)').css({
+            'min-width': '120px',
+            'max-width': '120px'
+        });
 
 
         var rows = table.rows().data();
@@ -511,7 +551,7 @@ function DataTable(response) {
 
         for (let index = 0; index < rows.length; index++) {
             ide = rows[index].id;
-            console.log(ide);
+            //console.log(ide);
             if (ide <= 1) {
                 $('#btn_' + ide + '').empty();
             }
